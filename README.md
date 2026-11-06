@@ -21,6 +21,17 @@ npm run build
 - `src/audio.js`: música com fusão, ambientes em laço e efeitos. `src/sons.json` é gerado.
 - `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
 
+## Narração
+
+O código da narração está pronto, mas a voz ainda não foi gravada: a conta da ElevenLabs está sem créditos. Enquanto faltar alguma das 8 cenas, o botão não aparece.
+
+```sh
+python3 tools/narracao.py --estimar   # só conta os caracteres
+python3 tools/narracao.py             # grava o que falta e continua de onde parou
+```
+
+Depois de gravar, faça o build, o commit, o push e o deploy. A chave vem do ambiente ou do `.env` do hub.
+
 ## Testes
 
 | Arquivo | O que prova |

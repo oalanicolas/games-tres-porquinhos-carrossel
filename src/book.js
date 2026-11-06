@@ -204,7 +204,8 @@ export class Livro {
     this.anel = new THREE.Group(); this.raiz.add(this.anel);
     this.paredes = []; this.cunhas = []; this.aniso = aniso;
     this.abertura = 0; this.giro = 0; this.stats = { pieces: 0, draws: 0, triangles: 0 };
-    this.anguloFinal = (k) => THREE.MathUtils.degToRad(90 + 180 / N) - k * CUNHA;
+    this.larguraFoco = CUNHA; this.alvos = [];
+    this.focar(0);
     this._construirParedes();
     this._construirCunhas();
     this._construirMiolo();
@@ -251,9 +252,10 @@ export class Livro {
       const g = new THREE.Group(); g.name = `cena-${j}`; this.anel.add(g);
       const conteudo = new THREE.Group(); g.add(conteudo);
       // disco do chão
-      const disco = piece(conteudo, sector(R + 0.03, CUNHA / 2), CEUS[j].chao, { t: 0.04, edge: shade(CEUS[j].disco, -0.1), jitter: 0 });
-      disco.rotation.x = Math.PI / 2; disco.position.y = 0.05; disco.name = 'disco';
-      this.cunhas.push({ g, conteudo, j });
+      // o chão fica fora do `conteudo`: é o único que estica quando a cena abre mais
+      const disco = piece(g, sector(R + 0.03, CUNHA / 2), CEUS[j].chao, { t: 0.04, edge: shade(CEUS[j].disco, -0.1), jitter: 0 });
+      disco.rotation.x = Math.PI / 2; disco.position.y = 0.05; disco.name = 'disco'; disco.frustumCulled = false;
+      this.cunhas.push({ g, conteudo, j, disco, discoBase: disco.geometry.attributes.position.array.slice(), discoEstica: 1 });
     }
   }
   _construirMiolo() {
@@ -281,7 +283,7 @@ export class Livro {
       const k = p.k;
       const atraso = k === 0 ? 0 : 0.14 + 0.32 * (k / N); const durac = k === 0 ? 0.75 : 0.54;
       const t = easeIO(THREE.MathUtils.clamp((o - atraso) / durac, 0, 1));
-      const a = this.anguloFinal(k) * t + (k === N && o >= 0.999 ? -0.0 : 0);
+      const a = this.alvos[k] * t;
       angulos.push(a);
       p.pivo.rotation.y = -a; p.angulo = a;
       const z0 = ((N / 2 - k) / N) * (ESPESSURA - 0.03);
@@ -296,11 +298,38 @@ export class Livro {
       const q = Math.tan(Math.max(metade, 0.0001)) / Math.tan(CUNHA / 2);
       c.g.rotation.y = Math.PI / 2 - centro;
       c.conteudo.scale.set(Math.min(q, 1), Math.min(1, Math.max(0.02, (metade / (CUNHA / 2)) ** 0.7)), 1);
+      c.disco.scale.x = Math.min(q, 1);
+      this._abrirCena(c, metade);
       c.g.visible = metade > 0.05;
     }
     const fechado = o < 0.16;
     this.miolo.visible = fechado; this.dorso.visible = o < 0.5; this.eixo.visible = o >= 0.5;
     for (const f of this.fitas) f.visible = o < 0.6;
+  }
+  /**
+   * Abre mais a cena em foco, para o texto ficar de frente. `idx` é a cena na frente, fracionária durante o giro.
+   * As vizinhas mantêm 45° e o fim não encosta no começo porque as distantes nem são desenhadas.
+   */
+  focar(idx) {
+    const largura = (j) => { const p = THREE.MathUtils.smoothstep(1 - Math.abs(j - idx), 0, 1); return CUNHA + (this.larguraFoco - CUNHA) * p; };
+    const u = (x) => { if (x <= 0) return x * largura(0); let s = 0; const f = Math.floor(x); for (let j = 0; j < f; j++) s += largura(j); return s + (x - f) * largura(f); };
+    const centro = u(idx + 0.5);
+    for (let k = 0; k <= N; k++) this.alvos[k] = Math.PI / 2 + centro - u(k) - idx * CUNHA;
+  }
+  /** As peças coladas nas paredes acompanham a abertura; o chão se estica em ângulo e mantém o raio. */
+  _abrirCena(c, metade) {
+    const f = Math.max(1, metade / (CUNHA / 2));
+    if (Math.abs(f - c.discoEstica) < 0.0005) return;
+    c.discoEstica = f;
+    const delta = metade - CUNHA / 2;
+    const pivos = c.conteudo.userData.pivos;
+    if (pivos) { if (pivos[-1]) pivos[-1].rotation.y = -Math.max(delta, 0); if (pivos[1]) pivos[1].rotation.y = Math.max(delta, 0); }
+    const atr = c.disco.geometry.attributes.position; const base = c.discoBase;
+    for (let i = 0; i < atr.count; i++) {
+      const x = base[i * 3]; const y = base[i * 3 + 1]; const r = Math.hypot(x, y); const a = Math.atan2(x, y) * f;
+      atr.array[i * 3] = Math.sin(a) * r; atr.array[i * 3 + 1] = Math.cos(a) * r;
+    }
+    atr.needsUpdate = true;
   }
   /**
    * A história é uma sequência, não um círculo: a última cena nunca aparece encostada na primeira.

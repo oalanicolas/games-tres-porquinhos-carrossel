@@ -23,7 +23,11 @@ export function palco(conteudo) {
     parede(lado, r, y, s = 1) {
       const a = CUNHA / 2; const nx = -lado * Math.cos(a), nz = Math.sin(a);
       const g = new THREE.Group(); g.position.set(lado * Math.sin(a) * r + nx * 0.012, y, Math.cos(a) * r + nz * 0.012);
-      g.rotation.y = Math.atan2(nx, nz); g.scale.setScalar(s); g.userData.naParede = true; conteudo.add(g); return g;
+      g.rotation.y = Math.atan2(nx, nz); g.scale.setScalar(s); g.userData.naParede = true;
+      // pivô na lombada: gira junto com a parede quando a cena abre mais
+      const pivos = (conteudo.userData.pivos ||= {});
+      if (!pivos[lado]) { const pv = new THREE.Group(); pv.userData.rig = true; pv.userData.naParede = true; pv.name = `parede-${lado}`; conteudo.add(pv); pivos[lado] = pv; }
+      pivos[lado].add(g); return g;
     },
     /** Grupo livre, sem plantar. */
     alto(x, y, z, s = 1) { return group(conteudo, { x, y, z, s }); },

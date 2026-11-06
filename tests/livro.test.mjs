@@ -3,13 +3,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { abrir } from './_apoio.mjs';
 const roda = promisify(execFile);
 
 test('nenhuma peça fora da cunha e 8 de 8 cenas pelo percurso real', async () => {
   const { endereco, fechar } = await abrir();
-  const saida = mkdtempSync('output/teste-');
+  const saida = (mkdirSync('output', { recursive: true }), mkdtempSync('output/teste-'));
   try {
     const p = await roda('node', ['tests/paredes.mjs'], { env: { ...process.env, LIVRO_URL: endereco } }).catch((e) => e);
     console.log(p.stdout.trim());

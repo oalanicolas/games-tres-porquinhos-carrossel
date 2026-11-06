@@ -3,3 +3,17 @@ dist/
 output/
 *.log
 .env*
+.DS_Store
+**/.DS_Store
+.aiox/
+**/.aiox/
+__pycache__/
+*.pyc
+.venv/
+**/node_modules/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json

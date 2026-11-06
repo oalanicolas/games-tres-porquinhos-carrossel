@@ -8,8 +8,19 @@
 <meta name="theme-color" content="#3a2212">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='17' r='13' fill='%23f7a7b5'/%3E%3Cellipse cx='16' cy='19' rx='6' ry='4.500' fill='%23e68593'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/src/style.css">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TT2J9B4B');</script>
+<!-- End Google Tag Manager -->
+<script defer src="./analytics.js"></script>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TT2J9B4B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <canvas id="palco" aria-label="Livro-carrossel em três dimensões"></canvas>
 
 <header class="pilula titulo" id="titulo">
@@ -28,12 +39,14 @@
 
 <a class="assinatura" href="https://x.com/oalanicolas" target="_blank" rel="noopener">© 2026 Alan Nicolas</a>
 <a class="assinatura credito-musica" href="https://incompetech.com" target="_blank" rel="noopener">Música: Kevin MacLeod (incompetech.com), CC BY 4.0</a>
+<a class="assinatura credito-voz" id="credito-voz" href="https://elevenlabs.io" target="_blank" rel="noopener" hidden></a>
 
 <nav class="pilula barra" id="barra" aria-label="Navegação do livro">
   <button class="seta" id="anterior" aria-label="Cena anterior"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
   <div class="pontos" id="pontos" role="tablist" aria-label="Cenas"></div>
   <div class="legenda" aria-live="polite"><strong id="cena-titulo"></strong><span id="cena-sub"></span></div>
   <button class="icone" id="olhar" aria-label="Só olhar: esconder os controles" aria-pressed="false"><svg viewBox="0 0 20 20"><path d="M1.5 10S5 4 10 4s8.500 6 8.500 6-3.500 6-8.500 6-8.500-6-8.500-6Z"/><circle cx="10" cy="10" r="2.700"/></svg></button>
+  <button class="icone" id="narrar" aria-label="Desligar a narração" aria-pressed="true" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4.500h9v8H7.500L4.500 15.500v-3H3Z"/><path id="voz-onda" d="M15 6.500a4 4 0 0 1 0 4.500M17 4.500a7 7 0 0 1 0 8.500"/></svg></button>
   <button class="icone" id="som" aria-label="Desligar o som" aria-pressed="true"><svg viewBox="0 0 20 20"><path class="cheio" d="M3 7.500v5h3l4.500 3.500v-12L6 7.500H3Z"/><path id="onda" d="M13.500 7a4 4 0 0 1 0 6M15.500 5a7 7 0 0 1 0 10"/></svg></button>
   <button class="acao" id="acao"></button>
   <button class="seta" id="proxima" aria-label="Próxima cena"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>

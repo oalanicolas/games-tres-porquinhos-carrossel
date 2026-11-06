@@ -68,6 +68,8 @@ function enquadrar() {
   const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   // aberto: cabe a altura das paredes e a largura da cunha com as vizinhas
   const paisagem = asp >= 1.05;
+  // quanto a cena em foco abre: em pé a tela é estreita e as pontas das paredes precisam caber
+  if (livro) livro.larguraFoco = THREE.MathUtils.degToRad(paisagem ? 90 : 64);
   const altNav = paisagem ? 0.12 : 0.2;
   const distAlt = (H * 1.29) / (2 * tanV * (1 - altNav * 0.4));
   const larguraUtil = paisagem ? R * 1.5 : R * 1.08;
@@ -92,6 +94,7 @@ function aplicarLivro() {
   const t = estado.tAbrir;
   const levantar = ease(clamp(t / 0.36, 0, 1));
   const abrir = clamp((t - 0.24) / 0.76, 0, 1);
+  livro.focar(estado.giro / CUNHA);
   livro.definirAbertura(abrir);
   const d = posDeitado();
   const r = livro.raiz;
@@ -119,6 +122,7 @@ for (let i = -1; i < N; i++) {
 }
 function atualizarUI() {
   audio.cena(estado.indice);
+  $('acao').classList.remove('chama');
   const i = estado.indice; const capa = i < 0;
   pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
   document.body.classList.toggle('aberto', !capa);
@@ -168,6 +172,28 @@ $('acao').addEventListener('click', agir);
 $('anterior').addEventListener('click', () => irPara(estado.indice - 1));
 $('proxima').addEventListener('click', () => irPara(estado.indice + 1));
 $('som').addEventListener('click', () => { audio.destravar(); const l = audio.alternar(); $('som').setAttribute('aria-pressed', String(l)); $('som').setAttribute('aria-label', l ? 'Desligar o som' : 'Ligar o som'); });
+// narração: só existe na tela quando há voz gravada; a escolha de quem lê fica guardada neste navegador
+function prepararNarracao() {
+  const tem = audio.temNarracao();
+  $('narrar').hidden = !tem;
+  const cred = $('credito-voz');
+  cred.hidden = !tem;
+  if (tem) cred.textContent = `Voz sintética${audio.nomeVoz ? `: ${audio.nomeVoz}` : ''}, ElevenLabs`;
+  let guardado = null;
+  try { guardado = localStorage.getItem('porquinhos-narracao'); } catch { /* sem armazenamento: fica ligada */ }
+  if (guardado === 'nao' && audio.narrando) audio.alternarNarracao();
+  atualizarBotaoNarrar();
+}
+function atualizarBotaoNarrar() {
+  const b = $('narrar'); b.setAttribute('aria-pressed', String(audio.narrando));
+  b.setAttribute('aria-label', audio.narrando ? 'Desligar a narração' : 'Ligar a narração');
+}
+$('narrar').addEventListener('click', () => {
+  audio.destravar(); audio.alternarNarracao(); atualizarBotaoNarrar();
+  try { localStorage.setItem('porquinhos-narracao', audio.narrando ? 'sim' : 'nao'); } catch { /* segue só nesta visita */ }
+});
+// terminou de ler: convida para a ação, sem fazer por quem lê
+audio.aoFimDaVoz = (i) => { if (i === estado.indice && !estado.tocouAcao.has(i)) $('acao').classList.add('chama'); };
 function alternarOlhar(v = !estado.olhar) { estado.olhar = v; document.body.classList.toggle('so-olhar', v); $('olhar').setAttribute('aria-pressed', String(v)); $('voltar-olhar').hidden = !v; esconderCartao(); }
 $('olhar').addEventListener('click', () => alternarOlhar());
 $('voltar-olhar').addEventListener('click', () => alternarOlhar(false));
@@ -298,6 +324,7 @@ async function iniciar() {
   for (const c of livro.cunhas) { const s = bake(c.conteudo); livro.stats.pieces += s.pieces; livro.stats.draws += s.draws; livro.stats.triangles += s.triangles; }
   livro.aplicarCapa(arteDaCapa(renderer));
   enquadrar();
+  prepararNarracao();
   estado.tAbrir = 0; atualizarUI();
   // ponte de QA: sem depender de relógio ou clique
   window.__livro = {

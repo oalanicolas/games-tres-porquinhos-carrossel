@@ -24,6 +24,36 @@ for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular p
       assert.ok(r.neblina >= r.distancia - 1, `névoa em ${r.neblina} com a câmera a ${r.distancia}`);
       for (const [a, b] of [['credito', 'h1'], ['credito', 'texto'], ['credito', 'barra'], ['assinatura', 'barra'], ['assinatura', 'credito']]) assert.ok(!sobrepoe(r[a], r[b]), `${a} sobre ${b}`);
       if (altura < 500) assert.ok(r.barra.height <= 60, `barra com ${r.barra.height}px numa tela de ${altura}px`);
+      // Defeito devolvido por Alan: "a página deve abrir mais para ficar mais fácil de ler".
+      const leitura = await page.evaluate(async () => {
+        const L = window.__livro; L.cenaEm(2, 0);
+        const espera = () => new Promise((f) => setTimeout(f, 250));
+        const larguraTexto = () => {
+          const p = L.livro.paredes[2]; const a = p.angulo + L.estado.giro; const v = L.camera.position.clone();
+          const y = 2.0; const nx = (x, z) => v.set(x, y, z).project(L.camera).x;
+          const ponta = nx(Math.cos(a) * 3.05, Math.sin(a) * 3.05);
+          return { largura: Math.abs(ponta - nx(0, 0)) * innerWidth / 2, ponta };
+        };
+        await espera(); const aberta = larguraTexto();
+        const alvo = L.livro.larguraFoco; L.livro.larguraFoco = Math.PI / 4;
+        L.cenaEm(2, 0); await espera(); const antiga = larguraTexto();
+        L.livro.larguraFoco = alvo; L.liberar();
+        return { aberta, antiga };
+      });
+      const minimo = largura > altura ? 1.5 : 1.2;
+      assert.ok(leitura.aberta.largura >= leitura.antiga.largura * minimo, `página com ${leitura.aberta.largura.toFixed(0)}px, antes ${leitura.antiga.largura.toFixed(0)}px`);
+      assert.ok(Math.abs(leitura.aberta.ponta) <= 1.02, `a ponta da parede de texto sai da tela (${leitura.aberta.ponta.toFixed(3)})`);
+      // A página mais aberta passou por trás do crédito: a licença CC BY precisa continuar legível na cena final.
+      const credito = await page.evaluate(async () => {
+        window.__livro.abrirNaHora(7); await new Promise((f) => setTimeout(f, 700));
+        const e = document.querySelector('.credito-musica'); const c = getComputedStyle(e); const q = e.getBoundingClientRect();
+        return { display: c.display, opacidade: +c.opacity, fundo: +(c.backgroundColor.match(/[\d.]+\)$/)?.[0].replace(')', '') ?? 1), dentro: q.left >= 0 && q.right <= innerWidth && q.top >= 0 && q.bottom <= innerHeight, barra: document.querySelector('#barra').getBoundingClientRect().toJSON(), q: q.toJSON() };
+      });
+      assert.notEqual(credito.display, 'none');
+      assert.ok(credito.opacidade === 1 && credito.fundo >= 0.6, `crédito com opacidade ${credito.opacidade} e fundo ${credito.fundo}`);
+      assert.ok(credito.dentro, 'crédito fora da tela');
+      assert.ok(!sobrepoe(credito.q, credito.barra), 'crédito sob a barra');
+      console.log(`${nome}: página de texto ${leitura.antiga.largura.toFixed(0)}px -> ${leitura.aberta.largura.toFixed(0)}px`);
     } finally { await fechar(); }
   });
 }
