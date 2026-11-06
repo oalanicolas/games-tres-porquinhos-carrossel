@@ -42,6 +42,8 @@ body.aberto .abertura { opacity: 0; transform: translateY(-14px); }
 
 .assinatura { position: fixed; z-index: 2; right: 18px; bottom: 96px; font-size: 13px; letter-spacing: .03em; color: #f2dcc4; opacity: .85; text-decoration: none; }
 .assinatura:hover { text-decoration: underline; }
+.credito-musica { bottom: 116px; font-size: 11px; opacity: 0; pointer-events: none; transition: opacity .4s; }
+body.credito .credito-musica { opacity: .75; pointer-events: auto; }
 
 .barra { left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 6px; padding: 10px 14px; max-width: calc(100vw - 20px); width: max-content; }
 body.so-olhar .barra { transform: translate(-50%, 6px); }
@@ -100,6 +102,7 @@ body.tocar .cartao { pointer-events: auto; }
   .abertura h1 br { display: none; }
   .abertura p { margin-top: 8px; font-size: 13.500px; }
   .assinatura { bottom: auto; top: 66px; right: 16px; font-size: 11px; }
+  .credito-musica { top: 84px; font-size: 10px; }
   body.aberto .assinatura { display: none; }
   .barra { flex-wrap: wrap; justify-content: center; border-radius: 26px; padding: 10px 8px; gap: 2px 3px; width: calc(100vw - 20px); }
   .legenda { order: -1; width: 100%; text-align: center; margin: 0 8px 4px; }

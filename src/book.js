@@ -283,7 +283,7 @@ export class Livro {
       const t = easeIO(THREE.MathUtils.clamp((o - atraso) / durac, 0, 1));
       const a = this.anguloFinal(k) * t + (k === N && o >= 0.999 ? -0.0 : 0);
       angulos.push(a);
-      p.pivo.rotation.y = -a;
+      p.pivo.rotation.y = -a; p.angulo = a;
       const z0 = ((N / 2 - k) / N) * (ESPESSURA - 0.03);
       // abertas, as capas ficam costas com costas: cada miolo vira para a sua cena
       const fora = (k === 0 ? -1 : k === N ? 1 : 0) * 0.024 * t;
@@ -302,13 +302,15 @@ export class Livro {
     this.miolo.visible = fechado; this.dorso.visible = o < 0.5; this.eixo.visible = o >= 0.5;
     for (const f of this.fitas) f.visible = o < 0.6;
   }
-  /** Só desenha o que pode aparecer: mantém o giro leve e as sombras limpas. */
+  /**
+   * A história é uma sequência, não um círculo: a última cena nunca aparece encostada na primeira.
+   * Aberto, mostra só as cenas vizinhas de verdade. Abrindo, as paredes do fim somem antes de dar a volta.
+   */
   cullPorGiro(giro, aberto) {
-    if (!aberto) return;
-    for (const c of this.cunhas) {
-      const d = Math.abs(((c.j * CUNHA - giro + Math.PI * 3) % TAU) - Math.PI);
-      c.g.visible = c.g.visible && Math.PI - d > -1;
-      c.g.visible = d < CUNHA * 2.7;
-    }
+    const idx = giro / CUNHA;
+    for (const c of this.cunhas) c.g.visible = c.g.visible && (aberto ? Math.abs(c.j - idx) <= 2.7 : c.j <= 2);
+    this.paredes.forEach((p, k) => {
+      if (aberto) { const antes = this.cunhas[k - 1]; const depois = this.cunhas[k]; p.pivo.visible = !!(antes?.g.visible || depois?.g.visible); } else p.pivo.visible = k <= 3 || p.angulo > -1.75;
+    });
   }
 }

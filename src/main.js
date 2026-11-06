@@ -77,10 +77,11 @@ function enquadrar() {
   camAberto.alvo.set(0, H * (paisagem ? 0.47 : 0.45), R * 0.2);
   // capa: livro deitado, em 3/4; em retrato sobe para sobrar lugar ao texto
   const k = paisagem ? 1 : Math.max(1, 1.05 / asp);
-  camCapa.pos.set(paisagem ? 0.1 : 0.02, 8.7 * k, 7.4 * k);
-  camCapa.alvo.set(paisagem ? 0.1 : 0.0, 0.0, paisagem ? 1.35 : -0.25);
+  camCapa.pos.set(paisagem ? 0.1 : 0.02, 8.1 * k, 6.9 * k);
+  camCapa.alvo.set(paisagem ? 0.25 : 0.0, 0.0, paisagem ? 1.3 : -0.25);
 }
 addEventListener('resize', enquadrar);
+for (const ev of ['pointerdown', 'keydown']) addEventListener(ev, () => audio.destravar(), { once: true });
 
 function posDeitado() {
   const asp = innerWidth / innerHeight; const paisagem = asp >= 1.05;
@@ -117,9 +118,11 @@ for (let i = -1; i < N; i++) {
   b.addEventListener('click', () => irPara(i)); $('pontos').append(b); pontos.push(b);
 }
 function atualizarUI() {
+  audio.cena(estado.indice);
   const i = estado.indice; const capa = i < 0;
   pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
   document.body.classList.toggle('aberto', !capa);
+  document.body.classList.toggle('credito', capa || i === N - 1);
   $('capitulo').hidden = capa;
   $('cena-titulo').textContent = capa ? CAPA.titulo : CENAS[i].titulo;
   $('cena-sub').textContent = capa ? CAPA.sub : CENAS[i].sub;
@@ -159,7 +162,7 @@ function agir() {
   if (i < 0) { abrirLivro(); return; }
   if (estado.modo !== 'aberto') return;
   const c = cenas[i]; if (!c) return;
-  c.linha.play(); estado.tocouAcao.add(i); atualizarUI();
+  c.linha.play(); audio.abaixar(c.linha.duration); estado.tocouAcao.add(i); atualizarUI();
 }
 $('acao').addEventListener('click', agir);
 $('anterior').addEventListener('click', () => irPara(estado.indice - 1));
@@ -296,7 +299,7 @@ async function iniciar() {
   estado.tAbrir = 0; atualizarUI();
   // ponte de QA: sem depender de relógio ou clique
   window.__livro = {
-    estado, livro, cenas, renderer, scene, camera, N,
+    estado, livro, cenas, renderer, scene, camera, N, audio,
     abrirNaHora(i = 0) { estado.modo = 'aberto'; estado.tAbrir = 1; estado.indice = i; estado.giro = estado.giroAlvo = i * CUNHA; atualizarUI(); passo(0); renderer.render(scene, camera); },
     irPara,
     agir,

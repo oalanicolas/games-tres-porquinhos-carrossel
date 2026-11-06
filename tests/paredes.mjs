@@ -21,7 +21,7 @@ const r = await page.evaluate(async () => {
         for (let k = 0; k < pos.count; k += 3) {
           const x = pos.getX(k), y = pos.getY(k), z = pos.getZ(k);
           const X = e[0] * x + e[4] * y + e[8] * z + e[12]; const Z = e[2] * x + e[6] * y + e[10] * z + e[14];
-          const lim = Math.max(Z, 0) * T; const d = Math.abs(X) - lim;
+          const lim = Math.max(Z, 0) * T; const d = Math.max(Math.abs(X) - lim, Math.hypot(X, Z) - 3.1);
           if (d > pior) { pior = d; px = X; pz = Z; }
         }
         if (pior > 0.012) fora.push({ cena: i, nome: dono.name || o.parent?.name || o.name, excesso: +pior.toFixed(3), x: +px.toFixed(2), z: +pz.toFixed(2) });

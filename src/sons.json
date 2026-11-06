@@ -1,0 +1,86 @@
+{
+ "efeitos": [
+  "flap1",
+  "flap2",
+  "abrir",
+  "vento",
+  "ar",
+  "inspira",
+  "palha",
+  "palha2",
+  "pano",
+  "range",
+  "range2",
+  "desaba",
+  "tabuas",
+  "martelo",
+  "martelo2",
+  "tijolo",
+  "tijolo2",
+  "porco",
+  "grunhido",
+  "guincho",
+  "uivo1",
+  "uivo2",
+  "tchibum",
+  "tchibum2",
+  "caldeirao",
+  "chama",
+  "lenha",
+  "fogos",
+  "fogos2",
+  "viva",
+  "risos",
+  "sino",
+  "melro"
+ ],
+ "ambientes": [
+  "passaros",
+  "brisa",
+  "grilos",
+  "fogo",
+  "fervura"
+ ],
+ "pad": 0.1,
+ "lacos": {
+  "passaros": 40,
+  "brisa": 40,
+  "grilos": 40,
+  "fogo": 2.4,
+  "fervura": 40
+ },
+ "musicas": {
+  "caixinha": {
+   "arquivo": "caixinha.mp3",
+   "ganho_db": -4.3
+  },
+  "shuffle": {
+   "arquivo": "shuffle.mp3",
+   "ganho_db": -5.8
+  },
+  "hyperfun": {
+   "arquivo": "hyperfun.mp3",
+   "ganho_db": -2.9
+  },
+  "marty": {
+   "arquivo": "marty.mp3",
+   "ganho_db": -0.2
+  },
+  "umlaut": {
+   "arquivo": "umlaut.mp3",
+   "ganho_db": -3.6
+  },
+  "getaway": {
+   "arquivo": "getaway.mp3",
+   "ganho_db": -9.2
+  },
+  "moonlight": {
+   "arquivo": "moonlight.mp3",
+   "ganho_db": -5.8
+  },
+  "delrio": {
+   "arquivo": "delrio.mp3",
+   "ganho_db": -9.5
+  }
+ }
+}
