@@ -264,6 +264,8 @@ function passo(dt) {
   livro.anel.rotation.y = -estado.giro * clamp(estado.tAbrir * 4 - 3, 0, 1) - estado.giro * (1 - clamp(estado.tAbrir * 4 - 3, 0, 1)) + px * 0.022;
   camera.position.x += px * 0.28; camera.position.y -= py * 0.12;
   camera.lookAt(alvoAtual);
+  // no celular em pé a câmera recua: a névoa recua junto para não apagar o livro
+  scene.fog.near = Math.max(13, camera.position.distanceTo(alvoAtual) + 2.4); scene.fog.far = scene.fog.near + 13;
   livro.cullPorGiro(estado.giro, estado.tAbrir > 0.98);
   // só a cena em foco e as vizinhas animam
   cenas.forEach((c, j) => {
