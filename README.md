@@ -27,6 +27,14 @@ npm run build
 - `src/audio.js`: música com fusão, ambientes em laço e efeitos. `src/sons.json` é gerado.
 - `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
 
+## Brincar de soprar
+
+O botão com **ícone de vento** ativa uma pausa interativa na palha, madeira e tijolos. O Lobo enche as bochechas junto com a criança. O medidor mostra a força captada e o vento acumulado: palha pede intensidade mínima de 16% e 0,55 unidade de energia, madeira 30% e 1,05, tijolos 40% e 1,6. Esses percentuais são uma escala do jogo calibrada pelo ambiente, não uma medida física. Ao completar a tentativa, a animação continua; os tijolos permanecem inteiros, como no conto. É possível respirar entre sopros, repetir ou continuar sem soprar.
+
+A interface da brincadeira é inteiramente visual: casas, vento, aro de intensidade e barra de energia, sem palavras ou percentuais visíveis. Os nomes e avisos existem apenas para leitores de tela. O microfone só é solicitado ao tocar no seu ícone. A captura é local, sem gravação nem envio, e para ao concluir, mudar de página, sair do modo ou ocultar a aba. Antes de escutar, o jogo silencia sua saída e mede 1,2 s de ruído ambiente. Mede RMS e distribuição espectral para reduzir acionamento por tons e estalos; não reconhece fala nem garante distinguir todo ruído de um sopro. A sensibilidade em telefones físicos ainda precisa de validação. O botão de segurar oferece a mesma brincadeira sem microfone, inclusive por teclado.
+
+Testes específicos: `node --test tests/sopro.test.mjs`. Incluem PCM gerado no navegador passando pelo mesmo AnalyserNode da captura, três casas, recusa, autorização tardia, pausa e repetição.
+
 ## Modo narrado e trilha
 
 No modo narrado, ligado por padrão, a voz conduz. O relógio da cena é o da fala: cada gesto está preso a uma palavra do texto, e a boca do personagem acompanha o volume da voz. Cada personagem que fala ganha um balão com a própria fala, e a página vira sozinha quando voz e gestos terminam. Depois da última cena, o livro se fecha e volta à capa, pronto para ser lido de novo.

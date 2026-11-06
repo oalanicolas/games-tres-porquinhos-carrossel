@@ -115,3 +115,77 @@ body.so-olhar .barra { transform: translate(-50%, 6px); }
 @media (prefers-reduced-motion: reduce) { .balao span { animation: none; } }
 @media (max-width: 375px) { .acao { padding: 9px 11px; font-size: 13px; margin: 0; } .seta, .icone { width: 30px; height: 30px; } }
 @media (prefers-reduced-motion: reduce) { .pilula, .abertura, .acao, .pontos button { transition: none; } }
+
+.sopro-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+body.soprando .legenda, body.soprando #acao { display: none; }
+.sopro-acessivel { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.interagir { top: max(65px, calc(env(safe-area-inset-top) + 49px)); right: 16px; width: 44px; height: 44px; display: grid; place-items: center; background: #fff2d9; }
+.interagir svg { width: 25px; height: 25px; fill: none; stroke: #466a59; stroke-width: 2.2; stroke-linecap: round; }
+.interagir[aria-pressed="true"] { background: #d9f1dc; box-shadow: 0 0 0 3px #81b99a55, var(--sombra); }
+.sopro-painel { --forca: 0; --progresso: 0%; --parede: #f6c55c; --telhado: #e99b47; --detalhe: #d79b3e; left: 50%; top: 110px; transform: translateX(-50%); width: 294px; padding: 12px 18px 10px; border-radius: 32px; background: linear-gradient(160deg, #fffaf0f5, #ffeed5f5); border: 2px solid #fff9ee; box-shadow: 0 6px 0 #cbaa7866, 0 16px 40px #321b1844, inset 0 0 0 4px #f7dfba55; }
+.sopro-painel[hidden] { display: none; }
+.sopro-painel svg { display: block; }
+.sopro-casas { display: flex; justify-content: center; gap: 14px; }
+.sopro-casas > svg { width: 30px; height: 30px; opacity: .32; filter: grayscale(.5); }
+.sopro-casas > [data-casa="2"] { --parede: #f6c55c; --telhado: #e99b47; --detalhe: #d79b3e; }
+.sopro-casas > [data-casa="3"] { --parede: #c89065; --telhado: #8964b3; --detalhe: #95613e; }
+.sopro-casas > [data-casa="4"] { --parede: #ee907b; --telhado: #8964b3; --detalhe: #ce695e; }
+.sopro-painel[data-casa="2"] .sopro-casas > [data-casa="2"], .sopro-painel[data-casa="3"] .sopro-casas > [data-casa="3"], .sopro-painel[data-casa="4"] .sopro-casas > [data-casa="4"] { opacity: 1; filter: none; transform: scale(1.18); }
+.sopro-painel[data-casa="3"] { --parede: #c89065; --telhado: #8964b3; --detalhe: #95613e; }
+.sopro-painel[data-casa="4"] { --parede: #ee907b; --telhado: #8964b3; --detalhe: #ce695e; }
+.casa-parede { fill: var(--parede); stroke: var(--detalhe); stroke-width: 2; }
+.casa-telhado { fill: var(--telhado); stroke: var(--detalhe); stroke-width: 1.5; stroke-linejoin: round; }
+.casa-porta { fill: #714e48; }
+.casa-janela { fill: #fff6d7; }
+.casa-trama { stroke: var(--detalhe); stroke-width: 1.4; opacity: .55; }
+.sopro-jogo { display: flex; align-items: center; justify-content: space-between; margin: 7px 0 8px; }
+#sopro-microfone { width: 80px; height: 80px; border-radius: 50%; position: relative; display: grid; place-items: center; background: #e3f0e0; box-shadow: inset 0 -5px 0 #6b95792b, 0 4px 0 #d0b89055; }
+.sopro-anel { position: absolute; inset: 0; width: 80px; height: 80px; fill: none; stroke: #c5dbbf; stroke-width: 5; }
+#sopro-anel { stroke: #559874; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transform: rotate(-90deg); transform-origin: center; }
+.sopro-mic { width: 30px; height: 30px; fill: none; stroke: #416c55; stroke-width: 2.2; stroke-linecap: round; }
+.sopro-check { display: none !important; width: 35px; height: 35px; fill: none; stroke: #416c55; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.sopro-vento { width: 38px; height: 38px; fill: none; stroke: #84bcb3; stroke-width: 2.2; stroke-linecap: round; opacity: calc(.3 + var(--forca) * .7); transform: translateX(calc(var(--forca) * 5px)) scale(calc(.8 + var(--forca) * .25)); }
+.sopro-alvo { position: relative; width: 85px; height: 85px; background: #f8dfb2; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 -4px 0 #d6ab6844; }
+.sopro-casa-grande { width: 73px; height: 73px; filter: drop-shadow(0 3px 0 #875e4026); }
+.sopro-escudo { display: none !important; position: absolute; width: 35px; height: 40px; right: -4px; bottom: 0; fill: #98cda2; stroke: #fff9e8; stroke-width: 2; filter: drop-shadow(0 2px 0 #53775b); }
+.sopro-estrelas { position: absolute; color: #dfa842; font-size: 24px; right: -2px; top: -6px; opacity: 0; }
+.sopro-carga { position: relative; height: 17px; margin: 0 9px 8px; border: 3px solid #eddbbb; border-radius: 20px; background: #dac7a84d; box-shadow: 0 1px 0 #fff; }
+.sopro-carga i { display: block; width: var(--progresso); height: 100%; border-radius: inherit; background: repeating-linear-gradient(110deg, #8ac69b 0 12px, #acd9a3 12px 16px); box-shadow: inset 0 2px 0 #dcf3cd; }
+.sopro-carga svg { position: absolute; right: -13px; top: -9px; width: 28px; height: 28px; padding: 4px; border: 2px solid #fff3dc; border-radius: 50%; fill: none; stroke: #59765b; stroke-width: 2; background: #b8dcaa; }
+.sopro-acoes { display: flex; justify-content: center; align-items: center; gap: 14px; }
+.sopro-acoes button { width: 44px; height: 40px; border-radius: 16px; background: #f4d5bc; box-shadow: 0 3px 0 #cb9d7955, inset 0 1px 0 #fff6e5; display: grid; place-items: center; }
+.sopro-acoes button svg { width: 25px; height: 25px; fill: none; stroke: #896449; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#sopro-botao { touch-action: none; user-select: none; -webkit-user-select: none; }
+#sopro-botao:active { transform: translateY(2px); box-shadow: none; background: #c5deaf; }
+#sopro-pular { width: 34px; height: 32px; background: transparent; box-shadow: none; opacity: .7; }
+.sopro-painel[data-fase="pronto"] #sopro-microfone { animation: sopro-convite 1.8s ease-in-out infinite; }
+.sopro-painel[data-fase="permissao"] .sopro-anel, .sopro-painel[data-fase="calibrando"] .sopro-anel { stroke-dasharray: 5 8; animation: sopro-giro 4s linear infinite; }
+.sopro-painel[data-fase="ouvindo"] #sopro-microfone { background: #cee9cb; }
+.sopro-painel[data-fase="botao"] #sopro-botao { background: #c5deaf; }
+.sopro-painel[data-fase="concluido"][data-resultado="venceu"] .sopro-check { display: block !important; }
+.sopro-painel[data-fase="concluido"][data-resultado="venceu"] .sopro-mic { display: none; }
+.sopro-painel[data-fase="concluido"][data-resultado="venceu"] .sopro-estrelas { animation: sopro-premio 1.6s ease-out both; }
+.sopro-painel[data-fase="concluido"][data-resultado="venceu"] .sopro-casa-grande { animation: sopro-casa .65s ease-in both; }
+.sopro-painel[data-fase="concluido"][data-resultado="venceu"][data-casa="4"] .sopro-casa-grande { animation: none; }
+.sopro-painel[data-fase="concluido"][data-resultado="venceu"][data-casa="4"] .sopro-escudo { display: block !important; }
+@keyframes sopro-convite { 50% { box-shadow: 0 0 0 7px #81b99a20, inset 0 -5px 0 #6b95792b; } }
+@keyframes sopro-giro { to { transform: rotate(360deg); } }
+@keyframes sopro-premio { 0% { opacity: 0; transform: scale(.4) rotate(-25deg); } 30%, 80% { opacity: 1; transform: scale(1.25) rotate(15deg); } 100% { opacity: 0; transform: translateY(-20px); } }
+@keyframes sopro-casa { 40% { transform: rotate(8deg); } to { transform: translate(12px, 10px) rotate(15deg) scale(.85); } }
+@media (min-width: 1000px) { .sopro-painel { left: auto; right: 26px; top: 124px; transform: none; } }
+@media (max-height: 500px) and (orientation: landscape) {
+  .sopro-painel { left: auto; right: 12px; top: 61px; transform: none; width: 230px; padding: 8px 14px; border-radius: 26px; }
+  .sopro-casas > svg { width: 24px; height: 24px; }
+  .sopro-jogo { margin: 3px 0 6px; }
+  #sopro-microfone, .sopro-anel { width: 62px; height: 62px; }
+  .sopro-mic { width: 25px; height: 25px; }
+  .sopro-alvo { width: 65px; height: 65px; }
+  .sopro-casa-grande { width: 58px; height: 58px; }
+  .sopro-vento { width: 30px; height: 30px; }
+  .interagir { top: 12px; right: 180px; width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) { .sopro-painel *, .sopro-painel *::after { animation: none !important; } }
+
+.sopro-painel[data-aviso="microfone"] #sopro-microfone { background: #f3d5cb; }
+.sopro-painel[data-aviso="microfone"] #sopro-microfone::after { content: ''; position: absolute; width: 40px; height: 3px; background: #b96856; transform: rotate(-45deg); border: 1px solid #ffe9df; }
+.sopro-painel[data-aviso="microfone"] #sopro-botao { animation: sopro-convite 1.8s ease-in-out infinite; }

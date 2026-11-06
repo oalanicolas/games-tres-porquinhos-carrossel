@@ -154,7 +154,7 @@ export class Audio {
       v.g.gain.cancelScheduledValues(t); v.g.gain.setValueAtTime(db(this.faixasVoz[i].ganho_db || 0), t);
       this.voz = v; this._aplicarNiveis();
       this.aoComecarVoz?.(i);
-      if (!this.oculto) v.el.play().catch((e) => { console.warn('voz', i, e.name); if (this.voz === v) { this._pararVoz(); this.aoFalhaVoz?.(i); } });
+      if (!this.oculto && !this.interacao) v.el.play().catch((e) => { console.warn('voz', i, e.name); if (this.voz === v) { this._pararVoz(); this.aoFalhaVoz?.(i); } });
     }, atraso * 1000);
   }
   /** Liga ou desliga a leitura; ao religar, recomeça a cena atual. */
@@ -163,11 +163,20 @@ export class Audio {
     if (this.ctx) { if (this.narrando) this._narrar(this.cenaAtual, 0.2); else this._pararVoz(); }
     return this.narrando;
   }
+  pausarInteracao(pausada) {
+    if (this.interacao === pausada) return;
+    this.interacao = pausada;
+    if (!this.ctx) return;
+    this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+    this.master.gain.setValueAtTime(pausada || !this.ligado ? 0 : 1, this.ctx.currentTime);
+    if (pausada) this.voz?.el.pause();
+    else if (!this.oculto) this.voz?.el.play().catch(() => { this._pararVoz(); this.aoFalhaVoz?.(this.cenaAtual); });
+  }
   _visibilidade() {
     this.oculto = document.hidden; if (!this.ctx) return;
-    if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume(); if (this.ligado) this.atual?.el.play().catch(() => {}); this.voz?.el.play().catch(() => {}); }
+    if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume(); if (this.ligado) this.atual?.el.play().catch(() => {}); if (!this.interacao) this.voz?.el.play().catch(() => {}); }
   }
-  alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
+  alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado && !this.interacao ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
   tocar(nome, { vol = 1, taxa = 1, depois = 0, dur = 0 } = {}) {
     if (!this.ctx || !this.ligado) return;
     const b = this.buffers.get(nome); if (!b) return;

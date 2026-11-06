@@ -5,6 +5,8 @@ import { montarCenas, arteDaCapa } from './cenas.js';
 import { Audio } from './audio.js';
 import { Atuacao } from './atuacao.js';
 import { bake } from './paper.js';
+import { InteracaoSopro } from './interacao.js';
+import { CASAS_SOPRO } from './sopro.js';
 
 const qs = new URLSearchParams(location.search);
 const $ = (id) => document.getElementById(id);
@@ -58,6 +60,8 @@ const DUR_ABRIR = reduzido ? 0.01 : 2.55;
 
 let livro; let cenas = [];
 const audio = new Audio();
+const interacao = new InteracaoSopro(audio, () => cenas);
+new ResizeObserver(([entrada]) => document.documentElement.style.setProperty('--barra-altura', `${entrada.target.getBoundingClientRect().height}px`)).observe($('barra'));
 
 // ---- enquadramento -------------------------------------------------------------------------------
 const camCapa = { pos: new THREE.Vector3(), alvo: new THREE.Vector3() };
@@ -122,6 +126,7 @@ for (let i = -1; i < N; i++) {
   b.addEventListener('click', () => irPara(i)); $('pontos').append(b); pontos.push(b);
 }
 function atualizarUI() {
+  interacao.entrar(estado.indice);
   audio.cena(estado.indice);
   if (estado.indice < 0) soltarLeitura(); else if (audio.narrando && estado.modo !== 'capa') prepararLeitura(estado.indice);
   const i = estado.indice; const capa = i < 0;
@@ -146,6 +151,7 @@ function atualizarUI() {
 }
 function abrirLivro() {
   if (estado.modo !== 'capa') return;
+  interacao.concluidas.clear();
   estado.modo = 'abrindo'; estado.indice = 0; estado.giro = estado.giroAlvo = 0; audio.tocar('abrir', { vol: 0.8 }); atualizarUI();
 }
 function fecharLivro() {
@@ -167,10 +173,23 @@ function agir() {
   if (i < 0) { abrirLivro(); return; }
   if (estado.modo !== 'aberto') return;
   const c = cenas[i]; if (!c) return;
+  if (interacao.pendente) return;
+  if (interacao.ativa && CASAS_SOPRO[i]) { repetirInteracao(); return; }
   if (leitura.i === i) soltarLeitura(); // quem aperta o botão assume a cena; a voz continua
   c.linha.play(); audio.abaixar(c.linha.duration); estado.tocouAcao.add(i); atualizarUI();
 }
 $('acao').addEventListener('click', agir);
+$('interagir').addEventListener('click', () => {
+  audio.destravar();
+  const ativa = interacao.alternar();
+  if (ativa && CASAS_SOPRO[estado.indice] && estado.modo === 'aberto') repetirInteracao();
+});
+function repetirInteracao() {
+  const i = estado.indice;
+  interacao.repetir(i); clearTimeout(viradaAuto); soltarLeitura(); estado.tocouAcao.delete(i);
+  if (audio.narrando) { prepararLeitura(i); audio._narrar(i, 0.2); }
+  else cenas[i].linha.play();
+}
 $('anterior').addEventListener('click', () => irPara(estado.indice - 1));
 $('proxima').addEventListener('click', () => irPara(estado.indice + 1));
 $('som').addEventListener('click', () => { audio.destravar(); const l = audio.alternar(); $('som').setAttribute('aria-pressed', String(l)); $('som').setAttribute('aria-label', l ? 'Desligar o som' : 'Ligar o som'); });
@@ -188,6 +207,7 @@ function atualizarBotaoNarrar() {
   b.setAttribute('aria-label', audio.narrando ? 'Desligar o modo narrado' : 'Ligar o modo narrado: a voz conta e o livro vira sozinho'); b.title = b.getAttribute('aria-label');
 }
 $('narrar').addEventListener('click', () => {
+  interacao.cancelar();
   audio.destravar(); audio.alternarNarracao(); if (!audio.narrando) { clearTimeout(viradaAuto); soltarLeitura(); } atualizarBotaoNarrar();
   try { localStorage.setItem('porquinhos-narracao', audio.narrando ? 'sim' : 'nao'); } catch { /* segue só nesta visita */ }
 });
@@ -217,6 +237,8 @@ function seguirLeitura(dt) {
   const i = leitura.i; const c = cenas[i]; const f = audio.faixasVoz[i];
   const t = audio.tempoVoz(i);
   if (t != null) { leitura.comecou = true; leitura.relogio = t; } else if (leitura.comecou) leitura.relogio += dt; else return;
+  leitura.relogio = interacao.limitar(i, leitura.relogio);
+  if (interacao.pendente && audio.voz?.i === i) audio.voz.el.currentTime = leitura.relogio;
   c.linha.seek(leitura.relogio, { silent: false });
   if (!estado.tocouAcao.has(i) && leitura.relogio >= (f.acao_em ?? f.duracao)) { estado.tocouAcao.add(i); audio.abaixar(1.2); atualizarUI(); }
   if (leitura.relogio >= c.linha.duration) leitura.segue = false;
@@ -233,7 +255,7 @@ audio.aoFimDaVoz = (i) => {
   const ultima = i >= N - 1; // fim da história: o livro se fecha sozinho e fica pronto para ser lido de novo
   const virar = () => {
     if (i !== estado.indice || !audio.narrando || !['abrindo', 'aberto'].includes(estado.modo)) return;
-    if (audio.oculto || estado.modo === 'abrindo' || estado.arrastando || leitura.segue || cenas[i].linha.playing) { viradaAuto = setTimeout(virar, 300); return; }
+    if (audio.oculto || interacao.pendente || estado.modo === 'abrindo' || estado.arrastando || leitura.segue || cenas[i].linha.playing) { viradaAuto = setTimeout(virar, 300); return; }
     if (ultima) { recomecarAoFechar = true; fecharLivro(); } else irPara(i + 1);
   };
   viradaAuto = setTimeout(virar, (ultima ? PAUSA_ANTES_DE_FECHAR : PAUSA_ANTES_DE_VIRAR) * 1000);
@@ -316,14 +338,20 @@ function passo(dt) {
   livro.cullPorGiro(estado.giro, estado.tAbrir > 0.98);
   // só a cena em foco e as vizinhas animam
   atuacao.desfazer();
+  interacao.quadro(dt);
   seguirLeitura(dt);
   cenas.forEach((c, j) => {
     const perto = Math.abs(j * CUNHA - estado.giro) < CUNHA * 2.2 && estado.tAbrir > 0.2;
     if (!perto) return;
-    c.linha.update(dt);
+    if (c.linha.playing && interacao.ativa && j === estado.indice && CASAS_SOPRO[j]) {
+      const t = interacao.limitar(j, Math.min(c.linha.t + dt, c.linha.duration));
+      c.linha.seek(t, { silent: false });
+      if (t >= c.linha.duration) c.linha.playing = false;
+    } else c.linha.update(dt);
     c.idle?.(relogio);
   });
   atuacao.quadro(estado.modo === 'aberto' ? estado.indice : -1, relogio);
+  interacao.animar();
 }
 function laco(agora) {
   requestAnimationFrame(laco);
@@ -353,6 +381,7 @@ async function iniciar() {
   // ponte de QA: sem depender de relógio ou clique
   window.__livro = {
     estado, livro, cenas, renderer, scene, camera, N, audio,
+    interacao,
     abrirNaHora(i = 0) { estado.modo = 'aberto'; estado.tAbrir = 1; estado.indice = i; estado.giro = estado.giroAlvo = i * CUNHA; atualizarUI(); passo(0); renderer.render(scene, camera); },
     irPara,
     agir,

@@ -47,3 +47,10 @@ Decididos na construção, ainda sem aprovação de Alan:
 - Personagens: João (palha), Lulu (madeira), Kael (tijolos) e Mamãe Porca. Nomes pedidos por Alan em 06/11/2026; os identificadores internos `pipo`, `tico` e `bento` continuam ligando os mesmos rigs e marcos.
 - Regressões devolvidas por Alan em 06/11/2026: balões disputando posição e história presa ao virar. `tests/continuidade.test.mjs` cobre ordem estável das falas, toque cancelado e fim da voz durante a abertura ou antes do primeiro quadro.
 - A música é original, gerada com Google Lyria 3 Pro pela Magnific (`tools/trilha.py`): a licença de uso público ainda não foi confirmada.
+
+## Interação por sopro
+
+- Pedido de Alan (06/11/2026): modo opcional que capta microfone e usa níveis de sopro nas casas. Palha cede antes da madeira; tijolos nunca caem. Reusar as animações e a cronologia existentes.
+- Decisões sem Alan: calibração local de 1,2 s, energia acumulada preservada entre sopros, botão de segurar como alternativa, saída do jogo silenciosa durante captura, nenhuma gravação/envio. A captura exige gesto explícito e termina ao sair, ocultar aba ou completar tentativa.
+- `tests/sopro.test.mjs`: silêncio/tom/estalo, energia das três casas, pausa/retomada, recusa, autorização tardia e captura PCM. Teste de microfone físico com criança continua pendente; não declarar distinção perfeita entre sopro e fala.
+- Correção visual de Alan (06/11/2026): “não tem que ter nada escrito”, “UI BEM GAMIFICADA E bonita”. A interface do sopro usa só ícones, casas e medidores; textos apenas em nomes acessíveis e status fora da tela. Preservar o texto do conto no livro.
