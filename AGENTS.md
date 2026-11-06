@@ -8,11 +8,16 @@ Herda as regras de `../../AGENTS.md`. Este arquivo lista só o que é próprio d
 - Servidor local: `npm start`, porta 4291.
 - Sons novos entram por `tools/sons.py`, nunca à mão. Só o acervo licenciado de `shared/sfx`; o acervo `universal` é extraído de jogos e serve apenas para estudo.
 
-## Desvios aprovados da referência
+## Desvios da referência
 
-- A história é uma sequência: nada antes da primeira cena, nada depois da última. Pedido de Alan em 06/11/2026. O livro físico e o vídeo de referência fecham o círculo; este não mostra isso.
+Pedidos por Alan:
+
+- A história é uma sequência: nada antes da primeira cena, nada depois da última (06/11/2026). O livro físico e o vídeo de referência fecham o círculo; este não mostra isso.
+- Música contínua que muda com a história; a referência toca só notas curtas (06/11/2026).
+
+Decididos na construção, ainda sem aprovação de Alan:
+
 - Oito cenas com cunha de 45°; a referência tem seis.
-- Música contínua que muda com a história; a referência toca só notas curtas. Pedido de Alan.
 
 ## Recusado por Alan
 
