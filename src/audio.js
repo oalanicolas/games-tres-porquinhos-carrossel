@@ -12,7 +12,7 @@ const NIVEL_AMB = 0.8; const NIVEL_AMB_SOB_VOZ = 0.5;
 const ATRASO_DA_CAPA = 2.6; const ATRASO_VIRADA = 0.6;
 
 // -1 é a capa; depois, uma entrada por cena
-export const TRILHA = ['shuffle', 'hyperfun', 'marty', 'umlaut', 'getaway', 'moonlight', 'moonlight', 'delrio'];
+export const TRILHA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima', 'noite', 'noite', 'festa'];
 const AMBIENTE = [
   { passaros: 0.8 }, { passaros: 0.7 }, { passaros: 0.5, brisa: 0.35 }, { passaros: 0.25, brisa: 0.6 },
   { brisa: 0.75 }, { grilos: 0.6, fogo: 0.55, fervura: 0.3 }, { grilos: 0.6, fogo: 0.55, fervura: 0.45 }, { grilos: 0.5, fogo: 0.4 },
@@ -21,8 +21,8 @@ const AMBIENTE = [
 export class Audio {
   constructor() {
     this.ligado = true; this.ctx = null; this.buffers = new Map(); this.camas = new Map(); this.faixas = new Map();
-    this.atual = null; this.pedida = 'caixinha'; this.ambPedido = {}; this.oculto = false; this.cenaAtual = null;
-    this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.vozes = new Map(); this.vozAgenda = null; this.acaoAte = 0; this.aoFimDaVoz = null;
+    this.atual = null; this.pedida = 'era-uma-vez'; this.ambPedido = {}; this.oculto = false; this.cenaAtual = null;
+    this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.vozes = new Map(); this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoMomentoDaVoz = null; this.aoFimDaVoz = null;
   }
   destravar() {
     if (!this.ctx) {
@@ -89,7 +89,7 @@ export class Audio {
     const daCapa = this.cenaAtual === null || this.cenaAtual < 0;
     this.cenaAtual = i;
     this._narrar(i, daCapa ? ATRASO_DA_CAPA : ATRASO_VIRADA);
-    this.trilha(i < 0 ? 'caixinha' : TRILHA[i]);
+    this.trilha(i < 0 ? 'era-uma-vez' : TRILHA[i]);
     this.ambPedido = i < 0 ? {} : AMBIENTE[i]; this._aplicarAmbiente();
     const prox = TRILHA[i + 1]; if (prox) this._faixa(prox);
   }
@@ -115,6 +115,11 @@ export class Audio {
       const el = new window.Audio(`${base}narracao/${this.faixasVoz[i].arquivo}`); el.preload = 'auto';
       v = { i, el, g: null }; this.vozes.set(i, v);
       el.addEventListener('ended', () => { if (this.voz === v) { this.voz = null; this._aplicarNiveis(); this.aoFimDaVoz?.(i); } });
+      // o gatilho segue o tempo da fala, e não o relógio: aba em segundo plano pausa os dois juntos
+      el.addEventListener('timeupdate', () => {
+        const em = this.faixasVoz[i].acao_em;
+        if (this.voz === v && !v.agiu && em != null && el.currentTime >= em) { v.agiu = true; this.aoMomentoDaVoz?.(i); }
+      });
     }
     if (this.ctx && !v.g) { v.g = this.ctx.createGain(); v.g.gain.value = 0; this.ctx.createMediaElementSource(v.el).connect(v.g); v.g.connect(this.busVoz); }
     return v;
@@ -128,7 +133,7 @@ export class Audio {
     clearTimeout(v.pausa); v.pausa = setTimeout(() => { if (this.voz !== v) v.el.pause(); }, 450);
     this._aplicarNiveis();
   }
-  /** Lê a cena. A voz nunca dispara a ação nem vira a página: o ritmo continua com quem está lendo. */
+  /** Lê a cena. Quem decide o que acontece na fala e ao fim dela é o livro, em aoMomentoDaVoz e aoFimDaVoz. */
   _narrar(i, atraso) {
     if (!this.ctx) return;
     this._pararVoz();
@@ -141,7 +146,8 @@ export class Audio {
       clearTimeout(v.pausa);
       v.el.currentTime = 0;
       v.g.gain.cancelScheduledValues(t); v.g.gain.setValueAtTime(db(this.faixasVoz[i].ganho_db || 0), t);
-      this.voz = v; this._aplicarNiveis();
+      v.agiu = false; this.voz = v; this._aplicarNiveis();
+      this.aoComecarVoz?.(i);
       if (!this.oculto) v.el.play().catch((e) => console.warn('voz', i, e.name));
     }, atraso * 1000);
   }

@@ -1,0 +1,86 @@
+{
+  "motor": "Google Lyria 3 Pro pela API da Magnific",
+  "faixas": {
+    "era-uma-vez": {
+      "hash": "6e2dbbe981692281",
+      "tarefa": "b736fbe9-9c99-40af-ae91-0d4192963d8b",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. Once upon a time: a delicate, tender opening melody on glockenspiel and harp, then soft flute. Slow, curious, like opening an old book. Instrumental only. About 45 seconds long, ending with a soft natural close.",
+      "pedido_s": 45,
+      "duracao": 43.23,
+      "lufs": -11.1,
+      "pico_dbfs": -0.1
+    },
+    "partida": {
+      "hash": "314487666602788a",
+      "tarefa": "a36c47b8-d0af-4e70-901b-09a3be2d795e",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. A warm morning at a small country home. A tender farewell from a mother to her children, then a light hopeful walking melody on flute and clarinet over pizzicato strings. Moderate tempo. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 59.06,
+      "lufs": -11.2,
+      "pico_dbfs": -0.1
+    },
+    "obra": {
+      "hash": "86674f59dba0964e",
+      "tarefa": "38ea106f-63a2-461d-9bd2-99e9cf29eff1",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. Three little brothers building their houses. Light, cheerful and busy: playful pizzicato strings, a carefree flute tune, a patient steady clarinet answering. Moderate tempo, innocent and happy. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 55.54,
+      "lufs": -11.3,
+      "pico_dbfs": 0.0
+    },
+    "lobo-chega": {
+      "hash": "0d54d6ec79a14409",
+      "tarefa": "ff0ca32e-ddf5-4a64-9506-91b8eb2b555f",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. A hungry wolf arrives. A sneaky, mischievous, comic low bassoon theme stepping over pizzicato basses, with nervous flute replies. Child friendly suspense, never scary. Moderately slow. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 57.5,
+      "lufs": -10.9,
+      "pico_dbfs": -0.1
+    },
+    "lobo-insiste": {
+      "hash": "55b1398c0630d48a",
+      "tarefa": "261374ad-b348-4dfc-b3c0-b997cb27aa47",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. The wolf chases on. The same sneaky low bassoon theme, now more insistent and a little faster, with tremolo strings and worried clarinet runs. Comic tension, child friendly. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 55.9,
+      "lufs": -11.6,
+      "pico_dbfs": 0.1
+    },
+    "lobo-teima": {
+      "hash": "d8b37fb113f4baf7",
+      "tarefa": "9b998796-3a63-4d03-bb80-2938a956ec7f",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. A stubborn wolf huffs at a strong brick house and nothing moves. The sneaky bassoon theme grows tired and frustrated, while a calm, cozy clarinet melody stays steady and safe. Gently funny. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 57.42,
+      "lufs": -11.6,
+      "pico_dbfs": -0.1
+    },
+    "noite": {
+      "hash": "7bb0ae06f86fcc97",
+      "tarefa": "d2df7dde-b220-44ae-8039-8b729f8933ca",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. A quiet night. The wolf tiptoes across a rooftop while the brothers whisper and stoke the fire. Hushed harp and glockenspiel, soft muted strings, slow tiptoeing pizzicato, gentle suspense. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 59.09,
+      "lufs": -11.5,
+      "pico_dbfs": 0.0
+    },
+    "fuga": {
+      "hash": "e7aa3a4d9b8e05d8",
+      "tarefa": "3b208f1a-26de-492b-aa9d-20b2170d1dbc",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. Comic relief: a wolf bolts away howling. A fast, funny orchestral gallop with running flute and clarinet and scurrying pizzicato that gets smaller and fades into the distance, ending in a light, relieved melody. Instrumental only. About 45 seconds long, ending with a soft natural close.",
+      "pedido_s": 45,
+      "duracao": 43.99,
+      "lufs": -11.3,
+      "pico_dbfs": 0.0
+    },
+    "festa": {
+      "hash": "c3934c934ada0f41",
+      "tarefa": "26379baf-cad9-479a-8611-d428071bc4a5",
+      "prompt": "Instrumental underscore for a children's fairy tale storybook, in the style of a classic orchestral storybook ballet. Small acoustic chamber ensemble only: pizzicato strings, flute, clarinet, bassoon, harp, glockenspiel. Warm, gentle, recorded in a small hall. No vocals, no choir, no drums, no synths, no electric instruments. Leaves room for a narrator's voice. A happy ending at night around a bonfire. A joyful country dance on flute and clarinet with bouncing pizzicato strings and bright glockenspiel. Warm, celebratory, a family dancing together. Instrumental only. About 60 seconds long, ending with a soft natural close.",
+      "pedido_s": 60,
+      "duracao": 58.07,
+      "lufs": -11.5,
+      "pico_dbfs": -0.1
+    }
+  }
+}

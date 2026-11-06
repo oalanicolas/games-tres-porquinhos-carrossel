@@ -2,7 +2,8 @@
 import { createServer } from 'vite';
 import { chromium } from 'playwright-core';
 
-export async function abrir({ largura = 1280, altura = 800, url } = {}) {
+// O modo narrado conduz o livro sozinho; os testes que dirigem as cenas à mão o desligam, e os da narração pedem `narrado`.
+export async function abrir({ largura = 1280, altura = 800, url, antes, narrado = false } = {}) {
   let servidor = null; let endereco = url;
   if (!endereco) {
     servidor = await createServer({ server: { host: '127.0.0.1', port: 0, strictPort: false }, logLevel: 'silent' });
@@ -14,6 +15,8 @@ export async function abrir({ largura = 1280, altura = 800, url } = {}) {
   const erros = [];
   page.on('pageerror', (e) => erros.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
+  if (!narrado) await page.addInitScript(() => localStorage.setItem('porquinhos-narracao', 'nao'));
+  await antes?.(page);
   await page.goto(endereco);
   await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });
   return { page, erros, endereco, fechar: async () => { await navegador.close(); await servidor?.close(); } };

@@ -445,7 +445,7 @@ montadores[6] = (p, audio) => {
   const fumas = []; for (let i = 0; i < 16; i++) { const g = rig(c, 'puf', { x: 0, y: topo + 0.1, z: 1.0 + i * 0.002, s: 0.001 }); piece(g, scallop(0.07, 0.06, 6, 0.16, 0, 0, 5), pat('stripes', '#dcd5ea', '#c6bedb', 0.08), { t: 0.006, edge: '#ffffff', jitter: 0, noShadow: true }); fumas.push(g); }
   const curva = (q) => [ -0.02 + q * q * 0.44 + Math.sin(q * 4) * 0.02, topo + 0.14 + q * 0.88 - q * q * 0.18 ];
   // ação: queda, tchibum, uivo, foguete, e foge pelo céu
-  tl.call(() => audio.trilha('moonlight'), 0.01); tl.call(() => audio.tocar('ar', { vol: 1, taxa: 0.55 }), 0.1);
+  tl.call(() => audio.trilha('noite'), 0.01); tl.call(() => audio.tocar('ar', { vol: 1, taxa: 0.55 }), 0.1);
   tl.to(w.root, { y: SOLO + 1.24 }, 0.08, 0.5, ease.in);
   tl.to(w.root, { z: 1.92 }, 0.5, 0.38, ease.linear); tl.to(w.root, { y: SOLO + 0.92 }, 0.56, 0.32, ease.in);
   const CAI = 0.86;
@@ -456,7 +456,7 @@ montadores[6] = (p, audio) => {
   [pipo, tico, bento].forEach((q, i) => { tl.pulse(q.corpo, { y: 0.19 }, CAI + 0.03 + i * 0.05, 0.42); tl.to(q.bracoD, { rz: 2.5 }, CAI, 0.15, ease.out); tl.to(q.bracoE, { rz: -2.5 }, CAI, 0.15, ease.out); });
   tl.call(() => audio.tocar('uivo1', { vol: 1, taxa: 1.25 }), CAI + 0.62);
   tl.call(() => audio.tocar('uivo2', { vol: 0.9, taxa: 1.5, depois: 0.7 }), CAI + 0.62);
-  tl.call(() => { audio.trilha('hyperfun'); audio.tocar('chama', { vol: 1, taxa: 0.8 }); audio.tocar('ar', { vol: 1, taxa: 0.5 }); }, CAI + 0.72); tl.call(() => audio.tocar('chama', { vol: 0.8 }), CAI + 1.02); tl.call(() => audio.tocar('ar', { vol: 0.8, taxa: 0.65 }), CAI + 1.3);
+  tl.call(() => { audio.trilha('fuga'); audio.tocar('chama', { vol: 1, taxa: 0.8 }); audio.tocar('ar', { vol: 1, taxa: 0.5 }); }, CAI + 0.72); tl.call(() => audio.tocar('chama', { vol: 0.8 }), CAI + 1.02); tl.call(() => audio.tocar('ar', { vol: 0.8, taxa: 0.65 }), CAI + 1.3);
   // sai pelo duto
   const SAI = CAI + 0.72;
   tl.to(w.root, { x: 0, y: topo - 0.15, z: 1.7, rz: 0.2 }, SAI - 0.02, 0.01);

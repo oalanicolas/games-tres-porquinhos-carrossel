@@ -8,6 +8,7 @@ const b = await chromium.launch({ channel: 'chrome', headless: !process.env.QA_H
 const page = await b.newPage({ viewport: { width: W, height: H } });
 const erros = []; page.on('pageerror', (e) => erros.push(String(e))); page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
 // o elemento de áudio cancela o download quando já tem o bastante: isso não é erro
+await page.addInitScript(() => localStorage.setItem('porquinhos-narracao', 'nao'));
 page.on('requestfailed', (r) => { const t = r.failure()?.errorText; if (!(t === 'net::ERR_ABORTED' && r.url().includes('/musica/'))) erros.push(`falhou ${r.url()} ${t}`); });
 const t0 = Date.now(); await page.goto(base); await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });
 const carga = Date.now() - t0;

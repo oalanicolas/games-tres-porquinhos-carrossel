@@ -4,16 +4,7 @@ Gerado por `tools/sons.py` a partir de `shared/sfx`. Não editar à mão.
 
 ## Música
 
-- **Industrial Music Box**, Kevin MacLeod (incompetech.com), CC-BY-4.0. capa. Music Box. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100812
-- **George Street Shuffle**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cena 1, a partida. Vibes, Bass, Piano, Kit. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300035
-- **Hyperfun**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cena 2, as casas; volta quando o Lobo foge. Piano, Tuba, Ukulele, Drums. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400038
-- **Marty Gots a Plan**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cena 3, o Lobo chega. Cello, Viola, Violin, English Horn, Alto Flute, Percussion, Marimba. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500015
-- **Professor Umlaut**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cena 4, a madeira. Guitar, Bass, Drums, Organ. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600020
-- **Mistake the Getaway**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cena 5, o tijolo resiste. Brass, Strings, Kit, Percussion. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100699
-- **Moonlight Hall**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cenas 6 e 7, a noite e a chaminé. Celesta, Tuba, Choir, Oboe, Bassoon, Violins, Violas, Cellos, Basses, Flute, Piccolo, Tympani, Percussion. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200095
-- **Del Rio Bravo**, Kevin MacLeod (incompetech.com), CC-BY-4.0. cena 8, a festa. Accordion, Marimba, Bass, Percussion. https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1900031
-
-Licença das músicas: Creative Commons Attribution 4.0, https://creativecommons.org/licenses/by/4.0/. Arquivos com os bytes originais do acervo, nivelados por ganho em tempo de execução.
+Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, tarefas e medições em `docs/trilha-recibo.json`; composta por `tools/trilha.py`. As faixas trazem a marca-d'água SynthID do Google, inaudível.
 
 ## Efeitos e ambientes
 

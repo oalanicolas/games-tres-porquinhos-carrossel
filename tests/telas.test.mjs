@@ -43,6 +43,12 @@ for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular p
       const minimo = largura > altura ? 1.5 : 1.2;
       assert.ok(leitura.aberta.largura >= leitura.antiga.largura * minimo, `página com ${leitura.aberta.largura.toFixed(0)}px, antes ${leitura.antiga.largura.toFixed(0)}px`);
       assert.ok(Math.abs(leitura.aberta.ponta) <= 1.02, `a ponta da parede de texto sai da tela (${leitura.aberta.ponta.toFixed(3)})`);
+      // Com o botão do modo narrado, a seta da direita caía para outra linha em 360 px.
+      const linhaDaBarra = await page.evaluate(async () => {
+        window.__livro.abrirNaHora(4); await new Promise((f) => setTimeout(f, 300));
+        return [...document.querySelectorAll('#barra button:not(#pontos button)')].filter((e) => e.offsetWidth).map((e) => { const q = e.getBoundingClientRect(); return q.top + q.height / 2; });
+      });
+      assert.ok(Math.max(...linhaDaBarra) - Math.min(...linhaDaBarra) < 6, `botões da barra em mais de uma linha: ${linhaDaBarra.map((v) => v.toFixed(0))}`);
       // A página mais aberta passou por trás do crédito: a licença CC BY precisa continuar legível na cena final.
       const credito = await page.evaluate(async () => {
         window.__livro.abrirNaHora(7); await new Promise((f) => setTimeout(f, 700));

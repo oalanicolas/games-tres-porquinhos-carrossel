@@ -1,6 +1,6 @@
 # Os Três Porquinhos, livro-carrossel
 
-Livro pop-up em 3D que abre em estrela e conta o conto inteiro em oito cenas. Cada cena tem uma ação de papel e a música muda conforme a história avança. Por [Alan Nicolas](https://x.com/oalanicolas).
+Livro pop-up em 3D que abre em estrela e conta o conto inteiro em oito cenas. Cada cena tem uma ação de papel e a música muda conforme a história avança. No modo narrado, a voz conta e o livro vira sozinho. Por [Alan Nicolas](https://x.com/oalanicolas).
 
 Referência de forma: o vídeo de Techartist sobre um livro-carrossel (<https://x.com/techartist_/status/2116407421065482362>). A arte, o texto e o código daqui são originais.
 
@@ -21,16 +21,23 @@ npm run build
 - `src/audio.js`: música com fusão, ambientes em laço e efeitos. `src/sons.json` é gerado.
 - `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
 
+## Modo narrado e trilha
+
+No modo narrado, ligado por padrão, a voz conduz: a ação de cada cena acontece no trecho da fala que a conta e a página vira sozinha quando voz e ação terminam. O momento vem do reconhecimento de fala (`acao_em` em `src/narracao.json`). Percurso completo com as faixas reais, cerca de 4 min: `LIVRO_URL=<url> node tests/narrado-real.mjs`.
+
+A trilha é original, gerada com Google Lyria 3 Pro pela API da Magnific, com o mesmo conjunto de câmara em todas as cenas: `python3 tools/trilha.py`. Prompts e medições em `docs/trilha-recibo.json`.
+
 ## Narração
 
-O código da narração está pronto, mas a voz ainda não foi gravada: a conta da ElevenLabs está sem créditos. Enquanto faltar alguma das 8 cenas, o botão não aparece.
+Voz sintética Yasmin Alves, da ElevenLabs, gravada pela API da Magnific com o modelo Turbo v2.5. Os arquivos ficam em `public/narracao/` e o recibo em `docs/narracao-recibo.json`.
 
 ```sh
 python3 tools/narracao.py --estimar   # só conta os caracteres
-python3 tools/narracao.py             # grava o que falta e continua de onde parou
+python3 tools/narracao.py --cena 3    # grava uma cena, para ouvir antes das outras
+python3 tools/narracao.py             # grava o que mudou no texto
 ```
 
-Depois de gravar, faça o build, o commit, o push e o deploy. A chave vem do ambiente ou do `.env` do hub.
+Sem as 8 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a conta direta, com o modelo Multilingual v2.
 
 ## Testes
 

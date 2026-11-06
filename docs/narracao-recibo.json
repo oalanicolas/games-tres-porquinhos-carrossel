@@ -1,0 +1,72 @@
+{
+  "faixas": {
+    "2": {
+      "hash": "e3cecafaa119460d",
+      "tarefa": "9531d067-2346-4c59-92cb-760dbfd71100",
+      "caracteres": 292,
+      "duracao": 26.94,
+      "lufs": -18.9
+    },
+    "0": {
+      "hash": "1b29143678e68510",
+      "tarefa": "9649df71-66a7-4f7f-ad87-b556023a05b8",
+      "caracteres": 334,
+      "duracao": 27.03,
+      "lufs": -18.2
+    },
+    "1": {
+      "hash": "628491b09d1ff7c1",
+      "tarefa": "6e5ba308-3558-4988-9b65-0f051d40a9ce",
+      "caracteres": 293,
+      "duracao": 25.12,
+      "lufs": -18.9
+    },
+    "3": {
+      "hash": "8d1d94bf2a09c390",
+      "tarefa": "1299791b-1e02-4356-85f5-0b751fdcd747",
+      "caracteres": 308,
+      "duracao": 28.14,
+      "lufs": -19.1
+    },
+    "4": {
+      "hash": "3f0f9f12564447f7",
+      "tarefa": "9195c576-95ac-4340-881e-43523cca7156",
+      "caracteres": 282,
+      "duracao": 29.12,
+      "lufs": -19.3
+    },
+    "5": {
+      "hash": "de45aacea96757e9",
+      "tarefa": "97a03996-d8eb-483d-a874-69942d1064bb",
+      "caracteres": 253,
+      "duracao": 21.18,
+      "lufs": -19.0
+    },
+    "6": {
+      "hash": "e1bf494721b475a7",
+      "tarefa": "7b800469-610c-4590-ad4f-ddc2bebff585",
+      "caracteres": 244,
+      "duracao": 21.5,
+      "lufs": -20.0
+    },
+    "7": {
+      "hash": "7a1c55a9fc90aafa",
+      "tarefa": "e9e1b204-05b8-4637-9fed-d83ab534e3aa",
+      "caracteres": 276,
+      "duracao": 24.01,
+      "lufs": -19.7
+    }
+  },
+  "voz": {
+    "id": "lWq4KDY8znfkV0DrK8Vb",
+    "nome": "Yasmin Alves"
+  },
+  "servico": "magnific",
+  "modelo": "eleven_turbo_v2_5",
+  "ajustes": {
+    "stability": 0.6,
+    "similarity_boost": 0.75,
+    "speed": 0.92,
+    "use_speaker_boost": true
+  }
+}

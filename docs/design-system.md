@@ -30,7 +30,7 @@ Pílulas translúcidas sobre a mesa: título à esquerda, momento do dia à dire
 
 ## Som
 
-- Cada momento tem música própria, com fusão de 1,6 s entre faixas. O mapa está em `src/audio.js`.
+- A trilha é uma peça só: pizzicato, flauta, clarinete, fagote, harpa e glockenspiel, com um tema de fagote para o Lobo. Cada momento tem a sua faixa, com fusão de 1,6 s. O mapa está em `src/audio.js`.
 - A música abaixa enquanto a cena age.
 - Efeitos e ambientes são gravações reais do acervo do estúdio.
 
@@ -40,4 +40,4 @@ A cena em foco abre 90° em paisagem e 64° em retrato; as vizinhas mantêm 45°
 
 ## Voz
 
-Quando houver narração gravada, a música cai para 0,3 e o ambiente para 0,5 enquanto a voz fala. Os créditos ficam sobre uma pílula escura, porque a página aberta passa por trás deles.
+Enquanto a voz fala, a música cai para 0,3 e o ambiente para 0,5. Os créditos ficam sobre uma pílula escura, porque a página aberta passa por trás deles.

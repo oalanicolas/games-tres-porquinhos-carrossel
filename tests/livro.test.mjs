@@ -19,6 +19,6 @@ test('nenhuma peça fora da cunha e 8 de 8 cenas pelo percurso real', async () =
     assert.equal(r.cenas.length, 8);
     assert.equal(r.cenas.filter((c) => c.terminou && c.acaoDepois === 'De novo').length, 8);
     assert.deepEqual(r.erros, []);
-    assert.equal(r.somCapa.trilha, 'caixinha');
+    assert.equal(r.somCapa.trilha, 'era-uma-vez');
   } finally { rmSync(saida, { recursive: true, force: true }); await fechar(); }
 });

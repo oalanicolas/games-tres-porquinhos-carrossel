@@ -122,7 +122,6 @@ for (let i = -1; i < N; i++) {
 }
 function atualizarUI() {
   audio.cena(estado.indice);
-  $('acao').classList.remove('chama');
   const i = estado.indice; const capa = i < 0;
   pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
   document.body.classList.toggle('aberto', !capa);
@@ -166,7 +165,7 @@ function agir() {
   if (i < 0) { abrirLivro(); return; }
   if (estado.modo !== 'aberto') return;
   const c = cenas[i]; if (!c) return;
-  c.linha.play(); audio.abaixar(c.linha.duration); estado.tocouAcao.add(i); atualizarUI();
+  agiuNaLeitura = true; c.linha.play(); audio.abaixar(c.linha.duration); estado.tocouAcao.add(i); atualizarUI();
 }
 $('acao').addEventListener('click', agir);
 $('anterior').addEventListener('click', () => irPara(estado.indice - 1));
@@ -186,14 +185,32 @@ function prepararNarracao() {
 }
 function atualizarBotaoNarrar() {
   const b = $('narrar'); b.setAttribute('aria-pressed', String(audio.narrando));
-  b.setAttribute('aria-label', audio.narrando ? 'Desligar a narração' : 'Ligar a narração');
+  b.setAttribute('aria-label', audio.narrando ? 'Desligar o modo narrado' : 'Ligar o modo narrado: a voz conta e o livro vira sozinho'); b.title = b.getAttribute('aria-label');
 }
 $('narrar').addEventListener('click', () => {
-  audio.destravar(); audio.alternarNarracao(); atualizarBotaoNarrar();
+  audio.destravar(); audio.alternarNarracao(); if (!audio.narrando) clearTimeout(viradaAuto); atualizarBotaoNarrar();
   try { localStorage.setItem('porquinhos-narracao', audio.narrando ? 'sim' : 'nao'); } catch { /* segue só nesta visita */ }
 });
-// terminou de ler: convida para a ação, sem fazer por quem lê
-audio.aoFimDaVoz = (i) => { if (i === estado.indice && !estado.tocouAcao.has(i)) $('acao').classList.add('chama'); };
+// modo narrado: a voz conduz. A ação acontece no trecho da fala que a conta e a página vira quando as duas terminam.
+const PAUSA_ANTES_DE_VIRAR = 1.4;
+let agiuNaLeitura = false; let viradaAuto = null;
+audio.aoComecarVoz = (i) => {
+  clearTimeout(viradaAuto); agiuNaLeitura = false;
+  if (estado.tocouAcao.has(i)) cenas[i].linha.seek(0); // ao voltar a uma cena, a história recomeça do início dela
+};
+audio.aoMomentoDaVoz = (i) => { if (!agiuNaLeitura && i === estado.indice && estado.modo === 'aberto') agir(); };
+audio.aoFimDaVoz = (i) => {
+  if (i !== estado.indice || estado.modo !== 'aberto') return;
+  if (!agiuNaLeitura) agir();
+  if (i >= N - 1) return; // fim da história: nada depois da última cena
+  const c = cenas[i];
+  const virar = () => {
+    if (i !== estado.indice || !audio.narrando || estado.modo !== 'aberto') return;
+    if (estado.arrastando || c.linha.playing) { viradaAuto = setTimeout(virar, 500); return; }
+    irPara(i + 1);
+  };
+  viradaAuto = setTimeout(virar, (Math.max(0, c.linha.duration - c.linha.t) + PAUSA_ANTES_DE_VIRAR) * 1000);
+};
 function alternarOlhar(v = !estado.olhar) { estado.olhar = v; document.body.classList.toggle('so-olhar', v); $('olhar').setAttribute('aria-pressed', String(v)); $('voltar-olhar').hidden = !v; esconderCartao(); }
 $('olhar').addEventListener('click', () => alternarOlhar());
 $('voltar-olhar').addEventListener('click', () => alternarOlhar(false));

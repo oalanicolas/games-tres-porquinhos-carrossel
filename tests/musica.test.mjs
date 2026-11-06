@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { abrir } from './_apoio.mjs';
 
-const ESPERADA = ['shuffle', 'hyperfun', 'marty', 'umlaut', 'getaway', 'moonlight', 'moonlight', 'delrio'];
+const ESPERADA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima', 'noite', 'noite', 'festa'];
 const som = (page) => page.evaluate(() => window.__livro.audio.estado());
 const espera = (page, ms) => page.waitForTimeout(ms);
 
@@ -14,7 +14,7 @@ test('faixa certa em 8 de 8 cenas, avançando e com sinal na saída', async () =
     await page.waitForFunction(() => { const e = window.__livro.audio.estado(); return e.camas === 5 && e.efeitos === 38; }, null, { timeout: 30000 });
     await espera(page, 1800);
     const capa = await som(page);
-    assert.equal(capa.trilha, 'caixinha'); assert.equal(capa.contexto, 'running'); assert.ok(capa.tempo > 0, 'a música da capa não andou');
+    assert.equal(capa.trilha, 'era-uma-vez'); assert.equal(capa.contexto, 'running'); assert.ok(capa.tempo > 0, 'a música da capa não andou');
     await page.evaluate(() => window.__livro.abrirNaHora(0));
     let certas = 0;
     for (let i = 0; i < 8; i++) {
@@ -37,19 +37,19 @@ test('o tchibum troca a música, repetir volta ao início e sair e voltar també
     await page.keyboard.press('Shift');
     await page.evaluate(() => window.__livro.abrirNaHora(6));
     await espera(page, 400);
-    assert.equal((await som(page)).trilha, 'moonlight');
+    assert.equal((await som(page)).trilha, 'noite');
     await page.evaluate(() => window.__livro.agir());
-    await page.waitForFunction(() => window.__livro.audio.estado().trilha === 'hyperfun', null, { timeout: 15000 });
+    await page.waitForFunction(() => window.__livro.audio.estado().trilha === 'fuga', null, { timeout: 15000 });
     await page.waitForFunction(() => { const l = window.__livro.cenas[6].linha; return l.t >= l.duration - 0.01; }, null, { timeout: 20000 });
     await espera(page, 300);
-    assert.equal((await som(page)).trilha, 'hyperfun', 'o fim da ação não pode desfazer a troca');
+    assert.equal((await som(page)).trilha, 'fuga', 'o fim da ação não pode desfazer a troca');
     await page.evaluate(() => window.__livro.agir());
     await espera(page, 200);
-    assert.equal((await som(page)).trilha, 'moonlight');
+    assert.equal((await som(page)).trilha, 'noite');
     await page.evaluate(() => window.__livro.irPara(7)); await espera(page, 200);
-    assert.equal((await som(page)).trilha, 'delrio');
+    assert.equal((await som(page)).trilha, 'festa');
     await page.evaluate(() => window.__livro.irPara(6)); await espera(page, 200);
-    assert.equal((await som(page)).trilha, 'moonlight');
+    assert.equal((await som(page)).trilha, 'noite');
   } finally { await fechar(); }
 });
 

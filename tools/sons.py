@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Monta os sons do livro a partir de shared/sfx: músicas com os bytes originais, efeitos recortados e nivelados.
-Gera public/sfx, public/musica, src/sons.json (ganhos e licenças) e docs/creditos-sons.md. Rode na raiz do módulo."""
+Gera public/sfx, os efeitos de src/sons.json (ganhos e licenças) e docs/creditos-sons.md. A música vem de tools/trilha.py. Rode na raiz do módulo."""
 import hashlib, json, re, shutil, subprocess, sys
 from pathlib import Path
 
@@ -40,16 +40,8 @@ AMBIENTES = {
   'fervura': ('original-owlish-kettle-boil', 20, 40, -30, ''),
 }
 # momento da história: música (bytes originais)
-MUSICAS = {
-  'caixinha': ('music-industrial-music-box', 'capa'),
-  'shuffle': ('music-george-street-shuffle', 'cena 1, a partida'),
-  'hyperfun': ('music-hyperfun', 'cena 2, as casas; volta quando o Lobo foge'),
-  'marty': ('music-marty-gots-a-plan', 'cena 3, o Lobo chega'),
-  'umlaut': ('music-professor-umlaut', 'cena 4, a madeira'),
-  'getaway': ('music-mistake-the-getaway', 'cena 5, o tijolo resiste'),
-  'moonlight': ('music-moonlight-hall', 'cenas 6 e 7, a noite e a chaminé'),
-  'delrio': ('music-del-rio-bravo', 'cena 8, a festa'),
-}
+# A trilha vem de tools/trilha.py: Alan recusou as faixas do acervo, que não têm nada de conto infantil.
+MUSICAS = {}
 ALVO_MUSICA = -22.0
 PAD = 0.1
 
@@ -97,25 +89,18 @@ def lufs_trecho(arq, ini, dur, base):
     return i, float(re.search(r'Peak:\s+(-?[\d.]+) dBFS', fim).group(1))
 
 def main():
-    sfx = MOD / 'public' / 'sfx'; mus = MOD / 'public' / 'musica'
-    for p in (sfx, mus):
-        shutil.rmtree(p, ignore_errors=True); p.mkdir(parents=True)
+    sfx = MOD / 'public' / 'sfx'
+    shutil.rmtree(sfx, ignore_errors=True); sfx.mkdir(parents=True)
     fx = [efeito(n, *v, sfx) for n, v in EFEITOS.items()]
     am = [efeito(n, *v, sfx, laco=True) for n, v in AMBIENTES.items()]
-    trilha = []
-    for nome, (sid, momento) in MUSICAS.items():
-        i, arq = origem(sid); l, p = lufs(arq); shutil.copyfile(arq, mus / f'{nome}{arq.suffix}')
-        ganho = ALVO_MUSICA - l
-        trilha.append({'nome': nome, 'id': sid, 'titulo': i['title'], 'autor': i['sources'][0].get('author'), 'licenca': i['sources'][0].get('license'), 'url': i['sources'][0].get('url'), 'momento': momento, 'arquivo': f'{nome}{arq.suffix}', 'duracao': round(i['technical']['duration'], 1), 'bitrate': i['technical'].get('bit_rate'), 'lufs': l, 'pico': p, 'ganho_db': round(ganho, 2), 'bytes': arq.stat().st_size, 'instrumentos': (i.get('music') or {}).get('instruments'), 'clima': (i.get('music') or {}).get('mood')})
-    (MOD / 'src' / 'sons.json').write_text(json.dumps({'efeitos': [f['nome'] for f in fx], 'ambientes': [a['nome'] for a in am], 'pad': PAD, 'lacos': {a['nome']: a['trecho'][1] for a in am}, 'musicas': {t['nome']: {'arquivo': t['arquivo'], 'ganho_db': t['ganho_db']} for t in trilha}}, ensure_ascii=False, indent=1) + '\n')
-    ln = ['# Créditos dos sons', '', 'Gerado por `tools/sons.py` a partir de `shared/sfx`. Não editar à mão.', '', '## Música', '']
-    for t in trilha: ln.append(f"- **{t['titulo']}**, {t['autor']} (incompetech.com), {t['licenca']}. {t['momento']}. {t['instrumentos'] or ''}. {t['url']}")
-    ln += ['', 'Licença das músicas: Creative Commons Attribution 4.0, https://creativecommons.org/licenses/by/4.0/. Arquivos com os bytes originais do acervo, nivelados por ganho em tempo de execução.', '', '## Efeitos e ambientes', '']
+    # as músicas são de tools/trilha.py: aqui só se preservam, para este script não apagar nem desfazer a trilha
+    arq_sons = MOD / 'src' / 'sons.json'
+    musicas = json.loads(arq_sons.read_text()).get('musicas', {}) if arq_sons.exists() else {}
+    (MOD / 'src' / 'sons.json').write_text(json.dumps({'efeitos': [f['nome'] for f in fx], 'ambientes': [a['nome'] for a in am], 'pad': PAD, 'lacos': {a['nome']: a['trecho'][1] for a in am}, 'musicas': musicas}, ensure_ascii=False, indent=1) + '\n')
+    ln = ['# Créditos dos sons', '', 'Gerado por `tools/sons.py` a partir de `shared/sfx`. Não editar à mão.', '', '## Música', '', 'Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, tarefas e medições em `docs/trilha-recibo.json`; composta por `tools/trilha.py`. As faixas trazem a marca-d\'água SynthID do Google, inaudível.', '', '## Efeitos e ambientes', '']
     for f in fx + am: ln.append(f"- `{f['nome']}`: {f['titulo']} (`{f['id']}`), {', '.join(f['autores'] or ['autor no catálogo'])}, {f['licenca']}, ganho {f['ganho_db']} dB.")
     (MOD / 'docs' / 'creditos-sons.md').write_text('\n'.join(ln) + '\n')
-    tot = sum(x['bytes'] for x in fx + am); mt = sum(t['bytes'] for t in trilha)
-    print(f'efeitos {len(fx)} ambientes {len(am)} musicas {len(trilha)} bytes_sfx {tot} bytes_musica {mt}')
-    for t in trilha: print(t['nome'], t['lufs'], 'LUFS pico', t['pico'], 'ganho', t['ganho_db'], t['duracao'], 's')
-    print('licencas', sorted({x['licenca'] for x in fx + am}), sorted({t['licenca'] for t in trilha}))
+    print(f"efeitos {len(fx)} ambientes {len(am)} bytes_sfx {sum(x['bytes'] for x in fx + am)}")
+
 
 main()
