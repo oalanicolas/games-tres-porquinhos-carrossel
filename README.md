@@ -1,6 +1,10 @@
 # Os Três Porquinhos, livro-carrossel
 
-Livro pop-up em 3D que abre em estrela e conta o conto inteiro em oito cenas. Cada cena tem uma ação de papel e a música muda conforme a história avança. No modo narrado, a voz conta e o livro vira sozinho. Por [Alan Nicolas](https://x.com/oalanicolas).
+Livro pop-up em 3D que abre em estrela e conta o conto inteiro em onze cenas. Cada cena tem uma ação de papel e a música muda conforme a história avança. No modo narrado, a voz conta e o livro vira sozinho. Por [Alan Nicolas](https://x.com/oalanicolas).
+
+João constrói a casa de palha, Lulu a de madeira e Kael a de tijolos. Texto e narração usam os mesmos nomes.
+
+O Lobo de papel é inspirado nas fotos da pelúcia enviadas por Alan: cinza, focinho e nariz grandes, barriga clara e lenço azul.
 
 Referência de forma: o vídeo de Techartist sobre um livro-carrossel (<https://x.com/techartist_/status/2116407421065482362>). A arte, o texto e o código daqui são originais.
 
@@ -16,7 +20,7 @@ npm run build
 ## Como funciona
 
 - `src/book.js`: paredes radiais, abertura e quais cenas ficam visíveis.
-- `src/cenas.js`, `src/personagens.js`, `src/objetos.js`, `src/palco.js`, `src/paper.js`: recortes de papel e ações das oito cenas.
+- `src/cenas.js`, `src/personagens.js`, `src/objetos.js`, `src/palco.js`, `src/paper.js`: recortes de papel e ações das onze cenas.
 - `src/story.js`: o texto.
 - `src/audio.js`: música com fusão, ambientes em laço e efeitos. `src/sons.json` é gerado.
 - `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
@@ -39,16 +43,19 @@ python3 tools/narracao.py --cena 3    # grava uma cena, para ouvir antes das out
 python3 tools/narracao.py             # grava o que mudou no texto
 ```
 
-Sem as 8 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a conta direta, com o modelo Multilingual v2.
+Sem as 11 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a conta direta, com o modelo Multilingual v2.
 
 ## Testes
 
 | Arquivo | O que prova |
 |---|---|
-| `tests/sequencia.test.mjs` | o fim nunca aparece junto do começo, em 8 de 8 cenas e na abertura |
-| `tests/musica.test.mjs` | faixa certa nas 8 cenas, som na saída, troca no tchibum, botão de som e 5 laços sem salto |
+| `tests/sequencia.test.mjs` | o fim nunca aparece junto do começo, em 11 de 11 cenas e na abertura |
+| `tests/musica.test.mjs` | faixa certa nas 11 cenas, som na saída, troca no tchibum, botão de som e 5 laços sem salto |
 | `tests/telas.test.mjs` | livro nítido e textos sem sobreposição em 4 tamanhos de tela |
 | `tests/livro.test.mjs` | nenhuma peça fora da cunha e percurso real pela interface |
+| `tests/texto-livre.test.mjs` | nada da cena tapa o texto da página, em 11 de 11 cenas |
+| `tests/furos.test.mjs` | a história se sustenta em cena: Kael entra por último antes do Lobo chegar, três janelas, Lobo alcança a porta, chaminé e caldeirão à vista, ninguém reaparece |
+| `tests/continuidade.test.mjs` | balões mantêm a ordem durante gestos; voz terminada durante a abertura ou antes do primeiro quadro e toque cancelado não prendem o avanço |
 
 ## Pesquisa
 

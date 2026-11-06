@@ -8,8 +8,8 @@ import { abrir } from './_apoio.mjs';
 
 const { faixas } = JSON.parse(readFileSync(new URL('../src/narracao.json', import.meta.url)));
 const TELAS = [[1440, 870], [390, 844], [360, 640], [844, 390]];
-// Medidas no commit anterior a esta mudança (1d059b3), sem narração: o livro de quem lê sozinho não mudou de tempo.
-const DURACOES_MANUAIS = [3.2, 4.75, 3.6391, 5.0804, 6.25, 3.89, 4.01, 5.7];
+// Recontado ao ganhar páginas e entradas de personagens, a pedido de Alan (06/11/2026): a chegada do Lobo e as entradas passaram a valer sem voz.
+const DURACOES_MANUAIS = [4.2944, 6.3, 6.7, 10.34, 11.97, 4.5, 5.39, 6.0319, 5.51, 7.4, 6.52];
 
 /** A cena `i` num segundo da fala, sem depender do áudio tocar. */
 const naFala = (page, i, t, nivel = 0.8) => page.evaluate(([i, t, nivel]) => {
@@ -19,7 +19,7 @@ const naFala = (page, i, t, nivel = 0.8) => page.evaluate(([i, t, nivel]) => {
   return L.atuacao.medir();
 }, [i, t, nivel]);
 
-test('sem voz, a duração de cada cena continua a mesma de antes', async () => {
+test('sem voz, cada cena dura o combinado', async () => {
   const { page, fechar, erros } = await abrir();
   try {
     const d = await page.evaluate(() => window.__livro.cenas.map((c) => +c.linha.duration.toFixed(4)));
@@ -43,7 +43,7 @@ test('nenhum gesto ficou fora de um grupo com palavra', async () => {
   const { page, fechar } = await abrir();
   try {
     const soltos = await page.evaluate(() => window.__livro.cenas.map((c) => [...c.linha.tracks, ...c.linha.calls].filter((x) => !x.g || x.g === 'base').length));
-    assert.deepEqual(soltos, [0, 0, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(soltos, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   } finally { await fechar(); }
 });
 
@@ -66,7 +66,7 @@ test('sem voz, os gestos só de narração não existem', async () => {
   const { page, fechar } = await abrir();
   try {
     const r = await page.evaluate(() => window.__livro.cenas.map((c) => { const l = c.linha; return [...l._trilhas(), ...l._chamadas()].filter((x) => x.soVoz).length; }));
-    assert.deepEqual(r, [0, 0, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(r, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   } finally { await fechar(); }
 });
 
@@ -117,12 +117,15 @@ test('o balão só existe durante a fala, e a boca só abre com ela', async () =
   try {
     await page.evaluate(() => window.__livro.abrirNaHora(2));
     await page.waitForTimeout(60);
-    const fala = faixas[2].falas[1]; // "Não, não e não!", de Pipo
-    const antes = faixas[2].falas[0].ate + 0.37; // o balão da fala anterior já saiu e o desta ainda não entrou
+    const fala = faixas[2].falas[1]; // "Não, não e não!", de João
+    const antes = faixas[2].falas[0].de - 0.11;
     assert.ok(antes < fala.de - 0.1);
     assert.equal((await naFala(page, 2, antes)).length, 0, 'antes da fala');
     const boca = () => page.evaluate(() => window.__livro.cenas[2].atores.pipo.boca.scale.y);
     assert.ok(await boca() < 0.01, 'boca fechada antes');
+    const preparando = await naFala(page, 2, fala.de - 0.11);
+    assert.equal(preparando.filter((b) => b.quem === 'pipo').length, 0, 'João ainda não fala durante a saída do balão do Lobo');
+    assert.ok(await boca() < 0.01, 'boca fechada imediatamente antes da própria fala');
     for (let k = 0; k < 8; k++) await naFala(page, 2, fala.de + 0.2);
     assert.equal((await naFala(page, 2, fala.de + 0.2)).length, 1, 'durante a fala');
     assert.ok(await boca() > 0.4, 'boca aberta na fala');

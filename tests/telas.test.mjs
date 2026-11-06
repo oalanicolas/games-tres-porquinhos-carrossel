@@ -50,7 +50,7 @@ for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular p
       assert.ok(Math.max(...linhaDaBarra) - Math.min(...linhaDaBarra) < 6, `botões da barra em mais de uma linha: ${linhaDaBarra.map((v) => v.toFixed(0))}`);
       // Pedido de Alan: nenhum crédito sobre a mesa; eles vivem no README.
       const textoNaTela = await page.evaluate(async () => {
-        window.__livro.abrirNaHora(7); await new Promise((f) => setTimeout(f, 300));
+        window.__livro.abrirNaHora(10); await new Promise((f) => setTimeout(f, 300));
         return { fixos: document.querySelectorAll('.assinatura, .credito-musica, .credito-voz').length, texto: document.body.innerText };
       });
       assert.equal(textoNaTela.fixos, 0, 'crédito sobre a mesa');

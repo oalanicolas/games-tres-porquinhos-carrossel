@@ -36,7 +36,7 @@ def main():
     roteiro = json.loads((MOD / 'src' / 'roteiro.json').read_text())
     faixas = json.loads((MOD / 'src' / 'narracao.json').read_text())['faixas']
     itens = []
-    for i in range(8):
+    for i in range(len(faixas)):
         cena = roteiro[str(i)] if str(i) in roteiro else roteiro['cenas'][i]
         for g, v in cena['marcos'].items():
             if g not in faixas[str(i)]['marcos']: continue

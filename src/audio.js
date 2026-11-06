@@ -12,10 +12,11 @@ const NIVEL_AMB = 0.8; const NIVEL_AMB_SOB_VOZ = 0.5;
 const ATRASO_DA_CAPA = 2.6; const ATRASO_VIRADA = 0.6;
 
 // -1 é a capa; depois, uma entrada por cena
-export const TRILHA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima', 'noite', 'noite', 'festa'];
+export const TRILHA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'festa', 'era-uma-vez'];
 const AMBIENTE = [
   { passaros: 0.8 }, { passaros: 0.7 }, { passaros: 0.5, brisa: 0.35 }, { passaros: 0.25, brisa: 0.6 },
-  { brisa: 0.75 }, { grilos: 0.6, fogo: 0.55, fervura: 0.3 }, { grilos: 0.6, fogo: 0.55, fervura: 0.45 }, { grilos: 0.5, fogo: 0.4 },
+  { brisa: 0.75 }, { grilos: 0.6, fogo: 0.3, fervura: 0.15 }, { grilos: 0.5, fogo: 0.55, fervura: 0.45 }, { grilos: 0.4, fogo: 0.55, fervura: 0.5 },
+  { grilos: 0.6, brisa: 0.35 }, { grilos: 0.5, fogo: 0.45 }, { passaros: 0.6, brisa: 0.2 },
 ];
 
 export class Audio {

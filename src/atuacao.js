@@ -26,7 +26,9 @@ export class Atuacao {
     const t = i >= 0 ? this.audio.tempoVoz(i) : null;
     if (t == null) return { t: null, lista: [] };
     const falas = this.audio.faixasVoz[i]?.falas ?? [];
-    return { t, lista: falas.filter((f) => t >= f.de - 0.1 && t <= f.ate + 0.35) };
+    const candidatas = falas.filter((f) => t >= f.de - 0.1 && t <= f.ate + 0.35);
+    const lista = candidatas.map((f, k) => ({ ...f, quem: f.quem.filter((quem) => !candidatas.slice(k + 1).some((prox) => prox.quem.includes(quem))) })).filter((f) => f.quem.length);
+    return { t, lista };
   }
   quadro(i, relogio) {
     const { t, lista } = this.ativas(i);
@@ -39,7 +41,7 @@ export class Atuacao {
       const ator = c?.atores?.[quem]; if (!ator) continue;
       falando.add(ator);
       if (t <= f.ate + 0.04) this._falar(ator, this.abertura, relogio);
-      pedidos.push({ chave: `${f.de}-${quem}`, ator, texto: f.texto, quem });
+      pedidos.push({ chave: `${i}-${f.de}-${quem}`, ator, texto: f.texto, quem });
     }
     for (const a of this.bocas) if (!falando.has(a)) { a.boca.scale.y = 0.001; this.bocas.delete(a); }
     this._desenhar(pedidos);
@@ -54,19 +56,32 @@ export class Atuacao {
       if (!b) {
         const el = document.createElement('div'); el.className = 'balao'; el.dataset.quem = p.quem;
         const s = document.createElement('span'); s.textContent = p.texto; el.append(s);
-        this.raiz.append(el); b = { el, w: 0, h: 0 }; this.baloes.set(p.chave, b);
-        b.w = el.offsetWidth; b.h = el.offsetHeight;
+        this.raiz.append(el); b = { el }; this.baloes.set(p.chave, b);
       }
+      b.w = b.el.offsetWidth; b.h = b.el.offsetHeight;
       ponto.set(0, p.ator.boca ? ALTURA_CABECA.porco : ALTURA_CABECA.lobo, 0); p.ator.cabeca.localToWorld(ponto); ponto.project(this.camera);
       const ax = q.left + (ponto.x + 1) / 2 * q.width; const ay = q.top + (1 - ponto.y) / 2 * q.height;
+      b.ordem ??= ax;
       return { b, ax, ay, x: ax - b.w / 2, y: ay - b.h - 12 };
-    }).sort((u, v) => u.ax - v.ax);
-    // balões vizinhos se afastam em vez de se cobrir, e ninguém sai da tela
-    for (let k = 1; k < itens.length; k++) { const a = itens[k - 1]; const c = itens[k]; const sobra = a.x + a.b.w + 6 - c.x; if (sobra > 0) { a.x -= sobra / 2; c.x += sobra / 2; } }
-    for (const it of itens) it.x = Math.min(Math.max(MARGEM, it.x), q.width - it.b.w - MARGEM);
-    for (let k = 1; k < itens.length; k++) { const a = itens[k - 1]; const c = itens[k]; if (a.x + a.b.w + 6 > c.x) c.y = Math.min(c.y, a.y - c.b.h - 6); }
+    }).sort((u, v) => u.b.ordem - v.b.ordem);
+    const filas = []; const restantes = itens.slice();
+    while (restantes.length) {
+      const fila = [restantes.shift()]; let largura = fila[0].b.w;
+      while (restantes.length && largura + restantes.at(-1).b.w + 12 <= q.width - MARGEM * 2) {
+        const it = restantes.pop(); fila.push(it); largura += it.b.w + 12;
+      }
+      fila.sort((u, v) => u.b.ordem - v.b.ordem); filas.push({ fila, largura });
+    }
+    let teto = q.height - MARGEM;
+    for (const { fila, largura } of filas) {
+      const centro = fila.reduce((s, it) => s + it.ax, 0) / fila.length;
+      let x = Math.max(MARGEM, Math.min(centro - largura / 2, q.width - largura - MARGEM));
+      for (const it of fila) { it.x = x; it.y = Math.min(it.y, teto - it.b.h); x += it.b.w + 12; }
+      teto = Math.min(...fila.map((it) => it.y)) - 18;
+    }
+    const descer = Math.max(0, MARGEM - Math.min(...itens.map((it) => it.y)));
     for (const it of itens) {
-      it.y = Math.max(MARGEM, it.y);
+      it.y = Math.max(MARGEM, Math.min(it.y + descer, q.height - it.b.h - MARGEM));
       it.b.el.style.transform = `translate(${it.x.toFixed(1)}px, ${it.y.toFixed(1)}px)`;
       const cauda = Math.min(Math.max(18, it.ax - it.x), it.b.w - 18);
       it.b.el.style.setProperty('--cauda', `${cauda.toFixed(1)}px`);

@@ -189,7 +189,8 @@ export function casaTijolo(parent, { x = 0, y = 0, z = 0, s = 1, largura = 1.3, 
   let portaR = null;
   if (comPorta) {
     f(blob([[-0.2, 0], [-0.2, 0.42], [-0.13, 0.57], [0, 0.63], [0.13, 0.57], [0.2, 0.42], [0.2, 0]], 5), '#e9c79c', { edge: '#f8e5c8' });
-    portaR = rig(raiz, 'porta', { z: f.z() + 0.003 });
+    piece(raiz, blob([[-0.16, 0], [-0.16, 0.4], [-0.1, 0.52], [0, 0.57], [0.1, 0.52], [0.16, 0.4], [0.16, 0]], 5), '#2a1a2c', { t: 0.002, z: f.z() + 0.014, edge: '#2a1a2c', jitter: 0 });
+    portaR = rig(raiz, 'porta', { z: f.z() + 0.022 });
     piece(portaR, blob([[-0.16, 0], [-0.16, 0.4], [-0.1, 0.52], [0, 0.57], [0.1, 0.52], [0.16, 0.4], [0.16, 0]], 5), pat('vstripes', '#3c8a8e', '#317a7e', 0.2), { t: 0.01 });
     piece(portaR, ellipse(0.024, 0.024, 0.09, 0.26, 8), '#ffd24f', { t: 0.006, z: 0.01, jitter: 0 });
     piece(portaR, heart(0.04), '#e0446a', { t: 0.004, z: 0.01, y: 0.42, jitter: 0 });

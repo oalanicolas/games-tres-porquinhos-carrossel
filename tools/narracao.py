@@ -2,7 +2,7 @@
 """Grava a narração do livro com vozes da ElevenLabs, pela Magnific (padrão) ou direto. Texto em src/story.js; a chave vem do ambiente ou do .env do hub e nunca é impressa.
 
   python3 tools/narracao.py --estimar     só conta os caracteres, sem rede
-  python3 tools/narracao.py               grava o que falta (por hash do texto) e, com 8 de 8, liga o botão no site
+  python3 tools/narracao.py               grava o que falta (por hash do texto) e, com todas, liga o botão no site
   python3 tools/narracao.py --cena 3      grava só essa cena, para ouvir antes de gastar nas outras
 
 Sem crédito, sai com código 3 e mantém o que já foi gravado: a próxima execução continua de onde parou.
@@ -28,7 +28,7 @@ AJUSTES = {
     'elevenlabs': {'stability': 0.6, 'similarity_boost': 0.75, 'style': 0.15, 'speed': 0.92, 'use_speaker_boost': True},
 }
 ALVO_LUFS = -18.0
-TOTAL = 8
+TOTAL = 11
 ROTEIRO = MOD / 'src' / 'roteiro.json'
 WHISPER = Path.home() / '.cache' / 'whisper-cpp' / 'ggml-large-v3-turbo.bin'
 
@@ -182,7 +182,7 @@ def main():
     ap.add_argument('--voz', default=VOZ['id'])
     ap.add_argument('--nome-voz', default=None)
     ap.add_argument('--servico', choices=sorted(MODELOS), default='magnific')
-    ap.add_argument('--cena', type=int, help='grava só esta cena (1 a 8)')
+    ap.add_argument('--cena', type=int, help='grava só esta cena (1 a 11)')
     a = ap.parse_args()
     nome_voz = a.nome_voz or (VOZ['nome'] if a.voz == VOZ['id'] else a.voz)
     tx = textos()
@@ -223,10 +223,11 @@ def main():
         salvar_json(RECIBO, recibo)
         print(f'cena {i + 1}: {recibo["faixas"][str(i)]["duracao"]} s, {recibo["faixas"][str(i)]["lufs"]} LUFS')
     if a.cena or any(not (PASTA / f'cena-{i}.mp3').exists() or recibo['faixas'].get(str(i), {}).get('hash') != assinatura(tx[i], a.voz, a.servico) for i in range(TOTAL)):
-        print('amostra gravada; o manifesto só muda com as 8 cenas.')
+        print('amostra gravada; o manifesto só muda com todas as cenas.')
         return 0
     roteiro = json.loads(ROTEIRO.read_text())
-    faixas = {str(i): {'arquivo': f'cena-{i}.mp3', 'duracao': recibo['faixas'][str(i)]['duracao'], 'ganho_db': round(ALVO_LUFS - recibo['faixas'][str(i)]['lufs'], 1), **resolver_roteiro(i, roteiro[str(i)], tx[i])} for i in range(TOTAL)}
+    versoes = [hashlib.sha256((PASTA / f'cena-{i}.mp3').read_bytes()).hexdigest()[:16] for i in range(TOTAL)]
+    faixas = {str(i): {'arquivo': f'cena-{i}.mp3?v={versoes[i]}', 'duracao': recibo['faixas'][str(i)]['duracao'], 'ganho_db': round(ALVO_LUFS - recibo['faixas'][str(i)]['lufs'], 1), **resolver_roteiro(i, roteiro[str(i)], tx[i])} for i in range(TOTAL)}
     for i, f in faixas.items():
         print(f'cena {int(i) + 1}: {len(f["marcos"])} marcos, {len(f["falas"])} falas, ação aos {f["acao_em"]} s de {f["duracao"]} s')
     salvar_json(MANIFESTO, {'voz': recibo['voz']['nome'], 'faixas': faixas})

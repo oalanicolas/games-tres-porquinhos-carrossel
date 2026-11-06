@@ -35,9 +35,10 @@ try {
   await page.waitForTimeout(800);
   const r = await page.evaluate(() => ({ marcas: window.__marcas, baloes: window.__baloes, relogio: window.__relogio, modo: window.__livro.estado.modo, indice: window.__livro.estado.indice, voz: window.__livro.audio.estado().voz, faixas: window.__livro.audio.faixasVoz, restante: document.querySelectorAll('.balao').length, fps: window.__fps }));
   const linhas = []; const defeitos = [];
-  for (let i = 0; i < 8; i++) {
+  const total = Object.keys(r.faixas).length;
+  for (let i = 0; i < total; i++) {
     const f = r.faixas[i];
-    const acao = r.marcas.find((m) => m.tipo === 'acao' && m.i === i); const voz = r.marcas.find((m) => m.tipo === 'voz' && m.i === i); const virou = r.marcas.find((m) => m.tipo === 'virou' && m.i === (i < 7 ? i + 1 : -1));
+    const acao = r.marcas.find((m) => m.tipo === 'acao' && m.i === i); const voz = r.marcas.find((m) => m.tipo === 'voz' && m.i === i); const virou = r.marcas.find((m) => m.tipo === 'virou' && m.i === (i + 1 < total ? i + 1 : -1));
     const relogio = r.relogio[i] ?? [];
     const erroRelogio = relogio.length ? Math.max(...relogio) : null;
     const baloes = (f.falas ?? []).map((fala) => {

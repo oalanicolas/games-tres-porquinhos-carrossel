@@ -4,7 +4,8 @@ import { TAU, rng, piece, rig, sector, stroke, pat, bake, shade } from './paper.
 import { CENAS, CAPA } from './story.js';
 
 export const N = CENAS.length;
-export const CUNHA = TAU / N;
+// A estrela não fecha o círculo na tela: só as vizinhas aparecem. Por isso a cunha é fixa em 45° e a arte não aperta quando entra página nova.
+export const CUNHA = TAU / 8;
 export const R = 3.05;
 export const H = 2.78;
 export const ESPESSURA = 0.34;
@@ -18,9 +19,12 @@ export const CEUS = [
   { faixas: [['#58c4d9', '#73d0e0'], ['#a6e3d5', '#bcebdf'], ['#ffeeb0', '#fff4c9'], ['#ffd28f', '#ffdfaa'], ['#ffb077', '#ffc392']], estrelas: 0, aves: 3, borda: '#ee8a3e', chao: pat('grass', '#bfe06b', '#a9d154', 0.5), disco: '#a8cf52' },
   { faixas: [['#f7a24d', '#f9b265'], ['#fbbd5b', '#fccb76'], ['#ffd67a', '#ffe096'], ['#ffb46b', '#ffc586'], ['#f58a6a', '#f79d82']], estrelas: 0, aves: 2, borda: '#d9682f', chao: pat('grass', '#d8cf60', '#c8bf4d', 0.5), disco: '#c2b84a' },
   { faixas: [['#7c4fc0', '#8c62cb'], ['#c15cb4', '#cd71c0'], ['#f26f9c', '#f485ac'], ['#fb9a6f', '#fcac87'], ['#ffd27a', '#ffdd96']], estrelas: 6, aves: 2, borda: '#c23f87', chao: pat('grass', '#8cc27b', '#7cb36b', 0.5), disco: '#74ab66' },
+  { faixas: [['#3f3392', '#4c3ea2'], ['#6e3fae', '#7d4cba'], ['#a74fb6', '#b561c0'], ['#e0689f', '#e87fae'], ['#fba77f', '#fcb897']], estrelas: 10, aves: 0, borda: '#9a45a8', chao: pat('grass', '#6f9f84', '#60907a', 0.5), disco: '#5f8f78' },
   { faixas: [['#2a2570', '#352f80'], ['#4a2f96', '#5839a6'], ['#7a3fb4', '#8a4dc2'], ['#b153b5', '#bf66c2'], ['#ec7fa9', '#f093b7']], estrelas: 16, aves: 0, borda: '#7a3fb4', chao: pat('grass', '#5e8f86', '#50807a', 0.5), disco: '#4e7f78' },
   { faixas: [['#100e42', '#191650'], ['#1c1a5e', '#26246d'], ['#2c2a7c', '#37358b'], ['#3f3a97', '#4c47a3'], ['#5a54ad', '#6761b8']], estrelas: 34, aves: 0, borda: '#3f3a97', chao: pat('grass', '#3f6f76', '#35626a', 0.5), disco: '#355f69' },
+  { faixas: [['#0f1a4c', '#16225a'], ['#1a2c6e', '#22367c'], ['#27408c', '#304b9a'], ['#3a5aa8', '#4566b2'], ['#5b7fc0', '#6a8cc8']], estrelas: 40, aves: 0, borda: '#3a5aa8', chao: pat('grass', '#3f7a78', '#356c6c', 0.5), disco: '#356a6a' },
   { faixas: [['#171650', '#211f60'], ['#30237a', '#3b2c88'], ['#5c2e93', '#6a39a1'], ['#a23e94', '#b04ea2'], ['#f2767f', '#f58b92']], estrelas: 28, aves: 0, borda: '#e0446a', chao: pat('grass', '#7fb56a', '#6fa65c', 0.5), disco: '#6da35a' },
+  { faixas: [['#6fcbf0', '#88d6f3'], ['#a6e4f2', '#bcebf5'], ['#fff0c4', '#fff6dc'], ['#ffd9b5', '#ffe5c9'], ['#ffc2c6', '#ffd3d5']], estrelas: 0, aves: 5, borda: '#ef6f8e', chao: pat('grass', '#b0e06a', '#9ad257', 0.5), disco: '#94cf56' },
 ];
 
 // ---- pintura em canvas ---------------------------------------------------------------------------
@@ -85,7 +89,7 @@ function novaFolha() { const c = document.createElement('canvas'); c.width = PX_
 function texturaDe(canvas, aniso) {
   const t = new THREE.CanvasTexture(canvas); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = aniso; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; return t;
 }
-function algarismo(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][n]; }
+function algarismo(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'][n]; }
 export const romano = algarismo;
 
 /** Parede esquerda de uma cena, como quem olha: papel com o texto à esquerda, céu junto à lombada à direita. */
@@ -339,7 +343,9 @@ export class Livro {
     const idx = giro / CUNHA;
     for (const c of this.cunhas) c.g.visible = c.g.visible && (aberto ? Math.abs(c.j - idx) <= 2.7 : c.j <= 2);
     this.paredes.forEach((p, k) => {
-      if (aberto) { const antes = this.cunhas[k - 1]; const depois = this.cunhas[k]; p.pivo.visible = !!(antes?.g.visible || depois?.g.visible); } else p.pivo.visible = k <= 3 || p.angulo > -1.75;
+      // A capa é grossa e a 45° da página vizinha: o canto dela fura a dobra da cena seguinte, por isso só aparece quando a cena dela está à vista.
+      const capaLonge = (k === 0 && idx >= 0.85) || (k === N && idx <= N - 2 + 0.15);
+      if (aberto) { const antes = this.cunhas[k - 1]; const depois = this.cunhas[k]; p.pivo.visible = !capaLonge && !!(antes?.g.visible || depois?.g.visible); } else p.pivo.visible = k <= 3 || p.angulo > -1.75;
     });
   }
 }

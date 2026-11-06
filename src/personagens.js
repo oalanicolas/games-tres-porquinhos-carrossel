@@ -130,86 +130,95 @@ export function porcoNaJanela(parent, tipo, { x = 0, y = 0, z = 0, s = 1 } = {})
 
 /** Lobo olhando para +x. y=0 nos pés; altura ~1,4 com as orelhas. */
 export function lobo(parent, { x = 0, y = 0, z = 0, s = 1, virado = false } = {}) {
-  const pelo = pat('chevron', '#6e6ca8', '#605e98', 0.3); const pelo2 = pat('chevron', '#5f5d97', '#525088', 0.3); const creme = pat('plain', '#f6e7cc');
+  const pelo = pat('chevron', '#a9b0ad', '#9fa7a3', 0.16); const pelo2 = pat('chevron', '#929d99', '#89958f', 0.16); const creme = pat('plain', '#ece8d8');
   const root = rig(parent, 'lobo', { x, y, z, s, sx: virado ? -s : s });
   const corpo = rig(root, 'corpo');
   // rabo e chama
   const rabo = rig(corpo, 'rabo', { x: -0.22, y: 0.46, z: 0.001, rot: 0.32 });
-  piece(rabo, blob([[0.03, -0.05], [0.04, 0.06], [-0.18, 0.15], [-0.4, 0.13], [-0.57, 0.17], [-0.52, 0.06], [-0.58, -0.02], [-0.42, -0.06], [-0.2, -0.08]]), pelo2, { t: 0.008, edge: '#d9d5ef' });
+  piece(rabo, blob([[0.03, -0.05], [0.04, 0.06], [-0.18, 0.15], [-0.4, 0.13], [-0.57, 0.17], [-0.52, 0.06], [-0.58, -0.02], [-0.42, -0.06], [-0.2, -0.08]]), pelo2, { t: 0.008, edge: '#d8ded5' });
   piece(rabo, blob([[-0.38, -0.06], [-0.4, 0.13], [-0.57, 0.17], [-0.52, 0.06], [-0.58, -0.02]]), creme, { t: 0.008, z: 0.005 });
   const chama = rig(rabo, 'chama', { x: -0.52, y: 0.08, z: 0.012, rot: 1.25, s: 0.001 });
   piece(chama, flame(0.3, 0.44), '#f35a30', { t: 0.006, glow: true }); piece(chama, flame(0.19, 0.29), '#ffb02e', { t: 0.006, z: 0.004, glow: true }); piece(chama, flame(0.09, 0.15), '#fff0a0', { t: 0.006, z: 0.008, glow: true });
   // perna e braço de trás
   const pernaT = rig(corpo, 'pernaT', { x: -0.09, y: 0.42, z: 0.008 });
-  piece(pernaT, stroke([[0, 0], [-0.05, -0.2], [-0.03, -0.38]], 0.13), pelo2, { t: 0.008, jitter: 0.002 });
-  piece(pernaT, blob([[-0.1, -0.42], [0.11, -0.43], [0.12, -0.37], [0, -0.34], [-0.1, -0.35]], 4), '#4f4b82', { t: 0.008, z: 0.005 });
+  piece(pernaT, stroke([[0, 0], [-0.05, -0.2], [-0.03, -0.38]], 0.15), pelo2, { t: 0.008, jitter: 0.002 });
+  piece(pernaT, blob([[-0.1, -0.42], [0.11, -0.43], [0.14, -0.37], [0, -0.32], [-0.1, -0.35]], 5), creme, { t: 0.008, z: 0.005, edge: '#d8ded5' });
   const bracoT = rig(corpo, 'bracoT', { x: -0.08, y: 0.8, z: 0.012, rot: -0.35 });
-  piece(bracoT, stroke([[0, 0], [-0.04, -0.2], [0, -0.36]], 0.1), pelo2, { t: 0.008, jitter: 0.002 });
-  piece(bracoT, ellipse(0.07, 0.06, 0, -0.39, 14), '#4f4b82', { t: 0.008, z: 0.004 });
+  piece(bracoT, stroke([[0, 0], [-0.04, -0.2], [0, -0.36]], 0.15), pelo2, { t: 0.008, jitter: 0.002 });
+  piece(bracoT, ellipse(0.08, 0.075, 0, -0.39, 18), creme, { t: 0.008, z: 0.004 });
   // tronco que enche
   const peito = rig(corpo, 'peito', { x: 0, y: 0.62, z: 0.022 });
   const f = pilha(peito);
-  f(blob([[-0.2, 0.2], [0.17, 0.25], [0.26, 0.04], [0.24, -0.15], [0.14, -0.28], [-0.14, -0.28], [-0.25, -0.12], [-0.25, 0.08]]), pelo, { edge: '#e4e0f7', name: 'tronco' });
-  f(blob([[0.0, 0.14], [0.2, 0.1], [0.24, -0.1], [0.12, -0.25], [-0.07, -0.25], [-0.11, -0.04]]), creme, { edge: '#e7cfa8' });
-  f(rrect(0.5, 0.17, 0.05, -0.0, -0.28), pat('vstripes', '#c9553f', '#b44a36', 0.16), { edge: '#f0c2a8' });
-  f(rrect(0.11, 0.09, 0.012, -0.12, -0.28), pat('gingham', '#ffd24f', '#e89b2a', 0.08));
-  f(stroke([[-0.18, -0.2], [-0.12, 0.24]], 0.04), '#8a3a2e', { jitter: 0 });
+  f(blob([[-0.2, 0.2], [0.17, 0.25], [0.26, 0.04], [0.24, -0.19], [0.14, -0.31], [-0.14, -0.31], [-0.25, -0.15], [-0.25, 0.08]]), pelo, { edge: '#d8ded5', name: 'tronco' });
+  f(blob([[-0.04, 0.19], [0.17, 0.16], [0.24, -0.07], [0.17, -0.24], [0, -0.29], [-0.16, -0.18], [-0.16, 0.04]]), creme, { edge: '#d9d6c7' });
   // perna da frente
   const pernaF = rig(corpo, 'pernaF', { x: 0.1, y: 0.42, z: 0.05 });
-  piece(pernaF, stroke([[0, 0.02], [0.03, -0.2], [0.01, -0.38]], 0.14), pat('vstripes', '#c9553f', '#b44a36', 0.16), { t: 0.008, jitter: 0.002, edge: '#f0c2a8' });
-  piece(pernaF, blob([[-0.08, -0.43], [0.2, -0.44], [0.21, -0.37], [0.06, -0.34], [-0.08, -0.35]], 4), '#5c5892', { t: 0.008, z: 0.005 });
+  piece(pernaF, stroke([[0, 0.02], [0.03, -0.2], [0.01, -0.38]], 0.16), pelo, { t: 0.008, jitter: 0.002, edge: '#d8ded5' });
+  piece(pernaF, blob([[-0.08, -0.43], [0.2, -0.44], [0.21, -0.36], [0.06, -0.3], [-0.08, -0.35]], 5), creme, { t: 0.008, z: 0.005 });
+  const lenco = rig(corpo, 'lenco', { x: -0.02, y: 0.85, z: 0.058 });
+  piece(lenco, blob([[-0.23, 0.04], [0.17, 0.025], [0.22, -0.045], [0.02, -0.1], [-0.22, -0.05]], 5), '#249dcc', { t: 0.008, edge: '#85d2e7' });
+  piece(lenco, blob([[-0.18, -0.03], [-0.03, -0.06], [-0.1, -0.23], [-0.2, -0.3], [-0.24, -0.12]], 4), '#279dca', { t: 0.008, z: 0.005, edge: '#77c8e2' });
+  piece(lenco, blob([[-0.17, -0.04], [-0.25, -0.1], [-0.34, -0.15], [-0.29, -0.02]], 4), '#1684b5', { t: 0.008, z: 0.003 });
   // cabeça
   const cabeca = rig(corpo, 'cabeca', { x: 0.03, y: 0.87, z: 0.066 });
   const h = pilha(cabeca);
   const orelhaT = rig(cabeca, 'orelhaT', { x: -0.14, y: 0.27, z: 0.0005, rot: 0.2 });
-  piece(orelhaT, blob([[-0.08, -0.02], [0.09, -0.02], [0.05, 0.14], [-0.03, 0.27], [-0.08, 0.12]], 4), pelo2, { t: 0.008 });
+  piece(orelhaT, blob([[-0.08, -0.02], [0.09, -0.02], [0.07, 0.18], [0.02, 0.29], [-0.03, 0.3], [-0.08, 0.19]], 5), pelo2, { t: 0.008 });
+  piece(orelhaT, blob([[-0.04, 0.02], [0.04, 0.02], [0.03, 0.17], [-0.015, 0.24], [-0.04, 0.17]], 5), creme, { t: 0.006, z: 0.004 });
   const orelhaF = rig(cabeca, 'orelhaF', { x: 0.02, y: 0.28, z: 0.004, rot: -0.1 });
-  piece(orelhaF, blob([[-0.09, -0.02], [0.09, -0.02], [0.07, 0.12], [0.01, 0.28], [-0.07, 0.13]], 4), pelo, { t: 0.008, edge: '#e4e0f7' });
-  piece(orelhaF, blob([[-0.045, 0], [0.045, 0], [0.03, 0.09], [0.005, 0.18], [-0.03, 0.09]], 3), '#f49ab0', { t: 0.006, z: 0.006 });
+  piece(orelhaF, blob([[-0.09, -0.02], [0.09, -0.02], [0.085, 0.17], [0.04, 0.29], [-0.015, 0.3], [-0.07, 0.2]], 5), pelo, { t: 0.008, edge: '#d8ded5' });
+  piece(orelhaF, blob([[-0.045, 0.015], [0.045, 0.015], [0.045, 0.15], [0.015, 0.24], [-0.025, 0.21], [-0.045, 0.12]], 5), creme, { t: 0.006, z: 0.006 });
   h.salto(0.012);
   // boca: fundo e queixo
   const queixo = rig(cabeca, 'queixo', { x: 0.17, y: -0.075, z: h.z() });
-  piece(queixo, blob([[-0.08, 0.04], [0.3, 0.015], [0.31, -0.03], [0.14, -0.09], [-0.03, -0.1], [-0.11, -0.03]], 5), '#f6e7cc', { t: 0.008, edge: '#e7cfa8' });
+  piece(queixo, blob([[-0.08, 0.04], [0.3, 0.015], [0.31, -0.03], [0.14, -0.09], [-0.03, -0.1], [-0.11, -0.03]], 5), creme, { t: 0.008, edge: '#d9d6c7' });
   piece(queixo, poly([0.08, -0.002], [0.11, 0.05], [0.14, -0.006]), '#fffaf0', { t: 0.004, z: 0.006, jitter: 0, edge: '#fff' });
   piece(queixo, poly([0.19, -0.004], [0.22, 0.046], [0.25, -0.006]), '#fffaf0', { t: 0.004, z: 0.006, jitter: 0, edge: '#fff' });
   h.salto(0.012);
   const fundoBoca = rig(cabeca, 'fundoBoca', { x: 0.19, y: -0.03, z: h.z(), sy: 0.35 });
-  piece(fundoBoca, blob([[-0.12, 0.02], [0.24, 0.01], [0.26, -0.07], [0.07, -0.11], [-0.12, -0.08]], 5), '#a12a45', { t: 0.004, edge: '#a12a45' });
+  piece(fundoBoca, blob([[-0.12, 0.02], [0.24, 0.01], [0.26, -0.07], [0.07, -0.11], [-0.12, -0.08]], 5), '#65494b', { t: 0.004, edge: '#65494b' });
   piece(fundoBoca, ellipse(0.1, 0.035, 0.06, -0.075, 14), '#ef6f8e', { t: 0.004, z: 0.003 });
   h.salto(0.01);
-  h(blob([[-0.23, 0.01], [-0.25, 0.17], [-0.16, 0.31], [0.03, 0.34], [0.17, 0.27], [0.38, 0.17], [0.54, 0.09], [0.52, -0.015], [0.34, -0.055], [0.14, -0.1], [-0.08, -0.13]]), pelo, { edge: '#e4e0f7', name: 'rosto' });
+  h(blob([[-0.25, -0.02], [-0.27, 0.18], [-0.18, 0.32], [-0.02, 0.37], [0.15, 0.32], [0.28, 0.23], [0.43, 0.18], [0.52, 0.08], [0.49, -0.025], [0.3, -0.085], [0.08, -0.14], [-0.12, -0.14]]), pelo, { edge: '#d8ded5', name: 'rosto' });
   // tufos
-  h(poly([-0.2, 0.1], [-0.34, 0.06], [-0.24, 0.015], [-0.33, -0.06], [-0.2, -0.05], [-0.22, -0.13], [-0.08, -0.08], [-0.05, 0.05]), pelo2, { edge: '#d9d5ef' });
-  h(blob([[0.1, -0.09], [0.07, 0.04], [0.22, 0.11], [0.42, 0.125], [0.545, 0.085], [0.52, -0.015], [0.34, -0.055]], 6), creme, { edge: '#e7cfa8' });
+  h(poly([-0.2, 0.12], [-0.32, 0.08], [-0.27, 0.03], [-0.34, -0.025], [-0.24, -0.045], [-0.28, -0.1], [-0.18, -0.11], [-0.2, -0.16], [-0.08, -0.12], [-0.02, 0.04]), creme, { edge: '#d9d6c7' });
+  h(blob([[0.04, -0.1], [0.055, 0.07], [0.18, 0.16], [0.38, 0.175], [0.54, 0.11], [0.54, -0.015], [0.36, -0.085], [0.17, -0.12]], 6), pat('plain', '#cdd2c9'), { edge: '#e5e4d7' });
   // dentes de cima
-  h(poly([0.21, -0.058], [0.24, -0.115], [0.27, -0.05]), '#fffaf0', { jitter: 0, t: 0.004, edge: '#fff' });
-  h(poly([0.35, -0.05], [0.375, -0.1], [0.4, -0.04]), '#fffaf0', { jitter: 0, t: 0.004, edge: '#fff' });
-  h(ellipse(0.065, 0.054, 0.525, 0.092, 18), '#2b1e36', { jitter: 0 });
-  h(ellipse(0.02, 0.012, 0.51, 0.118, 8), '#8d7fa8', { jitter: 0, t: 0.003 });
+  h(rrect(0.047, 0.055, 0.015, 0.245, -0.095), '#fffaf0', { jitter: 0, t: 0.004, edge: '#fff' });
+  h(rrect(0.044, 0.05, 0.014, 0.35, -0.08), '#fffaf0', { jitter: 0, t: 0.004, edge: '#fff' });
+  h(ellipse(0.112, 0.09, 0.5, 0.098, 30), '#454344', { jitter: 0, name: 'nariz' });
+  h(ellipse(0.032, 0.017, 0.475, 0.139, 14), '#6d6b68', { jitter: 0, t: 0.003 });
   // bochecha cheia (sopro) e rubor
   const bochecha = rig(cabeca, 'bochecha', { x: 0.2, y: 0.015, z: h.z() + 0.003, s: 0.001 });
-  piece(bochecha, ellipse(0.17, 0.15, 0, 0, 26), pat('dots', '#f6e7cc', '#f8c6c9', 0.14), { t: 0.006, edge: '#e7bfa8' });
+  piece(bochecha, ellipse(0.17, 0.15, 0, 0, 26), pat('dots', '#ece8d8', '#dfd9cd', 0.14), { t: 0.006, edge: '#d9d6c7' });
   piece(bochecha, ellipse(0.075, 0.05, 0.02, -0.02, 14), '#f49ab0', { t: 0.004, z: 0.005 });
   const roxo = rig(cabeca, 'roxo', { x: 0.1, y: 0.1, z: h.z() + 0.008, s: 0.001 });
   piece(roxo, ellipse(0.18, 0.13, 0, 0, 22), '#b13bb0', { t: 0.003, edge: '#b13bb0' });
   // olho
-  const olho = rig(cabeca, 'olho', { x: 0.075, y: 0.185, z: h.z() + 0.012 });
-  piece(olho, ellipse(0.09, 0.098, 0, 0, 24), '#fffdf4', { t: 0.006, edge: '#d5cbe2', jitter: 0.001 });
+  const olhoLonge = rig(cabeca, 'olhoLonge', { x: -0.075, y: 0.215, z: h.z() + 0.009 });
+  piece(olhoLonge, ellipse(0.06, 0.091, 0, 0, 24), '#fffdf4', { t: 0.006, edge: '#d8ded5', jitter: 0.001 });
+  piece(olhoLonge, ellipse(0.033, 0.062, 0.017, -0.007, 22), '#252c2c', { t: 0.006, z: 0.005, jitter: 0 });
+  piece(olhoLonge, ellipse(0.012, 0.017, 0.027, 0.015, 10), '#ffffff', { t: 0.004, z: 0.01, jitter: 0 });
+  h(stroke([[-0.13, 0.315], [-0.09, 0.34], [-0.035, 0.323]], 0.027), '#8c7b67', { jitter: 0 });
+  const olho = rig(cabeca, 'olho', { x: 0.075, y: 0.215, z: h.z() + 0.012 });
+  piece(olho, ellipse(0.09, 0.11, 0, 0, 26), '#fffdf4', { t: 0.006, edge: '#d8ded5', jitter: 0.001 });
   const pupila = rig(olho, 'pupila', { x: 0.024, y: -0.008, z: 0.005 });
-  piece(pupila, ellipse(0.05, 0.06, 0, 0, 18), '#2d1c2f', { t: 0.006, jitter: 0 });
+  piece(pupila, ellipse(0.05, 0.073, 0, 0, 24), '#252c2c', { t: 0.006, jitter: 0 });
   piece(pupila, ellipse(0.018, 0.018, 0.018, 0.022, 8), '#ffffff', { t: 0.004, z: 0.005, jitter: 0 });
-  const sobr = rig(cabeca, 'sobrancelha', { x: 0.08, y: 0.3, z: h.z() + 0.022, rot: -0.28 });
-  piece(sobr, stroke([[-0.12, 0.012], [0, 0.02], [0.12, -0.012]], 0.042, { taper: 0.5 }), '#3a3668', { t: 0.006, jitter: 0 });
+  const sobr = rig(cabeca, 'sobrancelha', { x: 0.08, y: 0.35, z: h.z() + 0.022, rot: -0.08 });
+  piece(sobr, stroke([[-0.1, -0.008], [-0.025, 0.025], [0.035, 0.02], [0.1, -0.015]], 0.034, { taper: 0.35 }), '#8c7b67', { t: 0.006, jitter: 0 });
   // braço da frente
   const bracoF = rig(corpo, 'bracoF', { x: 0.03, y: 0.78, z: 0.12, rot: 0.25 });
-  piece(bracoF, stroke([[0, 0], [0.04, -0.2], [0.03, -0.35]], 0.105), pelo, { t: 0.008, jitter: 0.002, edge: '#e4e0f7' });
-  piece(bracoF, ellipse(0.075, 0.066, 0.03, -0.385, 14), '#4f4b82', { t: 0.008, z: 0.004 });
+  piece(bracoF, stroke([[0, 0], [0.04, -0.2], [0.03, -0.35]], 0.15), pelo, { t: 0.008, jitter: 0.002, edge: '#d8ded5' });
+  piece(bracoF, ellipse(0.085, 0.075, 0.03, -0.385, 20), creme, { t: 0.008, z: 0.004 });
+  for (const dx of [-0.025, 0.02, 0.065]) piece(bracoF, ellipse(0.014, 0.021, dx, -0.44, 10), '#454344', { t: 0.004, z: 0.008, jitter: 0 });
   const fase = Math.abs(x * 5 + z * 2) % 6.28;
-  const refs = { root, corpo, cabeca, queixo, fundoBoca, peito, bochecha, roxo, rabo, chama, olho, pupila, sobr, bracoF, bracoT, pernaF, pernaT, orelhaF, orelhaT };
+  const refs = { root, corpo, cabeca, queixo, fundoBoca, peito, bochecha, roxo, rabo, chama, olho, olhoLonge, pupila, sobr, lenco, bracoF, bracoT, pernaF, pernaT, orelhaF, orelhaT };
   refs.idle = (t) => {
     corpo.position.y = Math.sin(t * 1.5 + fase) * 0.006;
     rabo.rotation.z = 0.32 + Math.sin(t * 2.2 + fase) * 0.06;
     const pisca = (t * 0.27 + fase) % 1; olho.scale.y = pisca < 0.03 ? 0.15 : 1;
+    olhoLonge.scale.y = olho.scale.y;
     orelhaF.rotation.z = -0.1 + Math.sin(t * 1.1 + fase) * 0.04;
   };
   return refs;

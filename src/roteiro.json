@@ -1,408 +1,501 @@
 {
- "0": {
-  "acao": "tchau",
-  "falas": [
-   {
-    "quem": [
-     "mae"
+  "0": {
+    "acao": "tchau",
+    "falas": [
+      {
+        "quem": [
+          "mae"
+        ],
+        "texto": "Chegou a hora, meus filhos.",
+        "de": "chegou a hora",
+        "ate": "meus filhos"
+      },
+      {
+        "quem": [
+          "mae"
+        ],
+        "texto": "Cada um vai construir a sua casa.",
+        "de": "cada um vai",
+        "ate": "a sua casa"
+      },
+      {
+        "quem": [
+          "mae"
+        ],
+        "texto": "Façam casas bem fortes, porque o Lobo anda por aí.",
+        "de": "facam casas",
+        "ate": "anda por ai"
+      }
     ],
-    "texto": "Chegou a hora, meus filhos.",
-    "de": "chegou a hora",
-    "ate": "meus filhos"
-   },
-   {
-    "quem": [
-     "mae"
+    "marcos": {
+      "era": {
+        "em": "era uma vez"
+      },
+      "mae-diz": {
+        "em": "um dia a mamae"
+      },
+      "pipo-nome": {
+        "em": "foram joao",
+        "palavra": 1
+      },
+      "tico-nome": {
+        "em": "lulu e kael de"
+      },
+      "bento-nome": {
+        "em": "e kael de trouxa",
+        "palavra": 1
+      },
+      "tchau": {
+        "em": "e la se foram"
+      },
+      "estrada": {
+        "em": "de trouxa nas",
+        "ate": "estrada afora"
+      }
+    }
+  },
+  "1": {
+    "acao": "palha",
+    "falas": [
+      {
+        "quem": [
+          "pipo",
+          "tico"
+        ],
+        "texto": "Para que tanto trabalho?",
+        "de": "para que tanto",
+        "ate": "tanto trabalho"
+      },
+      {
+        "quem": [
+          "bento"
+        ],
+        "texto": "Vocês vão ver!",
+        "de": "voces vao ver",
+        "ate": "voces vao ver"
+      }
     ],
-    "texto": "Cada um vai construir a sua casa.",
-    "de": "cada um vai",
-    "ate": "a sua casa"
-   },
-   {
-    "quem": [
-     "mae"
+    "marcos": {
+      "brincar": {
+        "em": "joao so queria"
+      },
+      "palha": {
+        "em": "juntou um monte",
+        "ate": "estava pronta"
+      },
+      "madeira": {
+        "em": "lulu pregou",
+        "ate": "as pressas"
+      },
+      "flauta": {
+        "em": "foi tocar flauta"
+      },
+      "tijolo": {
+        "em": "kael carregou",
+        "ate": "dia inteiro"
+      },
+      "riem": {
+        "em": "riram os irmaos"
+      },
+      "massa": {
+        "em": "passou mais massa"
+      }
+    }
+  },
+  "2": {
+    "acao": "sopro",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Porquinho, porquinho, deixe eu entrar!",
+        "de": "porquinho porquinho",
+        "ate": "eu entrar"
+      },
+      {
+        "quem": [
+          "pipo"
+        ],
+        "texto": "Não, não e não!",
+        "de": "nao nao e nao",
+        "ate": "nao nao e nao"
+      },
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Então eu vou soprar, e soprar, e a sua casa derrubar!",
+        "de": "entao eu vou",
+        "ate": "casa derrubar"
+      },
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Fuuuu!",
+        "de": "fuuuu",
+        "ate": "fuuuu"
+      }
     ],
-    "texto": "Façam casas bem fortes, porque o Lobo anda por aí.",
-    "de": "facam casas",
-    "ate": "anda por ai"
-   }
-  ],
-  "marcos": {
-   "era": {
-    "em": "era uma vez"
-   },
-   "mae-diz": {
-    "em": "um dia a mamae"
-   },
-   "pipo-nome": {
-    "em": "foram pipo",
-    "palavra": 1
-   },
-   "tico-nome": {
-    "em": "tico e bento de"
-   },
-   "bento-nome": {
-    "em": "e bento de trouxa",
-    "palavra": 1
-   },
-   "tchau": {
-    "em": "e la se foram"
-   },
-   "estrada": {
-    "em": "de trouxa nas",
-    "ate": "estrada afora"
-   }
+    "marcos": {
+      "chega": {
+        "em": "nao demorou",
+        "ate": "de barriga"
+      },
+      "bate": {
+        "em": "bateu na porta"
+      },
+      "encher": {
+        "em": "encheu o peito",
+        "ate": "o peito e"
+      },
+      "sopro": {
+        "em": "fuuuu"
+      },
+      "foge": {
+        "em": "e joao correu",
+        "palavra": 1
+      },
+      "calma": {
+        "em": "para todo lado"
+      },
+      "atras": {
+        "em": "casa do irmao"
+      }
+    }
+  },
+  "3": {
+    "acao": "sopro1",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Porquinhos, porquinhos, deixem eu entrar!",
+        "de": "porquinhos porquinhos",
+        "ate": "eu entrar"
+      },
+      {
+        "quem": [
+          "pipo",
+          "tico"
+        ],
+        "texto": "Não, não e não!",
+        "de": "nao nao e nao",
+        "ate": "nao nao e nao"
+      },
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Então eu vou soprar, e soprar, e a sua casa derrubar!",
+        "de": "entao eu vou",
+        "ate": "casa derrubar"
+      }
+    ],
+    "marcos": {
+      "pipo-chega": {
+        "em": "joao chegou",
+        "ate": "casa de lulu"
+      },
+      "entra": {
+        "em": "e os dois"
+      },
+      "chega": {
+        "em": "o lobo foi",
+        "ate": "e bateu"
+      },
+      "bate": {
+        "em": "bateu na porta"
+      },
+      "encher1": {
+        "em": "soprou uma vez",
+        "desloca": -0.72
+      },
+      "sopro1": {
+        "em": "soprou uma vez"
+      },
+      "calma1": {
+        "em": "soprou outra",
+        "desloca": -0.5
+      },
+      "encher2": {
+        "em": "soprou outra"
+      },
+      "sopro2": {
+        "em": "a casa despencou"
+      },
+      "foge": {
+        "em": "joao e lulu dispararam"
+      },
+      "calma2": {
+        "em": "casa de kael"
+      }
+    }
+  },
+  "4": {
+    "acao": "sopro0",
+    "falas": [
+      {
+        "quem": [
+          "bento"
+        ],
+        "texto": "Entrem, entrem!",
+        "de": "entrem entrem",
+        "ate": "entrem entrem"
+      },
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Porquinhos, porquinhos, deixem eu entrar!",
+        "de": "porquinhos porquinhos",
+        "ate": "eu entrar"
+      },
+      {
+        "quem": [
+          "pipo",
+          "tico",
+          "bento-janela"
+        ],
+        "texto": "Não, não e não!",
+        "de": "nao nao e nao",
+        "ate": "nao nao e nao"
+      },
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Então eu vou soprar, e soprar, e a sua casa derrubar!",
+        "de": "entao eu vou",
+        "ate": "casa derrubar"
+      }
+    ],
+    "marcos": {
+      "chegam": {
+        "em": "joao e lulu chegaram",
+        "ate": "casa de kael"
+      },
+      "abre": {
+        "em": "entrem entrem"
+      },
+      "entra-pipo": {
+        "em": "joao entrou"
+      },
+      "entra-tico": {
+        "em": "lulu entrou"
+      },
+      "entra-bento": {
+        "em": "e kael entrou",
+        "ate": "por ultimo"
+      },
+      "tranca": {
+        "em": "trancou a porta"
+      },
+      "chega": {
+        "em": "o lobo chegou",
+        "ate": "lobo chegou bufando"
+      },
+      "sopro0": {
+        "em": "soprou soprou",
+        "desloca": -0.72
+      },
+      "sopro1": {
+        "em": "soprou soprou",
+        "desloca": 1.0,
+        "ritmo": 0.7
+      },
+      "sopro2": {
+        "em": "soprou soprou",
+        "desloca": 2.2,
+        "ritmo": 0.7
+      },
+      "firme": {
+        "em": "a casa nem"
+      },
+      "cansado": {
+        "em": "la dentro",
+        "desloca": -0.8
+      },
+      "sopa": {
+        "em": "tomavam sopa"
+      }
+    }
+  },
+  "5": {
+    "acao": "sobe",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "A chaminé!",
+        "de": "a chamine",
+        "ate": "a chamine"
+      }
+    ],
+    "marcos": {
+      "olha": {
+        "em": "o lobo olhou"
+      },
+      "sorri": {
+        "em": "e sorriu"
+      },
+      "sobe": {
+        "em": "subiu no telhado",
+        "ate": "de mansinho"
+      },
+      "ouve": {
+        "em": "mas kael ouviu"
+      },
+      "passos": {
+        "em": "passos nas telhas"
+      }
+    }
+  },
+  "6": {
+    "acao": "brasas",
+    "falas": [
+      {
+        "quem": [
+          "bento"
+        ],
+        "texto": "Depressa, lenha no fogo!",
+        "de": "depressa lenha",
+        "ate": "no fogo"
+      }
+    ],
+    "marcos": {
+      "lenha": {
+        "em": "depressa lenha"
+      },
+      "brasas": {
+        "em": "joao soprou"
+      },
+      "empurra": {
+        "em": "lulu empurrou"
+      },
+      "ferve": {
+        "em": "a agua comecou"
+      },
+      "espia": {
+        "em": "o lobo ja"
+      }
+    }
+  },
+  "7": {
+    "acao": "tchibum",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Auuuuu!",
+        "de": "deu um uivo",
+        "ate": "sete montanhas"
+      }
+    ],
+    "marcos": {
+      "queda": {
+        "em": "o lobo desceu",
+        "ate": "escorregou e"
+      },
+      "tchibum": {
+        "em": "tchibum"
+      },
+      "uivo": {
+        "em": "deu um uivo"
+      },
+      "foguete": {
+        "em": "saiu pela chamine",
+        "ritmo": 1
+      },
+      "voo": {
+        "em": "como um foguete",
+        "ate": "soltando fumaca"
+      },
+      "viva": {
+        "em": "soltando fumaca"
+      }
+    }
+  },
+  "8": {
+    "acao": "foge1",
+    "falas": [
+      {
+        "quem": [
+          "pipo",
+          "tico",
+          "bento"
+        ],
+        "texto": "E não volte nunca mais!",
+        "de": "e nao volte",
+        "ate": "volte nunca mais"
+      }
+    ],
+    "marcos": {
+      "gritam": {
+        "em": "e nao volte"
+      },
+      "foge1": {
+        "em": "o lobo correu",
+        "palavra": 2
+      },
+      "foge2": {
+        "em": "lobo correu correu",
+        "palavra": 2
+      },
+      "foge3": {
+        "em": "correu correu correu",
+        "palavra": 2
+      },
+      "some": {
+        "em": "nunca mais voltou"
+      },
+      "acena": {
+        "em": "aquele lugar"
+      }
+    }
+  },
+  "9": {
+    "acao": "danca",
+    "falas": [],
+    "marcos": {
+      "noite": {
+        "em": "naquela noite"
+      },
+      "bolo": {
+        "em": "a mamae porca"
+      },
+      "danca": {
+        "em": "os tres dancaram"
+      },
+      "fogos": {
+        "em": "em volta da"
+      }
+    }
+  },
+  "10": {
+    "acao": "quartos",
+    "falas": [],
+    "marcos": {
+      "dias": {
+        "em": "depois disso"
+      },
+      "quartos": {
+        "em": "joao e lulu",
+        "ate": "dois quartos"
+      },
+      "flauta": {
+        "em": "kael aprendeu"
+      },
+      "vento": {
+        "em": "e viveram felizes"
+      },
+      "fim": {
+        "em": "fim"
+      }
+    }
   }
- },
- "1": {
-  "acao": "palha",
-  "falas": [
-   {
-    "quem": [
-     "pipo",
-     "tico"
-    ],
-    "texto": "Para que tanto trabalho?",
-    "de": "para que tanto",
-    "ate": "tanto trabalho"
-   },
-   {
-    "quem": [
-     "bento"
-    ],
-    "texto": "Vocês vão ver!",
-    "de": "voces vao ver",
-    "ate": "voces vao ver"
-   }
-  ],
-  "marcos": {
-   "brincar": {
-    "em": "pipo so queria"
-   },
-   "palha": {
-    "em": "juntou um monte"
-   },
-   "pronta": {
-    "em": "estava pronta"
-   },
-   "madeira": {
-    "em": "tico pregou",
-    "ate": "as pressas"
-   },
-   "flauta": {
-    "em": "foi tocar flauta"
-   },
-   "tijolo": {
-    "em": "bento carregou",
-    "ate": "dia inteiro"
-   },
-   "riem": {
-    "em": "riram os irmaos"
-   },
-   "massa": {
-    "em": "passou mais massa"
-   }
-  }
- },
- "2": {
-  "acao": "sopro",
-  "falas": [
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Porquinho, porquinho, deixe eu entrar!",
-    "de": "porquinho porquinho",
-    "ate": "eu entrar"
-   },
-   {
-    "quem": [
-     "pipo"
-    ],
-    "texto": "Não, não e não!",
-    "de": "nao nao e nao",
-    "ate": "nao nao e nao"
-   },
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Então eu vou soprar, e soprar, e a sua casa derrubar!",
-    "de": "entao eu vou",
-    "ate": "casa derrubar"
-   },
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Fuuuu!",
-    "de": "fuuuu",
-    "ate": "fuuuu"
-   }
-  ],
-  "marcos": {
-   "chega": {
-    "em": "nao demorou",
-    "ate": "de barriga"
-   },
-   "bate": {
-    "em": "bateu na porta"
-   },
-   "encher": {
-    "em": "encheu o peito",
-    "ate": "o peito e"
-   },
-   "sopro": {
-    "em": "fuuuu"
-   },
-   "foge": {
-    "em": "e pipo correu",
-    "palavra": 1
-   },
-   "calma": {
-    "em": "para todo lado"
-   }
-  }
- },
- "3": {
-  "acao": "sopro1",
-  "falas": [
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Porquinhos, porquinhos, deixem eu entrar!",
-    "de": "porquinhos porquinhos",
-    "ate": "eu entrar"
-   },
-   {
-    "quem": [
-     "pipo",
-     "tico"
-    ],
-    "texto": "Não, não e não!",
-    "de": "nao nao e nao",
-    "ate": "nao nao e nao"
-   },
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Então eu vou soprar, e soprar, e a sua casa derrubar!",
-    "de": "entao eu vou",
-    "ate": "casa derrubar"
-   }
-  ],
-  "marcos": {
-   "chega": {
-    "em": "o lobo foi",
-    "ate": "e bateu"
-   },
-   "bate": {
-    "em": "bateu na porta"
-   },
-   "encher1": {
-    "em": "soprou uma vez",
-    "desloca": -0.72
-   },
-   "sopro1": {
-    "em": "soprou uma vez"
-   },
-   "calma1": {
-    "em": "soprou outra",
-    "desloca": -0.5
-   },
-   "encher2": {
-    "em": "soprou outra"
-   },
-   "sopro2": {
-    "em": "a casa despencou"
-   },
-   "foge": {
-    "em": "pipo e tico dispararam"
-   },
-   "calma2": {
-    "em": "casa de bento"
-   }
-  }
- },
- "4": {
-  "acao": "sopro0",
-  "falas": [
-   {
-    "quem": [
-     "bento"
-    ],
-    "texto": "Entrem, entrem!",
-    "de": "entrem entrem",
-    "ate": "entrem entrem"
-   },
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Porquinhos, porquinhos, deixem eu entrar!",
-    "de": "porquinhos porquinhos",
-    "ate": "eu entrar"
-   },
-   {
-    "quem": [
-     "pipo",
-     "tico",
-     "bento"
-    ],
-    "texto": "Não, não e não!",
-    "de": "nao nao e nao",
-    "ate": "nao nao e nao"
-   },
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "Então eu vou soprar, e soprar, e a sua casa derrubar!",
-    "de": "entao eu vou",
-    "ate": "casa derrubar"
-   }
-  ],
-  "marcos": {
-   "tranca": {
-    "em": "trancou a porta"
-   },
-   "chega": {
-    "em": "o lobo chegou",
-    "ate": "lobo chegou bufando"
-   },
-   "sopro0": {
-    "em": "soprou soprou",
-    "desloca": -0.72
-   },
-   "sopro1": {
-    "em": "soprou soprou",
-    "desloca": 1.0,
-    "ritmo": 0.7
-   },
-   "sopro2": {
-    "em": "soprou soprou",
-    "desloca": 2.2,
-    "ritmo": 0.7
-   },
-   "firme": {
-    "em": "a casa nem"
-   },
-   "cansado": {
-    "em": "la dentro",
-    "desloca": -0.8
-   },
-   "sopa": {
-    "em": "tomavam sopa"
-   }
-  }
- },
- "5": {
-  "acao": "lenha",
-  "falas": [
-   {
-    "quem": [
-     "lobo"
-    ],
-    "texto": "A chaminé!",
-    "de": "a chamine subiu",
-    "ate": "a chamine subiu",
-    "palavras": 2
-   },
-   {
-    "quem": [
-     "bento"
-    ],
-    "texto": "Depressa, lenha no fogo!",
-    "de": "depressa lenha",
-    "ate": "no fogo"
-   }
-  ],
-  "marcos": {
-   "surge": {
-    "em": "o lobo olhou"
-   },
-   "sorri": {
-    "em": "e sorriu"
-   },
-   "sobe": {
-    "em": "subiu no telhado",
-    "ate": "de mansinho"
-   },
-   "ouve": {
-    "em": "bento ouviu"
-   },
-   "lenha": {
-    "em": "lenha no fogo"
-   },
-   "brasas": {
-    "em": "pipo soprou"
-   },
-   "empurra": {
-    "em": "tico empurrou"
-   },
-   "ferve": {
-    "em": "a agua comecou"
-   },
-   "espia": {
-    "em": "debaixo da chamine"
-   }
-  }
- },
- "6": {
-  "acao": "tchibum",
-  "falas": [],
-  "marcos": {
-   "queda": {
-    "em": "o lobo desceu",
-    "ate": "escorregou e"
-   },
-   "tchibum": {
-    "em": "tchibum"
-   },
-   "uivo": {
-    "em": "deu um uivo"
-   },
-   "foguete": {
-    "em": "saiu pela chamine",
-    "ritmo": 1
-   },
-   "voo": {
-    "em": "como um foguete",
-    "ate": "soltando fumaca"
-   },
-   "some": {
-    "em": "nunca mais voltou"
-   },
-   "viva": {
-    "em": "aquele lugar"
-   }
-  }
- },
- "7": {
-  "acao": "danca",
-  "falas": [],
-  "marcos": {
-   "bolo": {
-    "em": "a mamae porca"
-   },
-   "danca": {
-    "em": "os tres dancaram"
-   },
-   "quartos": {
-    "em": "ergueram mais",
-    "ate": "dois quartos"
-   },
-   "flauta": {
-    "em": "bento aprendeu"
-   },
-   "fogos": {
-    "em": "e viveram felizes"
-   },
-   "fim": {
-    "em": "fim"
-   }
-  }
- }
 }

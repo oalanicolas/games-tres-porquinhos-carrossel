@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync } from 'node:fs';
 import { abrir } from './_apoio.mjs';
 const { faixas } = JSON.parse(readFileSync(new URL('../src/narracao.json', import.meta.url)));
 const saida = process.env.SAIDA || 'output/qa'; mkdirSync(saida, { recursive: true });
-const escolhas = [[0, 0], [1, 1], [2, 0], [2, 1], [3, 1], [4, 2], [5, 1]];
+const escolhas = Object.keys(faixas).flatMap((i) => faixas[i].falas.map((_, k) => [+i, k]));
 for (const [largura, altura] of (process.env.TELAS ? JSON.parse(process.env.TELAS) : [[1440, 870], [390, 844], [360, 640], [844, 390]])) {
   const { page, fechar } = await abrir({ largura, altura, url: process.env.LIVRO_URL });
   for (const [i, k] of escolhas) {

@@ -1,4 +1,4 @@
-// Percurso real pela interface: abre pelo botão, percorre as oito cenas com a ação de cada uma, mede quadros, lupa e erros.
+// Percurso real pela interface: abre pelo botão, percorre as onze cenas com a ação de cada uma, mede quadros, lupa e erros.
 import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const base = process.env.LIVRO_URL || 'http://127.0.0.1:4291/';
@@ -23,7 +23,7 @@ const somCapa = await (async () => { await page.keyboard.press('Shift'); await p
 await page.click('#acao');
 const abertura = await fps(2600); rel.abertura = abertura;
 await page.waitForFunction(() => window.__livro.estado.modo === 'aberto', null, { timeout: 8000 });
-for (let i = 0; i < 8; i++) {
+for (let i = 0; i < 11; i++) {
   await page.waitForTimeout(700);
   const antes = await page.evaluate(() => ({ i: window.__livro.estado.indice, acao: document.querySelector('#acao').textContent, titulo: document.querySelector('#cena-titulo').textContent }));
   const s0 = await som(); await page.waitForTimeout(500); const s1 = await som();
@@ -46,7 +46,7 @@ for (let i = 0; i < 8; i++) {
     rel.lupa = await page.evaluate(() => ({ lupa: getComputedStyle(document.querySelector('#lupa')).display !== 'none' && document.querySelector('#lupa').classList.length, cartao: document.querySelector('#cartao').textContent.slice(0, 40) }));
     await page.screenshot({ path: `${saida}/lupa.png` }); await page.mouse.move(5, 5);
   }
-  if (i < 7) { await page.click('#proxima'); await page.waitForTimeout(800); }
+  if (i < 10) { await page.click('#proxima'); await page.waitForTimeout(800); }
 }
 rel.erros = erros;
 writeFileSync(`${saida}/relatorio.json`, JSON.stringify(rel, null, 1));

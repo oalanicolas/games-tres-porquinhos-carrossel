@@ -224,11 +224,16 @@ function seguirLeitura(dt) {
 audio.aoComecarVoz = (i) => { clearTimeout(viradaAuto); prepararLeitura(i); };
 audio.aoFalhaVoz = () => soltarLeitura();
 audio.aoFimDaVoz = (i) => {
-  if (i !== estado.indice || estado.modo !== 'aberto') return;
+  if (i !== estado.indice || !audio.narrando || !['abrindo', 'aberto'].includes(estado.modo)) return;
+  clearTimeout(viradaAuto);
+  if (leitura.i === i) {
+    leitura.comecou = true;
+    leitura.relogio = Math.max(leitura.relogio, audio.faixasVoz[i].duracao);
+  }
   const ultima = i >= N - 1; // fim da história: o livro se fecha sozinho e fica pronto para ser lido de novo
   const virar = () => {
-    if (i !== estado.indice || !audio.narrando || estado.modo !== 'aberto') return;
-    if (estado.arrastando || leitura.segue || cenas[i].linha.playing) { viradaAuto = setTimeout(virar, 300); return; }
+    if (i !== estado.indice || !audio.narrando || !['abrindo', 'aberto'].includes(estado.modo)) return;
+    if (audio.oculto || estado.modo === 'abrindo' || estado.arrastando || leitura.segue || cenas[i].linha.playing) { viradaAuto = setTimeout(virar, 300); return; }
     if (ultima) { recomecarAoFechar = true; fecharLivro(); } else irPara(i + 1);
   };
   viradaAuto = setTimeout(virar, (ultima ? PAUSA_ANTES_DE_FECHAR : PAUSA_ANTES_DE_VIRAR) * 1000);
@@ -312,6 +317,11 @@ canvas.addEventListener('pointerup', (ev) => {
   estado.giroAlvo = destino * CUNHA;
 });
 canvas.addEventListener('pointerleave', () => { if (!estado.arrastando) esconderCartao(); });
+for (const evento of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(evento, () => {
+  if (!estado.arrastando) return;
+  estado.arrastando = false; estado.velo = 0; estado.giroAlvo = Math.max(0, estado.indice) * CUNHA;
+  canvas.classList.remove('arrastando'); esconderCartao();
+});
 
 // ---- laço -------------------------------------------------------------------------------------------
 let ultimo = performance.now(); let relogio = 0;
