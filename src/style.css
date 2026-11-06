@@ -25,7 +25,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 button:focus-visible, a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
 .pilula { position: fixed; z-index: 3; background: var(--vidro); border: 1px solid var(--vidro-borda); box-shadow: var(--sombra), inset 0 1px 0 rgba(255,255,255,.5); backdrop-filter: blur(16px) saturate(1.25); -webkit-backdrop-filter: blur(16px) saturate(1.25); border-radius: 999px; transition: opacity .35s, transform .35s; }
-body.so-olhar .pilula:not(.voltar-olhar), body.so-olhar .assinatura { opacity: 0; pointer-events: none; transform: translateY(6px); }
+body.so-olhar .pilula:not(.voltar-olhar) { opacity: 0; pointer-events: none; transform: translateY(6px); }
 
 .titulo { top: max(16px, env(safe-area-inset-top)); left: 16px; display: flex; align-items: baseline; gap: 12px; padding: 12px 22px 13px; max-width: calc(100vw - 32px); }
 .titulo strong { font: 600 clamp(17px, 1.7vw, 25px)/1 var(--display); letter-spacing: -.01em; white-space: nowrap; font-variation-settings: 'opsz' 40; }
@@ -40,13 +40,7 @@ body.so-olhar .pilula:not(.voltar-olhar), body.so-olhar .assinatura { opacity: 0
 .abertura p { margin-top: 18px; font-size: clamp(13px, 1.04vw, 16px); line-height: 1.58; color: #e6c7a7; max-width: 36ch; }
 body.aberto .abertura, body.fechando .abertura { opacity: 0; transform: translateY(-14px); }
 
-.assinatura { position: fixed; z-index: 2; right: 18px; bottom: 96px; font-size: 13px; letter-spacing: .03em; color: #f2dcc4; opacity: .85; text-decoration: none; padding: 2px 9px; border-radius: 99px; background: rgba(46,26,12,.72); }
-.assinatura:hover { text-decoration: underline; }
-.credito-musica { bottom: 124px; font-size: 11px; opacity: 0; pointer-events: none; transition: opacity .4s; }
-body.credito .credito-musica { opacity: 1; pointer-events: auto; }
-.credito-voz { bottom: 150px; font-size: 11px; opacity: 0; pointer-events: none; transition: opacity .4s; }
-body.credito .credito-voz { opacity: 1; pointer-events: auto; }
-.credito-voz[hidden], .icone[hidden] { display: none; }
+.icone[hidden] { display: none; }
 
 .barra { left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 6px; padding: 10px 14px; max-width: calc(100vw - 20px); width: max-content; }
 body.so-olhar .barra { transform: translate(-50%, 6px); }
@@ -105,10 +99,6 @@ body.tocar .cartao { pointer-events: auto; }
   .abertura h1 { font-size: 40px; }
   .abertura h1 br { display: none; }
   .abertura p { margin-top: 8px; font-size: 13.500px; }
-  .assinatura { top: auto; bottom: 152px; right: 16px; font-size: 11px; }
-  .credito-musica { bottom: 170px; font-size: 10px; }
-  .credito-voz { bottom: 194px; font-size: 10px; }
-  body.aberto .assinatura:not(.credito-musica, .credito-voz) { display: none; }
   .barra { flex-wrap: wrap; justify-content: center; border-radius: 26px; padding: 10px 8px; gap: 2px 3px; width: calc(100vw - 20px); }
   .legenda { order: -1; width: 100%; text-align: center; margin: 0 8px 4px; }
   .legenda span { font-size: 12.500px; }
@@ -128,9 +118,6 @@ body.tocar .cartao { pointer-events: auto; }
   .abertura { top: 62px; width: 40vw; }
   .abertura h1 { font-size: 30px; }
   .abertura p { font-size: 12.500px; line-height: 1.4; }
-  .assinatura { right: auto; left: 20px; bottom: 62px; font-size: 10px; }
-  .credito-musica { bottom: 86px; }
-  .credito-voz { bottom: 108px; }
 }
 .baloes { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
 .balao { position: absolute; left: 0; top: 0; max-width: min(250px, 58vw); padding: 9px 14px 10px; background: #fffdf4; color: var(--tinta); font: 500 clamp(14px, 1.3vw, 19px)/1.24 var(--display); text-align: center; text-wrap: balance; border: 1px solid #e8d9c4; border-radius: 18px; box-shadow: 0 2px 0 #e8d9c4, 0 9px 20px rgba(30, 12, 2, .3); will-change: transform; }

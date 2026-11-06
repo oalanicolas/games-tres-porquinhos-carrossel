@@ -4,28 +4,28 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { abrir } from './_apoio.mjs';
 
-test('sem voz gravada, o botão e o crédito não aparecem', async () => {
+test('sem voz gravada, o botão não aparece', async () => {
   const { page, fechar, erros } = await abrir({ antes: (p) => p.route('**/src/narracao.json*', (r) => r.fulfill({ contentType: 'text/javascript', body: 'export default { faixas: {} };' })) });
   try {
     await page.waitForTimeout(500);
-    const r = await page.evaluate(() => ({ botao: getComputedStyle(document.querySelector('#narrar')).display, credito: document.querySelector('#credito-voz').hidden, tem: window.__livro.audio.temNarracao() }));
-    assert.deepEqual(r, { botao: 'none', credito: true, tem: false });
+    const r = await page.evaluate(() => ({ botao: getComputedStyle(document.querySelector('#narrar')).display, tem: window.__livro.audio.temNarracao() }));
+    assert.deepEqual(r, { botao: 'none', tem: false });
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
 
-test('a voz real existe nas 8 cenas, com botão, crédito e o momento de cada ação', async () => {
+test('a voz real existe nas 8 cenas, com botão e o momento de cada ação', async () => {
   const { page, fechar, erros } = await abrir({ narrado: true });
   try {
     await page.waitForTimeout(500);
     const r = await page.evaluate(async () => {
       const a = window.__livro.audio; const f = a.faixasVoz; const cenas = Object.keys(f);
       const medidas = await Promise.all(cenas.map(async (i) => { const x = await fetch(`/narracao/${f[i].arquivo}`); const b = await x.arrayBuffer(); const seg = await new (window.AudioContext)().decodeAudioData(b); return { i, status: x.status, seg: seg.duration, previsto: f[i].duracao, acao: f[i].acao_em }; }));
-      return { medidas, botao: getComputedStyle(document.querySelector('#narrar')).display, credito: document.querySelector('#credito-voz').textContent, oculto: document.querySelector('#credito-voz').hidden };
+      return { medidas, botao: getComputedStyle(document.querySelector('#narrar')).display };
     });
     assert.equal(r.medidas.length, 8);
     for (const m of r.medidas) { assert.equal(m.status, 200); assert.ok(Math.abs(m.seg - m.previsto) < 0.5, `cena ${m.i}: ${m.seg} s, previsto ${m.previsto} s`); assert.ok(m.acao > 0 && m.acao < m.seg, `cena ${m.i}: ação em ${m.acao} s`); }
-    assert.notEqual(r.botao, 'none'); assert.equal(r.oculto, false); assert.match(r.credito, /Voz sintética.*ElevenLabs/);
+    assert.notEqual(r.botao, 'none');
     await page.click('#acao');
     await page.waitForFunction(() => window.__livro.audio.estado().voz?.tempo > 1, null, { timeout: 15000 });
     const e = await page.evaluate(() => window.__livro.audio.estado());

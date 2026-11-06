@@ -50,8 +50,21 @@ Sem as 8 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a con
 | `tests/telas.test.mjs` | livro nítido e textos sem sobreposição em 4 tamanhos de tela |
 | `tests/livro.test.mjs` | nenhuma peça fora da cunha e percurso real pela interface |
 
-## Pesquisa e créditos
+## Pesquisa
 
 - Decisões técnicas: `docs/pesquisas/Livro pop-up em carrossel no navegador — papel recortado, sombra e trilha por cena em Three.js.md`, no vault do hub.
 - Identidade visual: [docs/design-system.md](docs/design-system.md).
-- Créditos: [docs/creditos.md](docs/creditos.md) e [docs/creditos-sons.md](docs/creditos-sons.md).
+
+## Créditos
+
+A página não mostra créditos sobre a mesa, a pedido de Alan: eles ficam só aqui.
+
+- Criação: [Alan Nicolas](https://x.com/oalanicolas).
+- Conto: *Os Três Porquinhos*, conto popular em domínio público, recontado aqui em português.
+- Arte, texto e código: originais deste projeto, feitos por código.
+- Referência de forma: vídeo de Techartist, <https://x.com/techartist_/status/2116407421065482362>. Nenhuma arte foi copiada dele.
+- Voz: sintética, Yasmin Alves, da ElevenLabs, gravada pela API da Magnific. Recibo em `docs/narracao-recibo.json`.
+- Música: original, gerada com [Google Lyria 3](https://deepmind.google/models/lyria/) Pro pela API da Magnific. Recibo em `docs/trilha-recibo.json`.
+- Efeitos e ambientes: acervo CC0 do estúdio, lista completa em [docs/creditos-sons.md](docs/creditos-sons.md).
+- Fontes (licença SIL OFL): Fraunces, Inter e Libre Caslon Text, pelo Fontsource.
+- Bibliotecas: Three.js e Vite (licença MIT).

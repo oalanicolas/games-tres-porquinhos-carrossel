@@ -44,4 +44,4 @@ Papel `#fffdf4`, borda `#e8d9c4`, sombra de papel e a fonte de títulos, com cau
 
 ## Voz
 
-Enquanto a voz fala, a música cai para 0,3 e o ambiente para 0,5. Os créditos ficam sobre uma pílula escura, porque a página aberta passa por trás deles.
+Enquanto a voz fala, a música cai para 0,3 e o ambiente para 0,5.

@@ -15,14 +15,13 @@ for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular p
         return {
           rolagem: document.documentElement.scrollWidth - innerWidth,
           distancia: L.camera.position.length(), neblina: L.scene.fog.near,
-          h1: caixa('.abertura h1'), texto: caixa('.abertura p'), barra: caixa('#barra'), credito: caixa('.credito-musica'), assinatura: caixa('.assinatura:not(.credito-musica)'),
+          h1: caixa('.abertura h1'), texto: caixa('.abertura p'), barra: caixa('#barra'),
           titulo: document.querySelector('.abertura h1').innerText.replace(/\s+/g, ' ').trim(),
         };
       });
       assert.equal(r.rolagem, 0);
       assert.equal(r.titulo, 'Não, não e não!');
       assert.ok(r.neblina >= r.distancia - 1, `névoa em ${r.neblina} com a câmera a ${r.distancia}`);
-      for (const [a, b] of [['credito', 'h1'], ['credito', 'texto'], ['credito', 'barra'], ['assinatura', 'barra'], ['assinatura', 'credito']]) assert.ok(!sobrepoe(r[a], r[b]), `${a} sobre ${b}`);
       if (altura < 500) assert.ok(r.barra.height <= 60, `barra com ${r.barra.height}px numa tela de ${altura}px`);
       // Defeito devolvido por Alan: "a página deve abrir mais para ficar mais fácil de ler".
       const leitura = await page.evaluate(async () => {
@@ -49,16 +48,13 @@ for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular p
         return [...document.querySelectorAll('#barra button:not(#pontos button)')].filter((e) => e.offsetWidth).map((e) => { const q = e.getBoundingClientRect(); return q.top + q.height / 2; });
       });
       assert.ok(Math.max(...linhaDaBarra) - Math.min(...linhaDaBarra) < 6, `botões da barra em mais de uma linha: ${linhaDaBarra.map((v) => v.toFixed(0))}`);
-      // A página mais aberta passou por trás do crédito: a licença CC BY precisa continuar legível na cena final.
-      const credito = await page.evaluate(async () => {
-        window.__livro.abrirNaHora(7); await new Promise((f) => setTimeout(f, 700));
-        const e = document.querySelector('.credito-musica'); const c = getComputedStyle(e); const q = e.getBoundingClientRect();
-        return { display: c.display, opacidade: +c.opacity, fundo: +(c.backgroundColor.match(/[\d.]+\)$/)?.[0].replace(')', '') ?? 1), dentro: q.left >= 0 && q.right <= innerWidth && q.top >= 0 && q.bottom <= innerHeight, barra: document.querySelector('#barra').getBoundingClientRect().toJSON(), q: q.toJSON() };
+      // Pedido de Alan: nenhum crédito sobre a mesa; eles vivem no README.
+      const textoNaTela = await page.evaluate(async () => {
+        window.__livro.abrirNaHora(7); await new Promise((f) => setTimeout(f, 300));
+        return { fixos: document.querySelectorAll('.assinatura, .credito-musica, .credito-voz').length, texto: document.body.innerText };
       });
-      assert.notEqual(credito.display, 'none');
-      assert.ok(credito.opacidade === 1 && credito.fundo >= 0.6, `crédito com opacidade ${credito.opacidade} e fundo ${credito.fundo}`);
-      assert.ok(credito.dentro, 'crédito fora da tela');
-      assert.ok(!sobrepoe(credito.q, credito.barra), 'crédito sob a barra');
+      assert.equal(textoNaTela.fixos, 0, 'crédito sobre a mesa');
+      assert.doesNotMatch(textoNaTela.texto, /©|Lyria|ElevenLabs|Voz sintética/, 'crédito sobre a mesa');
       console.log(`${nome}: página de texto ${leitura.antiga.largura.toFixed(0)}px -> ${leitura.aberta.largura.toFixed(0)}px`);
     } finally { await fechar(); }
   });

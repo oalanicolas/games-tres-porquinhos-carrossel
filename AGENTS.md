@@ -35,6 +35,7 @@ Decididos na construção, ainda sem aprovação de Alan:
 
 ## Regras do conteúdo
 
+- Créditos só no `README.md`, nunca sobre a mesa (pedido de Alan, 06/11/2026). `tests/telas.test.mjs` confere.
 - Versão infantil: nenhum porquinho é comido e o Lobo foge.
 - Personagens: Pipo (palha), Tico (madeira), Bento (tijolos) e Mamãe Porca.
-- A música é original, gerada com Google Lyria 3 Pro pela Magnific (`tools/trilha.py`): o crédito visível na capa e na cena final não sai, e a licença de uso público ainda não foi confirmada.
+- A música é original, gerada com Google Lyria 3 Pro pela Magnific (`tools/trilha.py`): a licença de uso público ainda não foi confirmada.

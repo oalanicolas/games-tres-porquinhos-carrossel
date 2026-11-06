@@ -128,7 +128,6 @@ function atualizarUI() {
   pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
   document.body.classList.toggle('aberto', !capa);
   document.body.classList.toggle('fechando', estado.modo === 'fechando'); // o título da capa só volta com o livro já fechado
-  document.body.classList.toggle('credito', capa || i === N - 1);
   $('capitulo').hidden = capa;
   $('cena-titulo').textContent = capa ? CAPA.titulo : CENAS[i].titulo;
   $('cena-sub').textContent = capa ? CAPA.sub : CENAS[i].sub;
@@ -179,9 +178,6 @@ $('som').addEventListener('click', () => { audio.destravar(); const l = audio.al
 function prepararNarracao() {
   const tem = audio.temNarracao();
   $('narrar').hidden = !tem;
-  const cred = $('credito-voz');
-  cred.hidden = !tem;
-  if (tem) cred.textContent = `Voz sintética${audio.nomeVoz ? `: ${audio.nomeVoz}` : ''}, ElevenLabs`;
   let guardado = null;
   try { guardado = localStorage.getItem('porquinhos-narracao'); } catch { /* sem armazenamento: fica ligada */ }
   if (guardado === 'nao' && audio.narrando) audio.alternarNarracao();
