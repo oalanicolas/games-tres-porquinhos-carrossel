@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Os Três Porquinhos · livro-carrossel</title>
+<meta name="description" content="O conto completo do Lobo e dos Três Porquinhos num livro pop-up em carrossel: abra, gire e trabalhe o papel.">
+<meta name="theme-color" content="#3a2212">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='17' r='13' fill='%23f7a7b5'/%3E%3Cellipse cx='16' cy='19' rx='6' ry='4.500' fill='%23e68593'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<canvas id="palco" aria-label="Livro-carrossel em três dimensões"></canvas>
+
+<header class="pilula titulo" id="titulo">
+  <strong>Os Três Porquinhos</strong>
+  <span>conto popular · livro-carrossel</span>
+</header>
+<div class="pilula capitulo" id="capitulo" hidden>
+  <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="#f2a93b"/><circle id="fase" cx="10" cy="10" r="7" fill="#463325"/></svg>
+  <span id="capitulo-texto"></span>
+</div>
+
+<section class="abertura" id="abertura">
+  <h1>Não, não<br>e não!</h1>
+  <p>O conto inteiro do Lobo e dos três irmãos num livro pop-up em carrossel: oito cenas que ficam em pé em forma de estrela. Abra, gire e trabalhe o papel.</p>
+</section>
+
+<a class="assinatura" href="https://x.com/oalanicolas" target="_blank" rel="noopener">© 2026 Alan Nicolas</a>
+
+<nav class="pilula barra" id="barra" aria-label="Navegação do livro">
+  <button class="seta" id="anterior" aria-label="Cena anterior"><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></svg></button>
+  <div class="pontos" id="pontos" role="tablist" aria-label="Cenas"></div>
+  <div class="legenda" aria-live="polite"><strong id="cena-titulo"></strong><span id="cena-sub"></span></div>
+  <button class="icone" id="olhar" aria-label="Só olhar: esconder os controles" aria-pressed="false"><svg viewBox="0 0 20 20"><path d="M1.5 10S5 4 10 4s8.500 6 8.500 6-3.500 6-8.500 6-8.500-6-8.500-6Z"/><circle cx="10" cy="10" r="2.700"/></svg></button>
+  <button class="icone" id="som" aria-label="Desligar o som" aria-pressed="true"><svg viewBox="0 0 20 20"><path class="cheio" d="M3 7.500v5h3l4.500 3.500v-12L6 7.500H3Z"/><path id="onda" d="M13.500 7a4 4 0 0 1 0 6M15.500 5a7 7 0 0 1 0 10"/></svg></button>
+  <button class="acao" id="acao"></button>
+  <button class="seta" id="proxima" aria-label="Próxima cena"><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></svg></button>
+</nav>
+
+<button class="pilula voltar-olhar" id="voltar-olhar" hidden>Mostrar controles</button>
+
+<div class="lupa" id="lupa" hidden><svg viewBox="0 0 24 24"><circle cx="10.500" cy="10.500" r="6"/><path d="m15 15 5 5"/></svg></div>
+<article class="cartao" id="cartao" hidden></article>
+
+<div class="carregando" id="carregando"><span>Dobrando o papel…</span></div>
+<noscript>Este livro precisa de JavaScript e WebGL para ficar em pé.</noscript>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
