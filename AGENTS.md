@@ -41,6 +41,7 @@ Decididos na construção, ainda sem aprovação de Alan:
 
 ## Regras do conteúdo
 
+- Zoom desativado por pedido de Alan em 06/11/2026: sem lupa/cartão de texto e sem ampliação por gestos. Checagem: `tests/jornada.mjs`, passar sobre o texto não abre sobreposição; pinça e roda com Ctrl não mudam a escala nem prendem a navegação.
 - Créditos só no `README.md`, nunca sobre a mesa (pedido de Alan, 06/11/2026). `tests/telas.test.mjs` confere.
 - Versão infantil: nenhum porquinho é comido e o Lobo foge.
 - Personagens: João (palha), Lulu (madeira), Kael (tijolos) e Mamãe Porca. Nomes pedidos por Alan em 06/11/2026; os identificadores internos `pipo`, `tico` e `bento` continuam ligando os mesmos rigs e marcos.

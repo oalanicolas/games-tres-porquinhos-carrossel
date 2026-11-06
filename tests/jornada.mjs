@@ -1,4 +1,4 @@
-// Percurso real pela interface: abre pelo botão, percorre as onze cenas com a ação de cada uma, mede quadros, lupa e erros.
+// Percurso real pela interface: abre pelo botão, percorre as onze cenas com a ação de cada uma e confere o enquadramento fixo.
 import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const base = process.env.LIVRO_URL || 'http://127.0.0.1:4291/';
@@ -40,11 +40,16 @@ for (let i = 0; i < 11; i++) {
   const depois = await page.evaluate((i) => ({ fim: window.__livro.cenas[i].linha.t >= window.__livro.cenas[i].linha.duration - 0.01, acao: document.querySelector('#acao').textContent }), i);
   await page.screenshot({ path: `${saida}/c${i}-c.png` });
   rel.cenas.push({ ...antes, duracao: +dur.toFixed(2), ...f, terminou: depois.fim, acaoDepois: depois.acao });
-  if (i === 2) { // lupa sobre o texto
+  if (i === 2) {
     const box = { w: W, h: H };
     await page.mouse.move(box.w * 0.385, box.h * 0.4); await page.waitForTimeout(350);
-    rel.lupa = await page.evaluate(() => ({ lupa: getComputedStyle(document.querySelector('#lupa')).display !== 'none' && document.querySelector('#lupa').classList.length, cartao: document.querySelector('#cartao').textContent.slice(0, 40) }));
-    await page.screenshot({ path: `${saida}/lupa.png` }); await page.mouse.move(5, 5);
+    rel.semZoom = await page.evaluate(() => {
+      const roda = new WheelEvent('wheel', { ctrlKey: true, deltaY: -200, cancelable: true, bubbles: true });
+      window.dispatchEvent(roda);
+      return !document.querySelector('#lupa, #cartao') && visualViewport.scale === 1 && getComputedStyle(document.documentElement).touchAction === 'none' && roda.defaultPrevented;
+    });
+    if (!rel.semZoom) throw new Error('zoom ou sobreposição ativada sobre o texto');
+    await page.mouse.move(5, 5);
   }
   if (i < 10) { await page.click('#proxima'); await page.waitForTimeout(800); }
 }

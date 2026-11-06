@@ -150,7 +150,7 @@ function abrirLivro() {
 }
 function fecharLivro() {
   if (estado.modo !== 'aberto') return;
-  estado.modo = 'fechando'; estado.indice = -1; estado.giroAlvo = 0; audio.tocar('abrir', { vol: 0.7, taxa: 1.15 }); atualizarUI(); esconderCartao();
+  estado.modo = 'fechando'; estado.indice = -1; estado.giroAlvo = 0; audio.tocar('abrir', { vol: 0.7, taxa: 1.15 }); atualizarUI();
 }
 function irPara(i) {
   audio.destravar();
@@ -159,7 +159,7 @@ function irPara(i) {
   if (estado.modo !== 'aberto' && estado.modo !== 'abrindo') return;
   if (i === estado.indice) return;
   estado.indice = i; estado.giroAlvo = i * CUNHA; estado.virando = true;
-  audio.tocar(Math.random() > 0.5 ? 'flap1' : 'flap2', { vol: 0.9 }); atualizarUI(); esconderCartao();
+  audio.tocar(Math.random() > 0.5 ? 'flap1' : 'flap2', { vol: 0.9 }); atualizarUI();
 }
 function agir() {
   audio.destravar();
@@ -238,76 +238,44 @@ audio.aoFimDaVoz = (i) => {
   };
   viradaAuto = setTimeout(virar, (ultima ? PAUSA_ANTES_DE_FECHAR : PAUSA_ANTES_DE_VIRAR) * 1000);
 };
-function alternarOlhar(v = !estado.olhar) { estado.olhar = v; document.body.classList.toggle('so-olhar', v); $('olhar').setAttribute('aria-pressed', String(v)); $('voltar-olhar').hidden = !v; esconderCartao(); }
+function alternarOlhar(v = !estado.olhar) { estado.olhar = v; document.body.classList.toggle('so-olhar', v); $('olhar').setAttribute('aria-pressed', String(v)); $('voltar-olhar').hidden = !v; }
 $('olhar').addEventListener('click', () => alternarOlhar());
 $('voltar-olhar').addEventListener('click', () => alternarOlhar(false));
 addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight') { if (estado.indice < N - 1) irPara(estado.indice + 1); else e.preventDefault(); } else if (e.key === 'ArrowLeft') { irPara(estado.indice - 1); } else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); agir(); } else if (e.key === 'Escape') { if (estado.olhar) alternarOlhar(false); else esconderCartao(); } else if (e.key.toLowerCase() === 'o') alternarOlhar();
+  if (e.key === 'ArrowRight') { if (estado.indice < N - 1) irPara(estado.indice + 1); else e.preventDefault(); } else if (e.key === 'ArrowLeft') { irPara(estado.indice - 1); } else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); agir(); } else if (e.key === 'Escape') { if (estado.olhar) alternarOlhar(false); } else if (e.key.toLowerCase() === 'o') alternarOlhar();
 });
 
-// ---- ponteiro: arrastar gira, tocar na cena age, passar no texto abre a lupa --------------------------
-const ray = new THREE.Raycaster(); const ptr = new THREE.Vector2();
-function pegaParede(ev) {
-  if (!livro || estado.modo !== 'aberto' || estado.indice < 0) return null;
-  ptr.set((ev.clientX / innerWidth) * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1);
-  ray.setFromCamera(ptr, camera);
-  const parede = livro.paredes[estado.indice].m; // parede esquerda da cena atual
-  const hit = ray.intersectObject(parede, false)[0];
-  if (!hit || !hit.uv) return null;
-  // textura: y=1 no alto; texto ocupa o papel à esquerda
-  const limiteY = livro.fimTexto[estado.indice] / 1276;
-  const v = 1 - hit.uv.y;
-  if (hit.uv.x < 0.6 && v < limiteY + 0.02) return { hit };
-  return null;
-}
-function esconderCartao() { $('cartao').hidden = true; $('lupa').hidden = true; estado.cartaoDe = null; }
-function mostrarCartao(ev) {
-  const i = estado.indice; const c = CENAS[i]; const el = $('cartao');
-  if (estado.cartaoDe !== i) {
-    el.innerHTML = '';
-    const sm = document.createElement('small'); sm.textContent = `Cena ${romano(i)} · ${c.parte}`;
-    const h = document.createElement('h2'); h.textContent = c.titulo; el.append(sm, h);
-    c.linhas.forEach((l) => { const p = document.createElement('p'); p.textContent = l.t; if (l.fala) p.className = 'fala'; el.append(p); });
-    estado.cartaoDe = i;
-  }
-  el.hidden = false; const lu = $('lupa'); lu.hidden = false;
-  lu.style.left = `${ev.clientX}px`; lu.style.top = `${ev.clientY}px`;
-  const rw = el.offsetWidth; const rh = el.offsetHeight;
-  const x = clamp(ev.clientX + 56, 12, innerWidth - rw - 12); const y = clamp(ev.clientY - rh * 0.34, 74, innerHeight - rh - 96);
-  el.style.left = `${x}px`; el.style.top = `${y}px`;
-}
+// ---- ponteiro: arrastar gira, tocar na cena age -----------------------------------------------------
+for (const evento of ['gesturestart', 'gesturechange', 'gestureend']) addEventListener(evento, (e) => e.preventDefault(), { passive: false });
+addEventListener('wheel', (e) => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive: false });
 canvas.addEventListener('pointerdown', (ev) => {
+  if (!ev.isPrimary) return;
   audio.destravar();
   estado.arrastando = true; estado.movido = 0; estado.ultimoX = ev.clientX; estado.velo = 0; canvas.setPointerCapture(ev.pointerId);
   if (estado.modo === 'aberto') canvas.classList.add('arrastando');
 });
 canvas.addEventListener('pointermove', (ev) => {
+  if (!ev.isPrimary) return;
   estado.mouse.set((ev.clientX / innerWidth) * 2 - 1, (ev.clientY / innerHeight) * 2 - 1);
   if (estado.arrastando) {
     const dx = ev.clientX - estado.ultimoX; estado.ultimoX = ev.clientX; estado.movido += Math.abs(dx);
     if (estado.modo === 'aberto' && estado.movido > 6) {
       const k = (CUNHA / Math.min(innerWidth, 720)) * 1.5;
-      estado.giro -= dx * k; estado.giro = clamp(estado.giro, -0.25, (N - 1) * CUNHA + 0.25); estado.giroAlvo = estado.giro; estado.velo = -dx * k; esconderCartao();
+      estado.giro -= dx * k; estado.giro = clamp(estado.giro, -0.25, (N - 1) * CUNHA + 0.25); estado.giroAlvo = estado.giro; estado.velo = -dx * k;
     }
     return;
   }
   if (ev.pointerType === 'mouse') {
-    const pega = pegaParede(ev);
-    if (pega && !estado.olhar) mostrarCartao(ev); else if (estado.cartaoDe != null) esconderCartao();
     canvas.classList.toggle('pega', estado.modo === 'capa');
   }
 });
 canvas.addEventListener('pointerup', (ev) => {
+  if (!ev.isPrimary) return;
   const foiToque = estado.movido <= 6;
   estado.arrastando = false; canvas.classList.remove('arrastando');
   if (estado.modo === 'capa' && foiToque) { abrirLivro(); return; }
   if (estado.modo !== 'aberto') return;
   if (foiToque) {
-    if (ev.pointerType !== 'mouse') {
-      const pega = pegaParede(ev);
-      if (pega) { document.body.classList.add('tocar'); if (estado.cartaoDe != null) esconderCartao(); else { mostrarCartao(ev); $('lupa').hidden = true; } return; }
-      if (estado.cartaoDe != null) { esconderCartao(); return; }
-    }
     const py = ev.clientY / innerHeight; if (py > 0.2 && Math.abs((ev.clientX / innerWidth) - 0.5) < 0.2) agir();
     return;
   }
@@ -316,11 +284,10 @@ canvas.addEventListener('pointerup', (ev) => {
   if (destino !== estado.indice) { estado.indice = destino; audio.tocar('flap1', { vol: 0.7 }); atualizarUI(); }
   estado.giroAlvo = destino * CUNHA;
 });
-canvas.addEventListener('pointerleave', () => { if (!estado.arrastando) esconderCartao(); });
 for (const evento of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(evento, () => {
   if (!estado.arrastando) return;
   estado.arrastando = false; estado.velo = 0; estado.giroAlvo = Math.max(0, estado.indice) * CUNHA;
-  canvas.classList.remove('arrastando'); esconderCartao();
+  canvas.classList.remove('arrastando');
 });
 
 // ---- laço -------------------------------------------------------------------------------------------

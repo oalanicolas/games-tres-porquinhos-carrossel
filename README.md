@@ -4,6 +4,8 @@ Livro pop-up em 3D que abre em estrela e conta o conto inteiro em onze cenas. Ca
 
 João constrói a casa de palha, Lulu a de madeira e Kael a de tijolos. Texto e narração usam os mesmos nomes.
 
+O enquadramento é fixo: não há lupa do texto nem zoom por gestos. Arrastar continua virando as páginas.
+
 O Lobo de papel é inspirado nas fotos da pelúcia enviadas por Alan: cinza, focinho e nariz grandes, barriga clara e lenço azul.
 
 Referência de forma: o vídeo de Techartist sobre um livro-carrossel (<https://x.com/techartist_/status/2116407421065482362>). A arte, o texto e o código daqui são originais.
