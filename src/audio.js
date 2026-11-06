@@ -22,7 +22,7 @@ export class Audio {
   constructor() {
     this.ligado = true; this.ctx = null; this.buffers = new Map(); this.camas = new Map(); this.faixas = new Map();
     this.atual = null; this.pedida = 'era-uma-vez'; this.ambPedido = {}; this.oculto = false; this.cenaAtual = null;
-    this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.vozes = new Map(); this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoMomentoDaVoz = null; this.aoFimDaVoz = null;
+    this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.vozes = new Map(); this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoFalhaVoz = null; this.aoFimDaVoz = null;
   }
   destravar() {
     if (!this.ctx) {
@@ -34,6 +34,7 @@ export class Audio {
       this.busMusica = ctx.createGain(); this.busMusica.gain.value = NIVEL_MUSICA; this.busMusica.connect(this.master);
       this.busAmb = ctx.createGain(); this.busAmb.gain.value = NIVEL_AMB; this.busAmb.connect(this.master);
       this.busVoz = ctx.createGain(); this.busVoz.connect(this.master);
+      this.medidorVoz = ctx.createAnalyser(); this.medidorVoz.fftSize = 512; this.busVoz.connect(this.medidorVoz);
       for (const n of SONS.efeitos) this._carregar(n);
       for (const n of SONS.ambientes) this._carregar(n).then(() => this._iniciarCama(n));
       document.addEventListener('visibilitychange', () => this._visibilidade());
@@ -115,14 +116,18 @@ export class Audio {
       const el = new window.Audio(`${base}narracao/${this.faixasVoz[i].arquivo}`); el.preload = 'auto';
       v = { i, el, g: null }; this.vozes.set(i, v);
       el.addEventListener('ended', () => { if (this.voz === v) { this.voz = null; this._aplicarNiveis(); this.aoFimDaVoz?.(i); } });
-      // o gatilho segue o tempo da fala, e não o relógio: aba em segundo plano pausa os dois juntos
-      el.addEventListener('timeupdate', () => {
-        const em = this.faixasVoz[i].acao_em;
-        if (this.voz === v && !v.agiu && em != null && el.currentTime >= em) { v.agiu = true; this.aoMomentoDaVoz?.(i); }
-      });
     }
     if (this.ctx && !v.g) { v.g = this.ctx.createGain(); v.g.gain.value = 0; this.ctx.createMediaElementSource(v.el).connect(v.g); v.g.connect(this.busVoz); }
     return v;
+  }
+  /** O relógio da animação é o da fala: aba em segundo plano ou rede lenta pausam os dois juntos. */
+  tempoVoz(i) { return this.voz && this.voz.i === i ? this.voz.el.currentTime : null; }
+  /** Volume da voz agora, de 0 a 1: é o que abre a boca de quem fala. */
+  nivelVoz() {
+    if (!this.medidorVoz || !this.voz) return 0;
+    const v = this.bufVoz ??= new Float32Array(this.medidorVoz.fftSize); this.medidorVoz.getFloatTimeDomainData(v);
+    let s = 0; for (let k = 0; k < v.length; k++) s += v[k] * v[k];
+    return Math.min(1, Math.sqrt(s / v.length) * 7);
   }
   _pararVoz() {
     clearTimeout(this.vozAgenda); this.vozAgenda = null;
@@ -133,7 +138,7 @@ export class Audio {
     clearTimeout(v.pausa); v.pausa = setTimeout(() => { if (this.voz !== v) v.el.pause(); }, 450);
     this._aplicarNiveis();
   }
-  /** Lê a cena. Quem decide o que acontece na fala e ao fim dela é o livro, em aoMomentoDaVoz e aoFimDaVoz. */
+  /** Lê a cena. O livro segue o relógio de tempoVoz e decide a virada em aoFimDaVoz. */
   _narrar(i, atraso) {
     if (!this.ctx) return;
     this._pararVoz();
@@ -146,9 +151,9 @@ export class Audio {
       clearTimeout(v.pausa);
       v.el.currentTime = 0;
       v.g.gain.cancelScheduledValues(t); v.g.gain.setValueAtTime(db(this.faixasVoz[i].ganho_db || 0), t);
-      v.agiu = false; this.voz = v; this._aplicarNiveis();
+      this.voz = v; this._aplicarNiveis();
       this.aoComecarVoz?.(i);
-      if (!this.oculto) v.el.play().catch((e) => console.warn('voz', i, e.name));
+      if (!this.oculto) v.el.play().catch((e) => { console.warn('voz', i, e.name); if (this.voz === v) { this._pararVoz(); this.aoFalhaVoz?.(i); } });
     }, atraso * 1000);
   }
   /** Liga ou desliga a leitura; ao religar, recomeça a cena atual. */

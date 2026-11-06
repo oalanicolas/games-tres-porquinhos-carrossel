@@ -17,7 +17,11 @@ export async function abrir({ largura = 1280, altura = 800, url, antes, narrado 
   page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
   if (!narrado) await page.addInitScript(() => localStorage.setItem('porquinhos-narracao', 'nao'));
   await antes?.(page);
-  await page.goto(endereco);
-  await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });
-  return { page, erros, endereco, fechar: async () => { await navegador.close(); await servidor?.close(); } };
+  const fechar = async () => { await navegador.close(); await servidor?.close(); };
+  try {
+    // Quem manda é o livro pronto, não o evento `load`: com a máquina ocupada, o Vite em desenvolvimento passa dos 30 s do `goto`.
+    await page.goto(endereco, { waitUntil: 'commit', timeout: 90000 });
+    await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });
+  } catch (e) { await fechar(); throw e; } // um navegador aberto prende a suíte para sempre
+  return { page, erros, endereco, fechar };
 }

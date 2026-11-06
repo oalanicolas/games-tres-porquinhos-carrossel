@@ -29,9 +29,7 @@ AJUSTES = {
 }
 ALVO_LUFS = -18.0
 TOTAL = 8
-# trecho da fala em que a ação da cena acontece no modo narrado
-# (o tchibum da animação vem 0,86 s depois do início dela, e a voz diz "tchibum" no meio da frase; o reconhecedor escreve "tibum")
-ANCORAS = [('e la se foram', 0), ('juntou um monte', 0), ('encheu o peito', 0), ('soprou uma vez', 0), ('soprou soprou', 0), ('soprou as brasas', 0), ('tibum', 0.86), ('os tres dancaram', 0)]
+ROTEIRO = MOD / 'src' / 'roteiro.json'
 WHISPER = Path.home() / '.cache' / 'whisper-cpp' / 'ggml-large-v3-turbo.bin'
 
 
@@ -108,17 +106,67 @@ def so_letras(t):
     return re.findall(r'[a-z]+', ''.join(c for c in unicodedata.normalize('NFD', t.lower()) if not unicodedata.combining(c)))
 
 
-def ancorar(i, ancora, adianto=0):
-    """Acha pelo reconhecimento de fala o segundo em que a âncora é dita. A Magnific não devolve o alinhamento do texto."""
-    base = CACHE / f'cena-{i}'
-    subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', str(PASTA / f'cena-{i}.mp3'), '-ar', '16000', '-ac', '1', f'{base}.wav'], check=True)
-    subprocess.run(['whisper-cli', '-m', str(WHISPER), '-l', 'pt', '-ml', '1', '-sow', '-oj', '-of', str(base), '-f', f'{base}.wav'], capture_output=True, check=True)
-    itens = [(so_letras(s['text']), s['offsets']['from'] / 1000) for s in json.loads(Path(f'{base}.json').read_text())['transcription']]
-    alvo = so_letras(ancora); palavras = [(p, t) for ps, t in itens for p in ps]
-    for k in range(len(palavras) - len(alvo) + 1):
-        if [p for p, _ in palavras[k:k + len(alvo)]] == alvo:
-            return round(max(0, palavras[k][1] - adianto), 2)
-    return None
+def trechos_de_fala(arq):
+    """Os trechos com voz, medidos no áudio: o começo de cada frase é exato, porque vem depois de uma pausa real."""
+    r = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-i', str(arq), '-af', 'silencedetect=noise=-38dB:d=0.16', '-f', 'null', '-'], capture_output=True, text=True).stderr
+    ini = [float(x) for x in re.findall(r'silence_start: ([\d.]+)', r)]; fim = [float(x) for x in re.findall(r'silence_end: ([\d.]+)', r)]
+    dur = float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', str(arq)], text=True))
+    if len(fim) < len(ini): fim.append(dur)
+    bordas = sorted([(0.0, 0.0)] + list(zip(ini, fim)) + [(dur, dur)])
+    return [(a[1], b[0]) for a, b in zip(bordas, bordas[1:]) if b[0] - a[1] > 0.12]
+
+
+def alinhar(texto, trechos):
+    """Reparte o texto conhecido pelos trechos, por programação dinâmica, e dá a cada palavra o seu tempo. A API não devolve alinhamento."""
+    crus = texto.split(); palavras = [so_letras(c) for c in crus]; marcas = [c.rstrip()[-1] in ',.!?:…;' for c in crus]
+    itens = []
+    for p, m in zip(palavras, marcas):
+        for k, q in enumerate(p): itens.append((q, m and k == len(p) - 1))
+    n, m = len(itens), len(trechos); pesos = [len(q) + 1 for q, _ in itens]
+    soma = [0]
+    for w in pesos: soma.append(soma[-1] + w)
+    ritmo = sum(b - a for a, b in trechos) / soma[-1]
+    INF = float('inf'); melhor = [[INF] * (n + 1) for _ in range(m + 1)]; veio = [[0] * (n + 1) for _ in range(m + 1)]; melhor[0][0] = 0
+    for j in range(1, m + 1):
+        d = trechos[j - 1][1] - trechos[j - 1][0]
+        for f in range(1, n + 1):
+            for i in range(max(0, f - 40), f):
+                if melhor[j - 1][i] == INF: continue
+                c = melhor[j - 1][i] + ((d - ritmo * (soma[f] - soma[i])) / max(d, 0.4)) ** 2 + (0 if itens[f - 1][1] or j == m else 0.35)
+                if c < melhor[j][f]: melhor[j][f] = c; veio[j][f] = i
+    cortes = [n]
+    for j in range(m, 0, -1): cortes.append(veio[j][cortes[-1]])
+    cortes.reverse()
+    tempos = []
+    for j in range(m):
+        i, f = cortes[j], cortes[j + 1]; a, b = trechos[j]; tot = (soma[f] - soma[i]) or 1
+        for k in range(i, f):
+            tempos.append((itens[k][0], a + (soma[k] - soma[i]) / tot * (b - a), a + (soma[k + 1] - soma[i]) / tot * (b - a)))
+    return tempos
+
+
+def achar(tempos, ancora, cena):
+    alvo = so_letras(ancora); nomes = [t[0] for t in tempos]
+    ach = [k for k in range(len(nomes) - len(alvo) + 1) if nomes[k:k + len(alvo)] == alvo]
+    if len(ach) != 1:
+        sys.exit(f'cena {cena + 1}: a âncora "{ancora}" aparece {len(ach)} vez(es) no texto; precisa aparecer uma.')
+    return ach[0], len(alvo)
+
+
+def resolver_roteiro(i, roteiro, texto):
+    """Troca as âncoras do roteiro pelos segundos da gravação."""
+    tempos = alinhar(texto, trechos_de_fala(PASTA / f'cena-{i}.mp3'))
+    ini = lambda a, p=0: tempos[achar(tempos, a, i)[0] + p][1]
+    def fim(a, palavras=None):
+        k, n = achar(tempos, a, i); return tempos[k + (palavras or n) - 1][2]
+    marcos = {}
+    for g, m in roteiro['marcos'].items():
+        d = {'em': round(max(0, ini(m['em'], m.get('palavra', 0)) + m.get('desloca', 0)), 2)}
+        if 'ate' in m: d['ate'] = round(fim(m['ate']), 2)
+        if 'ritmo' in m: d['ritmo'] = m['ritmo']
+        marcos[g] = d
+    falas = [{'quem': f['quem'], 'texto': f['texto'], 'de': round(ini(f['de']), 2), 'ate': round(fim(f['ate'], f.get('palavras')), 2)} for f in roteiro['falas']]
+    return {'marcos': marcos, 'falas': falas, 'acao_em': marcos[roteiro['acao']]['em']}
 
 
 def salvar_json(arq, dados):
@@ -177,9 +225,10 @@ def main():
     if a.cena or any(not (PASTA / f'cena-{i}.mp3').exists() or recibo['faixas'].get(str(i), {}).get('hash') != assinatura(tx[i], a.voz, a.servico) for i in range(TOTAL)):
         print('amostra gravada; o manifesto só muda com as 8 cenas.')
         return 0
-    faixas = {str(i): {'arquivo': f'cena-{i}.mp3', 'duracao': recibo['faixas'][str(i)]['duracao'], 'ganho_db': round(ALVO_LUFS - recibo['faixas'][str(i)]['lufs'], 1), 'acao_em': ancorar(i, *ANCORAS[i])} for i in range(TOTAL)}
+    roteiro = json.loads(ROTEIRO.read_text())
+    faixas = {str(i): {'arquivo': f'cena-{i}.mp3', 'duracao': recibo['faixas'][str(i)]['duracao'], 'ganho_db': round(ALVO_LUFS - recibo['faixas'][str(i)]['lufs'], 1), **resolver_roteiro(i, roteiro[str(i)], tx[i])} for i in range(TOTAL)}
     for i, f in faixas.items():
-        print(f'cena {int(i) + 1}: ação aos {f["acao_em"]} s de {f["duracao"]} s' if f['acao_em'] is not None else f'cena {int(i) + 1}: âncora não encontrada; a ação fica para o fim da fala')
+        print(f'cena {int(i) + 1}: {len(f["marcos"])} marcos, {len(f["falas"])} falas, ação aos {f["acao_em"]} s de {f["duracao"]} s')
     salvar_json(MANIFESTO, {'voz': recibo['voz']['nome'], 'faixas': faixas})
     print(f'{TOTAL} de {TOTAL} cenas gravadas; manifesto em src/narracao.json. Falta build, commit, push e deploy.')
     return 0

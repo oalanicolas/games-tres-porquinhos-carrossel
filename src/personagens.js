@@ -78,7 +78,11 @@ export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false
   h(ellipse(0.024, 0.036, -0.048, 0.035, 12), '#9c4560', { jitter: 0 });
   h(ellipse(0.024, 0.036, 0.048, 0.035, 12), '#9c4560', { jitter: 0 });
   h(stroke([[-0.09, -0.085], [-0.035, -0.112], [0.035, -0.112], [0.09, -0.085]], 0.018), '#7c2c49', { jitter: 0 });
-  const refs = { root, corpo, cabeca, bracoE: bracoT, bracoD: bracoF, olhos, orelhaE, orelhaD, rabo, pernaE, pernaD };
+  // boca: fechada, sobra o sorriso de sempre; aberta só enquanto o porquinho fala
+  const boca = rig(cabeca, 'boca', { y: -0.098, z: h.z() + 0.002, sy: 0.001 });
+  piece(boca, ellipse(0.062, 0.058, 0, -0.022, 18), '#7c2c49', { t: 0.004, jitter: 0 });
+  piece(boca, ellipse(0.04, 0.026, 0, -0.05, 14), '#ef7fa0', { t: 0.002, z: 0.003, jitter: 0 });
+  const refs = { root, corpo, cabeca, boca, bracoE: bracoT, bracoD: bracoF, olhos, orelhaE, orelhaD, rabo, pernaE, pernaD };
   // acessórios
   if (tipo === 'pipo') {
     const ch = rig(cabeca, 'chapeu', { y: 0.33, z: h.z() + 0.003, rot: -0.08 });
@@ -104,9 +108,13 @@ export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false
     h(stroke([[0.09, 0.27], [0.14, 0.255]], 0.012), '#2d1c2f', { jitter: 0 });
   }
   const fase = Math.abs(x * 7 + z * 3) % 6.28;
+  // A respiração soma ao que a linha do tempo escreveu neste quadro: antes, ela apagava os pulos e os gestos de cabeça.
+  const soma = { y: 0, yEscrito: corpo.position.y, yBase: corpo.position.y, z: 0, zEscrito: cabeca.rotation.z, zBase: cabeca.rotation.z };
   refs.idle = (t) => {
-    corpo.position.y = Math.abs(Math.sin(t * 1.5 + fase)) * 0.011;
-    cabeca.rotation.z = Math.sin(t * 0.9 + fase) * 0.035;
+    if (corpo.position.y !== soma.yEscrito) soma.yBase = corpo.position.y;
+    if (cabeca.rotation.z !== soma.zEscrito) soma.zBase = cabeca.rotation.z;
+    soma.yEscrito = corpo.position.y = soma.yBase + Math.abs(Math.sin(t * 1.5 + fase)) * 0.011;
+    soma.zEscrito = cabeca.rotation.z = soma.zBase + Math.sin(t * 0.9 + fase) * 0.035;
     const pisca = (t * 0.37 + fase) % 1; olhos.scale.y = pisca < 0.035 ? 0.12 : 1;
     orelhaE.rotation.z = 0.25 + Math.sin(t * 1.3 + fase) * 0.05; orelhaD.rotation.z = -0.25 - Math.sin(t * 1.4 + fase) * 0.05;
   };

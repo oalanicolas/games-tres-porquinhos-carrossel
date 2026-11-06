@@ -3,6 +3,7 @@ import { Livro, criaMesa, N, CUNHA, R, H, ESPESSURA, romano } from './book.js';
 import { CENAS, CAPA } from './story.js';
 import { montarCenas, arteDaCapa } from './cenas.js';
 import { Audio } from './audio.js';
+import { Atuacao } from './atuacao.js';
 import { bake } from './paper.js';
 
 const qs = new URLSearchParams(location.search);
@@ -122,9 +123,11 @@ for (let i = -1; i < N; i++) {
 }
 function atualizarUI() {
   audio.cena(estado.indice);
+  if (estado.indice < 0) soltarLeitura(); else if (audio.narrando && estado.modo !== 'capa') prepararLeitura(estado.indice);
   const i = estado.indice; const capa = i < 0;
   pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
   document.body.classList.toggle('aberto', !capa);
+  document.body.classList.toggle('fechando', estado.modo === 'fechando'); // o título da capa só volta com o livro já fechado
   document.body.classList.toggle('credito', capa || i === N - 1);
   $('capitulo').hidden = capa;
   $('cena-titulo').textContent = capa ? CAPA.titulo : CENAS[i].titulo;
@@ -165,7 +168,8 @@ function agir() {
   if (i < 0) { abrirLivro(); return; }
   if (estado.modo !== 'aberto') return;
   const c = cenas[i]; if (!c) return;
-  agiuNaLeitura = true; c.linha.play(); audio.abaixar(c.linha.duration); estado.tocouAcao.add(i); atualizarUI();
+  if (leitura.i === i) soltarLeitura(); // quem aperta o botão assume a cena; a voz continua
+  c.linha.play(); audio.abaixar(c.linha.duration); estado.tocouAcao.add(i); atualizarUI();
 }
 $('acao').addEventListener('click', agir);
 $('anterior').addEventListener('click', () => irPara(estado.indice - 1));
@@ -188,28 +192,50 @@ function atualizarBotaoNarrar() {
   b.setAttribute('aria-label', audio.narrando ? 'Desligar o modo narrado' : 'Ligar o modo narrado: a voz conta e o livro vira sozinho'); b.title = b.getAttribute('aria-label');
 }
 $('narrar').addEventListener('click', () => {
-  audio.destravar(); audio.alternarNarracao(); if (!audio.narrando) clearTimeout(viradaAuto); atualizarBotaoNarrar();
+  audio.destravar(); audio.alternarNarracao(); if (!audio.narrando) { clearTimeout(viradaAuto); soltarLeitura(); } atualizarBotaoNarrar();
   try { localStorage.setItem('porquinhos-narracao', audio.narrando ? 'sim' : 'nao'); } catch { /* segue só nesta visita */ }
 });
-// modo narrado: a voz conduz. A ação acontece no trecho da fala que a conta e a página vira quando as duas terminam.
+// modo narrado: a voz conduz. O relógio da cena é o da fala, e a página vira quando as duas terminam.
 const PAUSA_ANTES_DE_VIRAR = 1.4;
-let agiuNaLeitura = false; let viradaAuto = null;
-audio.aoComecarVoz = (i) => {
-  clearTimeout(viradaAuto); agiuNaLeitura = false;
-  if (estado.tocouAcao.has(i)) cenas[i].linha.seek(0); // ao voltar a uma cena, a história recomeça do início dela
-};
-audio.aoMomentoDaVoz = (i) => { if (!agiuNaLeitura && i === estado.indice && estado.modo === 'aberto') agir(); };
+const PAUSA_ANTES_DE_FECHAR = 2.4;
+let recomecarAoFechar = false;
+let viradaAuto = null;
+const leitura = { i: -1, segue: false, relogio: 0, comecou: false };
+function prepararLeitura(i) {
+  if (leitura.i === i) return;
+  soltarLeitura();
+  const f = audio.faixasVoz[i]; if (!audio.narrando || !f || !cenas[i]) return;
+  const c = cenas[i];
+  estado.tocouAcao.delete(i); // cada leitura atua a cena desde o começo
+  c.linha.desancorar().ancorar(f.marcos ?? {}, f.acao_em ?? f.duracao); c.linha.seek(-0.01);
+  Object.assign(leitura, { i, segue: true, relogio: 0, comecou: false });
+}
+function soltarLeitura() {
+  const i = leitura.i; if (i < 0) return;
+  const c = cenas[i]; const agiu = estado.tocouAcao.has(i);
+  leitura.i = -1; leitura.segue = false;
+  c.linha.desancorar(); c.linha.reset(); if (agiu) c.linha.seek(c.linha.duration);
+}
+function seguirLeitura(dt) {
+  if (!leitura.segue) return;
+  const i = leitura.i; const c = cenas[i]; const f = audio.faixasVoz[i];
+  const t = audio.tempoVoz(i);
+  if (t != null) { leitura.comecou = true; leitura.relogio = t; } else if (leitura.comecou) leitura.relogio += dt; else return;
+  c.linha.seek(leitura.relogio, { silent: false });
+  if (!estado.tocouAcao.has(i) && leitura.relogio >= (f.acao_em ?? f.duracao)) { estado.tocouAcao.add(i); audio.abaixar(1.2); atualizarUI(); }
+  if (leitura.relogio >= c.linha.duration) leitura.segue = false;
+}
+audio.aoComecarVoz = (i) => { clearTimeout(viradaAuto); prepararLeitura(i); };
+audio.aoFalhaVoz = () => soltarLeitura();
 audio.aoFimDaVoz = (i) => {
   if (i !== estado.indice || estado.modo !== 'aberto') return;
-  if (!agiuNaLeitura) agir();
-  if (i >= N - 1) return; // fim da história: nada depois da última cena
-  const c = cenas[i];
+  const ultima = i >= N - 1; // fim da história: o livro se fecha sozinho e fica pronto para ser lido de novo
   const virar = () => {
     if (i !== estado.indice || !audio.narrando || estado.modo !== 'aberto') return;
-    if (estado.arrastando || c.linha.playing) { viradaAuto = setTimeout(virar, 500); return; }
-    irPara(i + 1);
+    if (estado.arrastando || leitura.segue || cenas[i].linha.playing) { viradaAuto = setTimeout(virar, 300); return; }
+    if (ultima) { recomecarAoFechar = true; fecharLivro(); } else irPara(i + 1);
   };
-  viradaAuto = setTimeout(virar, (Math.max(0, c.linha.duration - c.linha.t) + PAUSA_ANTES_DE_VIRAR) * 1000);
+  viradaAuto = setTimeout(virar, (ultima ? PAUSA_ANTES_DE_FECHAR : PAUSA_ANTES_DE_VIRAR) * 1000);
 };
 function alternarOlhar(v = !estado.olhar) { estado.olhar = v; document.body.classList.toggle('so-olhar', v); $('olhar').setAttribute('aria-pressed', String(v)); $('voltar-olhar').hidden = !v; esconderCartao(); }
 $('olhar').addEventListener('click', () => alternarOlhar());
@@ -293,11 +319,16 @@ canvas.addEventListener('pointerleave', () => { if (!estado.arrastando) esconder
 
 // ---- laço -------------------------------------------------------------------------------------------
 let ultimo = performance.now(); let relogio = 0;
+const atuacao = new Atuacao({ raiz: $('baloes'), camera, canvas: renderer.domElement, audio, cenas: () => cenas });
 const quadros = { n: 0, soma: 0, piores: [] };
 function passo(dt) {
   relogio += dt;
   if (estado.modo === 'abrindo') { estado.tAbrir = Math.min(1, estado.tAbrir + dt / DUR_ABRIR); if (estado.tAbrir >= 1) { estado.modo = 'aberto'; } } else if (estado.modo === 'fechando') {
-    if (Math.abs(estado.giro) < 0.01) { estado.tAbrir = Math.max(0, estado.tAbrir - dt / (DUR_ABRIR * 0.8)); if (estado.tAbrir <= 0) estado.modo = 'capa'; }
+    if (Math.abs(estado.giro) < 0.01) { estado.tAbrir = Math.max(0, estado.tAbrir - dt / (DUR_ABRIR * 0.8)); if (estado.tAbrir <= 0) {
+      estado.modo = 'capa';
+      document.body.classList.remove('fechando');
+      if (recomecarAoFechar) { recomecarAoFechar = false; estado.tocouAcao.clear(); cenas.forEach((c) => { c.linha.desancorar(); c.linha.reset(); }); atualizarUI(); }
+    } }
   }
   // giro entre cenas: mola curta, como no original (cerca de 0,6 s)
   if (!estado.arrastando) { const d = estado.giroAlvo - estado.giro; const k = reduzido ? 1 : 1 - Math.exp(-dt * 7.5); estado.giro += d * k; if (Math.abs(d) < 0.0004) estado.giro = estado.giroAlvo; }
@@ -311,12 +342,15 @@ function passo(dt) {
   scene.fog.near = Math.max(13, camera.position.distanceTo(alvoAtual) + 2.4); scene.fog.far = scene.fog.near + 13;
   livro.cullPorGiro(estado.giro, estado.tAbrir > 0.98);
   // só a cena em foco e as vizinhas animam
+  atuacao.desfazer();
+  seguirLeitura(dt);
   cenas.forEach((c, j) => {
     const perto = Math.abs(j * CUNHA - estado.giro) < CUNHA * 2.2 && estado.tAbrir > 0.2;
     if (!perto) return;
     c.linha.update(dt);
     c.idle?.(relogio);
   });
+  atuacao.quadro(estado.modo === 'aberto' ? estado.indice : -1, relogio);
 }
 function laco(agora) {
   requestAnimationFrame(laco);
@@ -349,6 +383,8 @@ async function iniciar() {
     abrirNaHora(i = 0) { estado.modo = 'aberto'; estado.tAbrir = 1; estado.indice = i; estado.giro = estado.giroAlvo = i * CUNHA; atualizarUI(); passo(0); renderer.render(scene, camera); },
     irPara,
     agir,
+    atuacao,
+    leitura,
     sequencia(t) { qsPausado = true; estado.modo = 'abrindo'; estado.tAbrir = t; estado.indice = 0; atualizarUI(); passo(0); estado.tAbrir = t; renderer.render(scene, camera); },
     cenaEm(i, t) { qsPausado = true; const c = cenas[i]; c.linha.seek(t ?? c.linha.duration); c.idle?.(0); estado.modo = 'aberto'; estado.tAbrir = 1; estado.indice = i; estado.giro = estado.giroAlvo = i * CUNHA; atualizarUI(); passo(0); renderer.render(scene, camera); },
     liberar() { qsPausado = false; },

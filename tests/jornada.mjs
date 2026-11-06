@@ -6,6 +6,7 @@ const saida = process.env.SAIDA || 'output/qa/jornada'; mkdirSync(saida, { recur
 const W = Number(process.env.W || 1440), H = Number(process.env.H || 870);
 const b = await chromium.launch({ channel: 'chrome', headless: !process.env.QA_HEADED, args: ['--use-angle=metal', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
 const page = await b.newPage({ viewport: { width: W, height: H } });
+page.on('crash', () => console.error('QUEDA: a página travou', new Date().toISOString()));
 const erros = []; page.on('pageerror', (e) => erros.push(String(e))); page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
 // o elemento de áudio cancela o download quando já tem o bastante: isso não é erro
 await page.addInitScript(() => localStorage.setItem('porquinhos-narracao', 'nao'));

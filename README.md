@@ -23,7 +23,9 @@ npm run build
 
 ## Modo narrado e trilha
 
-No modo narrado, ligado por padrão, a voz conduz: a ação de cada cena acontece no trecho da fala que a conta e a página vira sozinha quando voz e ação terminam. O momento vem do reconhecimento de fala (`acao_em` em `src/narracao.json`). Percurso completo com as faixas reais, cerca de 4 min: `LIVRO_URL=<url> node tests/narrado-real.mjs`.
+No modo narrado, ligado por padrão, a voz conduz. O relógio da cena é o da fala: cada gesto está preso a uma palavra do texto, e a boca do personagem acompanha o volume da voz. Cada personagem que fala ganha um balão com a própria fala, e a página vira sozinha quando voz e gestos terminam. Depois da última cena, o livro se fecha e volta à capa, pronto para ser lido de novo.
+
+As palavras e as falas estão em `src/roteiro.json`. `python3 tools/narracao.py` acha o segundo de cada uma nas pausas reais da gravação, com o texto conhecido da história, e grava `marcos` e `falas` em `src/narracao.json`. O reconhecimento de fala ficou de fora: errou até cerca de 1 s dentro das frases. Os gestos marcados `soVoz` em `src/cenas.js` só existem com narração; sem voz, as cenas têm os mesmos tempos de antes (`tests/sincronia.test.mjs`). Percurso completo com as faixas reais, cerca de 4 min: `LIVRO_URL=<url> node tests/narrado-real.mjs`.
 
 A trilha é original, gerada com Google Lyria 3 Pro pela API da Magnific, com o mesmo conjunto de câmara em todas as cenas: `python3 tools/trilha.py`. Prompts e medições em `docs/trilha-recibo.json`.
 

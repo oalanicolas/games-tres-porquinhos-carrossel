@@ -38,6 +38,10 @@ Pílulas translúcidas sobre a mesa: título à esquerda, momento do dia à dire
 
 A cena em foco abre 90° em paisagem e 64° em retrato; as vizinhas mantêm 45°. A largura muda de forma contínua durante o giro. As paredes, o chão e as peças coladas nelas acompanham a abertura; a arte central mantém o tamanho.
 
+## Balões
+
+Papel `#fffdf4`, borda `#e8d9c4`, sombra de papel e a fonte de títulos, com cauda apontando para a cabeça de quem fala. Um balão por personagem, em HTML, para continuar legível no celular. Fica sobre a cabeça, não sai da tela e não cobre o vizinho. Aparece 0,1 s antes da fala e sai 0,35 s depois, sem animação de entrada em `prefers-reduced-motion`.
+
 ## Voz
 
 Enquanto a voz fala, a música cai para 0,3 e o ambiente para 0,5. Os créditos ficam sobre uma pílula escura, porque a página aberta passa por trás deles.

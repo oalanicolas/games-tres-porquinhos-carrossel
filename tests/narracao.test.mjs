@@ -66,18 +66,22 @@ test('a voz entra, a ação acontece na fala, a música abaixa e virar a página
 });
 
 // Pedido de Alan: "no modo narrado o livro deve ir sozinho folhando".
-test('no modo narrado, o livro faz as ações e vira sozinho até a última cena, e para ali', async () => {
+// Pedido de Alan: "ao concluir o player automatico deveria fechar o livro".
+test('no modo narrado, o livro faz as ações, vira sozinho até a última cena e se fecha ao concluir', async () => {
   const { page, fechar, erros } = await abrir({ narrado: true });
   try {
     await page.waitForTimeout(500);
     await page.evaluate(() => { const f = {}; for (let i = 0; i < 8; i++) f[i] = { arquivo: '../sfx/flap1.mp3', duracao: 1, ganho_db: 0, acao_em: null }; window.__livro.audio.faixasVoz = f; window.__visitas = []; setInterval(() => { const i = window.__livro.estado.indice; if (window.__visitas.at(-1) !== i) window.__visitas.push(i); }, 100); });
     await page.click('#acao');
-    await page.waitForFunction(() => window.__livro.estado.indice === 7 && window.__livro.cenas[7].linha.t >= window.__livro.cenas[7].linha.duration - 0.01, null, { timeout: 240000 });
-    await page.waitForTimeout(4000);
-    const r = await page.evaluate(() => ({ visitas: window.__visitas, tocou: [...window.__livro.estado.tocouAcao].sort(), indice: window.__livro.estado.indice }));
-    assert.deepEqual(r.visitas, [0, 1, 2, 3, 4, 5, 6, 7]);
-    assert.deepEqual(r.tocou, [0, 1, 2, 3, 4, 5, 6, 7]);
-    assert.equal(r.indice, 7, 'nada depois da última cena');
+    await page.waitForFunction(() => { const e = window.__livro.estado; window.__tocouTudo = (e.tocouAcao.size === 8) || window.__tocouTudo; if (e.modo === 'fechando') window.__tituloNoFechar = Math.max(window.__tituloNoFechar ?? 0, +getComputedStyle(document.getElementById('abertura')).opacity); return e.modo === 'capa'; }, null, { timeout: 240000, polling: 50 });
+    const r = await page.evaluate(() => ({ visitas: window.__visitas, tocouTudo: window.__tocouTudo, depois: window.__livro.estado.tocouAcao.size, indice: window.__livro.estado.indice, aberto: window.__livro.estado.tAbrir, voz: window.__livro.audio.estado().voz }));
+    assert.deepEqual(r.visitas, [0, 1, 2, 3, 4, 5, 6, 7, -1], 'as oito cenas em ordem e depois a capa');
+    assert.equal(r.tocouTudo, true, 'as oito cenas atuaram');
+    assert.equal(r.indice, -1, 'volta para a capa');
+    assert.ok(await page.evaluate(() => window.__tituloNoFechar) < 0.05, 'o título da capa não cobre o livro enquanto ele fecha');
+    assert.equal(r.aberto, 0, 'o livro está fechado');
+    assert.equal(r.depois, 0, 'pronto para ser lido de novo');
+    assert.ok(!r.voz, 'sem voz depois de fechar');
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
