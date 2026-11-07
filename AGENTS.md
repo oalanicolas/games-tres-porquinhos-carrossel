@@ -6,7 +6,7 @@ Herda as regras de `../../AGENTS.md`. Este arquivo lista só o que é próprio d
 
 - `npm test` e `npm run build`. Os arquivos de teste rodam um por vez (cerca de 10 min): em paralelo, cinco Chromes com GPU na máquina ocupada derrubam navegador e carga, sem ser defeito do livro.
 - Servidor local: `npm start`, porta 4291.
-- Narração: `python3 tools/narracao.py --estimar` conta o texto e `python3 tools/narracao.py` grava pela Magnific. Sem as 11 cenas gravadas, o manifesto fica vazio e o botão não aparece. Mudou o texto de `src/story.js`? Rode de novo: só a cena alterada é regravada. Depois de gravar, confira a fala com `whisper-cli` em português.
+- Narração: `python3 tools/narracao.py --estimar` conta o texto e `python3 tools/narracao.py` grava pela Magnific. Sem as 17 cenas gravadas, o manifesto fica vazio e o botão não aparece. Mudou o texto de `src/story.js`? Rode de novo: só a cena alterada é regravada. Depois de gravar, confira a fala com `whisper-cli` em português.
 - Sons novos entram por `tools/sons.py`, nunca à mão. Só o acervo licenciado de `shared/sfx`; o acervo `universal` é extraído de jogos e serve apenas para estudo. Antes de aceitar um corte curto do acervo (`foley-*`), procure a gravação de origem no campo `sources`: o uivo de 1,6 s vinha de uma tomada de 23 s. Checagem: `tests/sonoplastia.test.mjs`.
 
 ## Desvios da referência
@@ -19,14 +19,16 @@ Pedidos por Alan:
 - Animação sincronizada com a fala e um balão em cada personagem que fala (06/11/2026). Checagens: `tests/sincronia.test.mjs`, `tests/narrado-real.mjs`.
 - O modo narrado fecha o livro ao concluir (06/11/2026). Checagem: `tests/narracao.test.mjs`.
 - Terceira janela para Bento e entrada Pipo → Tico → Bento antes de o Lobo chegar (06/11/2026): "bento ta fora de casa, o logo iria pegar ele". Checagem: `tests/furos.test.mjs`.
+- Dezessete cenas (06/11/2026): "mais cenas"; "poderia ter uma cena para cada casa sendo construida"; Lobo espiando e corridas, escolhidos por Alan. Casa nasce no lugar em que será soprada; quem sai pela direita entra pela esquerda. Checagem: `tests/coerencia-17.test.mjs`.
+- O Lobo voa e cai do lado da casa (06/11/2026): "ele precisa voar e cair do lado da casa". Em Rabo em brasa ele sobe e sai por cima; em Cataplof! sobe, para, despenca e cai; a fuga começa onde ele caiu. Checagem: `tests/coerencia-17.test.mjs`.
 - Página a mais sempre que a história precisar, para não ter furo (06/11/2026): "nem que precise adicionar mais páginas". Checagem: `tests/furos.test.mjs`.
-- Narração por voz feminina calma da ElevenLabs (06/11/2026). A conta direta ficou sem créditos e Alan mandou tentar outro serviço, como a Magnific: as 11 cenas foram gravadas por ela, que usa vozes da ElevenLabs.
+- Narração por voz feminina calma da ElevenLabs (06/11/2026). A conta direta ficou sem créditos e Alan mandou tentar outro serviço, como a Magnific: as cenas foram gravadas por ela, que usa vozes da ElevenLabs.
 - Lobo recortado da referência que Alan mandou (`arte/lobo-referencia.png`, 06/11/2026): "bem longe de ficar parecido com a referencia". Peças articuladas tiradas da própria imagem (`tools/lobo_pecas.py`, `src/lobo-recorte.js`), com o rig de fala, sopro, subida e fuga de antes. Ainda sem aprovação de Alan. Checagem: `tests/lobo-referencia.test.mjs`.
 
 Decididos na construção, ainda sem aprovação de Alan:
 
-- Onze cenas com cunha fixa de 45° (`CUNHA` em `src/book.js`, desacoplada do número de cenas); a referência tem seis. Só as páginas próximas ficam visíveis, então a estrela não precisa fechar 360° com 8 paredes.
-- Os textos novos das cenas VI a XI (telhado, chaminé, rabo em brasa, fuga, festa, os três juntos) e a posição da terceira janela, na empena.
+- Dezessete cenas com cunha fixa de 45° (`CUNHA` em `src/book.js`, desacoplada do número de cenas); a referência tem seis. Só as páginas próximas ficam visíveis, então a estrela não precisa fechar 360° com 8 paredes.
+- Os textos das cenas que não vêm da referência (obras, Lobo espiando, corridas, telhado, chaminé, rabo em brasa, tombo, fuga, festa, os três juntos) e a posição da terceira janela, na empena.
 - O Lobo menor em cena, para caber na cunha sem atravessar as paredes do livro. Checagem: `tests/paredes.mjs`.
 - Voz Yasmin Alves, escolhida pelos metadados, sem ouvir. A rota da Magnific só oferece o modelo Turbo v2.5 e não aceita `previous_text`, `next_text` nem `style`.
 - Modo narrado (pedido de Alan, 06/11/2026: "no modo narrado o livro deve ir sozinho folhando"): vem ligado; a voz conduz e a página vira sozinha quando voz e gestos terminam. Mexer à mão continua valendo e desligar o botão devolve o ritmo a quem lê.
@@ -45,6 +47,7 @@ Auditoria pedida por Alan em 06/11/2026. Nada aqui foi ouvido por quem fez: é e
 
 - Efeitos passam por `busEfeitos`: cedem 4 dB enquanto a voz soa e voltam nas pausas. Voz fica seca, efeitos ganham espaço leve, e o limitador está na saída.
 - Todo `tocar` varia altura e volume; `passo()` nunca repete a gravação. `pan` usa a posição na página, ou `[de, até]` quando o som atravessa a cena.
+- A queda do Lobo em Cataplof! e o tropeço na corrida usam o som `tombo` (`impact-thud-2`).
 - Sem gravação no acervo, ainda hoje: palha (usa papel amassado), rajada de sopro de boca (usa ar em movimento), barriga roncando e torcida infantil (`viva` são adolescentes).
 
 ## Regras do conteúdo

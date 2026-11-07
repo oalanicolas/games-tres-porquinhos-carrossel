@@ -432,8 +432,22 @@
       "depende": [
         "R7"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "Relatório em output/agentes/porquinhos-auditoria-17.md com cada apontamento corrigido ou recusado com motivo; percurso real 3 vezes exit 0 em output/revisao/percursos.txt; modo narrado completo sem defeito em output/narrado-real.json",
+        "gates verdes em 2026-11-07T06:13:49Z (1): percurso"
+      ],
+      "inicio": "2026-11-07T05:31:42Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T05:31:42Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "1cba9d1034e57c7df3b969d63e84de444c4bd346"
+        }
+      },
+      "tentativas": 1,
+      "sem_progresso": 0,
+      "ultima_arvore_vermelha": "a77838e17c38d51155118508cde178f2655ca4ac822d2fc052e28f49a0604531",
+      "fim": "2026-11-07T06:13:49Z"
     },
     {
       "id": "R9",
@@ -1399,6 +1413,144 @@
           "+const ESPERADA = ['partida', 'obra', 'obra', 'obra', 'lobo-chega', 'lobo-chega', 'lobo-insiste', 'lobo-insiste', 'lobo-teima', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'fuga', 'festa', 'era-u"
         ]
       }
+    },
+    {
+      "rodada": "R8",
+      "quando": "2026-11-07T06:08:50Z",
+      "ok": false,
+      "gates": [
+        {
+          "exit": 1,
+          "segundos": 83.127,
+          "log_sha256": "4546c09425e78652e8bb1f96e29857aaa02ee002fced490d9e3b5bd0674ab326",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R8-20261107T060726Z/01-percurso/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R8-20261107T060726Z/01-percurso/01.log",
+          "ok": false,
+          "nome": "percurso",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/livro.test.mjs",
+            "tests/coerencia-17.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Relatório em output/agentes/porquinhos-auditoria-17.md com cada apontamento corrigido ou recusado com motivo; percurso real 3 vezes exit 0 em output/revisao/percursos.txt; modo narrado completo sem defeito em output/narrado-real.json"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "1cba9d1034e57c7df3b969d63e84de444c4bd346",
+          "ate": "1cba9d1034e57c7df3b969d63e84de444c4bd346",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 17,
+          "sem_commit": [
+            "M AGENTS.md",
+            "M README.md",
+            "A  docs/auditoria-interface-2026-11-07.md",
+            "M  docs/design-system.md",
+            "M docs/gauntlet-17-cenas.json",
+            "M  index.html",
+            "M  src/book.js",
+            "M src/cenas.js",
+            "M  src/main.js",
+            "M src/narracao.json",
+            "M src/objetos.js",
+            "M src/roteiro.json",
+            "M  src/style.css",
+            "A  tests/acessibilidade.test.mjs",
+            "M tests/captura.mjs",
+            "M tests/jornada.mjs",
+            "M  tests/telas.test.mjs"
+          ]
+        }
+      ],
+      "arvore_sha256": "a77838e17c38d51155118508cde178f2655ca4ac822d2fc052e28f49a0604531",
+      "head": "1cba9d1034e57c7df3b969d63e84de444c4bd346",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false,
+      "testes_snapshot": {
+        "total": 24,
+        "mapa": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R8-20261107T060726Z/testes.json",
+        "copia": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R8-20261107T060726Z/testes"
+      }
+    },
+    {
+      "rodada": "R8",
+      "quando": "2026-11-07T06:13:49Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 253.576,
+          "log_sha256": "1efc2885d6df1981cb53171c65dbeecc73f95aaa2d716ae941a1b3bf200ea112",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R8-20261107T060936Z/01-percurso/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R8-20261107T060936Z/01-percurso/01.log",
+          "ok": true,
+          "nome": "percurso",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/livro.test.mjs",
+            "tests/coerencia-17.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Relatório em output/agentes/porquinhos-auditoria-17.md com cada apontamento corrigido ou recusado com motivo; percurso real 3 vezes exit 0 em output/revisao/percursos.txt; modo narrado completo sem defeito em output/narrado-real.json"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "1cba9d1034e57c7df3b969d63e84de444c4bd346",
+          "ate": "1cba9d1034e57c7df3b969d63e84de444c4bd346",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 17,
+          "sem_commit": [
+            "M AGENTS.md",
+            "M README.md",
+            "A  docs/auditoria-interface-2026-11-07.md",
+            "M  docs/design-system.md",
+            "M docs/gauntlet-17-cenas.json",
+            "M  index.html",
+            "M  src/book.js",
+            "M src/cenas.js",
+            "M  src/main.js",
+            "M src/narracao.json",
+            "M src/objetos.js",
+            "M src/roteiro.json",
+            "M  src/style.css",
+            "A  tests/acessibilidade.test.mjs",
+            "M tests/captura.mjs",
+            "M tests/jornada.mjs",
+            "M  tests/telas.test.mjs"
+          ]
+        }
+      ],
+      "arvore_sha256": "377e8d9cc1db7f3ff7a074539d18cc023b2a2bd6c2c2a1156d472999fe53f09c",
+      "head": "1cba9d1034e57c7df3b969d63e84de444c4bd346",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false,
+      "testes": {
+        "base": "2026-11-07T06:08:50Z",
+        "alterados": [],
+        "adicionados": [],
+        "removidos": [],
+        "afrouxado": []
+      }
     }
   ],
   "historico": [
@@ -1489,6 +1641,19 @@
     {
       "quando": "2026-11-07T05:31:29Z",
       "evento": "R7 → concluida"
+    },
+    {
+      "quando": "2026-11-07T05:31:42Z",
+      "evento": "R8 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T06:08:50Z",
+      "evento": "R8 gate vermelho",
+      "tentativas": 1
+    },
+    {
+      "quando": "2026-11-07T06:13:49Z",
+      "evento": "R8 → concluida"
     }
   ]
 }

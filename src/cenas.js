@@ -257,7 +257,7 @@ montadores.partida = (p, audio) => {
   return { linha: tl, atores: { mae, pipo, tico, bento }, provas: { irmaos: [pipo, tico, bento] }, idle(t) { mae.idle(t); pipo.idle(t); tico.idle(t); bento.idle(t); fum.idle(t); so.raios.rotation.z = t * 0.1; } };
 };
 
-// ---- 3. A casa de palha ----------------------------------------------------------------------------
+// ---- 6. A casa de palha ----------------------------------------------------------------------------
 montadores.palha = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[0.02, 1.8], [0.34, 1.8], [0.5, 2.2], [0.1, 2.6], [0.1, 3.02], [-0.5, 3.02], [-0.16, 2.5], [0.1, 2.15]]), pat('stripes', '#f5dfa7', '#efd492', 0.2), { edge: '#d9c18a' });
@@ -297,7 +297,7 @@ montadores.palha = (p, audio) => {
   return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { casa: casa.raiz, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
 };
 
-// ---- 4. A casa de madeira ---------------------------------------------------------------------------
+// ---- 8. A casa de madeira ---------------------------------------------------------------------------
 montadores.madeira = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.34, 1.75], [0.06, 1.75], [0.24, 2.3], [0.34, 3.02], [-0.44, 3.02], [-0.2, 2.3]]), pat('stripes', '#f0cd8b', '#e8c076', 0.2), { edge: '#c9a764' });
@@ -369,7 +369,7 @@ montadores.madeira = (p, audio) => {
   return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo, tico }, provas: { casa: casa.raiz, corredor: corre, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); tico.idle(t); corre.idle(t); so.raios.rotation.z = t * 0.08; } };
 };
 
-// ---- 5. A casa de tijolos ---------------------------------------------------------------------------
+// ---- 10. A casa de tijolos ---------------------------------------------------------------------------
 const CASA_BENTO = { x: 0.04, zc: 1.74, s: 0.9 };
 /** A casa de Bento nas páginas 5 e 6: mesma posição, mesmas três janelas, mesma chaminé. */
 function casaDeBento(c) {
@@ -448,7 +448,7 @@ montadores.tijolo = (p, audio) => {
   return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo: j1, tico: j2, 'bento-janela': j3, bento }, provas: { casa: casa.raiz, deFora: { pipo, tico, bento }, janelas: [j1, j2, j3] }, idle(tt) { w.idle(tt); w.rabo.rotation.z = 1.35 + Math.sin(tt * 2.2) * 0.06; j1.idle(tt); j2.idle(tt); j3.idle(tt); bento.idle(tt); pipo.idle(tt); tico.idle(tt); fum.idle(tt); so.raios.rotation.z = tt * 0.08; } };
 };
 
-// ---- 6. A chaminé! ----------------------------------------------------------------------------------
+// ---- 11. A chaminé! ----------------------------------------------------------------------------------
 montadores.telhado = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.2, 1.8], [0.3, 1.8], [0.34, 2.3], [0.36, 2.92], [-0.56, 2.92], [-0.3, 2.3]]), pat('stripes', '#dcb7c8', '#cfa7ba', 0.2), { edge: '#a98498' });
@@ -528,7 +528,7 @@ function casaEmCorte(p, zc = 1.62) {
   return { g, zc, L, A, apiceY: SOLO + apice, topoY: SOLO + alto };
 }
 
-// ---- 7. Depressa! -----------------------------------------------------------------------------------
+// ---- 12. Depressa! -----------------------------------------------------------------------------------
 montadores.chamine = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.68, 1.68], [0.68, 1.68], [1.12, 2.78], [0.6, 2.96], [0, 3.02], [-0.6, 2.96], [-1.12, 2.78]]), pat('wood', '#a06a42', '#8c5a36', 0.34), { edge: '#7c4d2e' });
@@ -587,7 +587,7 @@ montadores.chamine = (p, audio) => {
   return { linha: tl, atores: { lobo: w, bento, pipo, tico }, provas: { caldeirao: cal.g, duto: DX }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.6 + Math.sin(t * 2.2) * 0.05; bento.idle(t); pipo.idle(t); tico.idle(t); fogo.idle(t, forca.v); fum.idle(t); } };
 };
 
-// ---- 8. Rabo em brasa -------------------------------------------------------------------------------
+// ---- 13. Rabo em brasa -------------------------------------------------------------------------------
 montadores.rabo = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.68, 1.68], [0.68, 1.68], [1.12, 2.78], [0.6, 2.96], [0, 3.02], [-0.6, 2.96], [-1.12, 2.78]]), pat('wood', '#8c5a3e', '#7a4d33', 0.34), { edge: '#6c4229' });
@@ -657,7 +657,7 @@ montadores.rabo = (p, audio) => {
   return { linha: tl, atores: { lobo: w }, provas: { caldeirao: cal.g, duto: DX }, idle(t) { w.idle(t); bento.idle(t); pipo.idle(t); tico.idle(t); fogo.idle(t, 1.6); fum.idle(t); w.rabo.rotation.z = 0.32 + Math.sin(t * 12) * 0.14; } };
 };
 
-// ---- 9. Correu, correu ------------------------------------------------------------------------------
+// ---- 15. Correu, correu ------------------------------------------------------------------------------
 montadores.fuga = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   // o mesmo lugar da página anterior: a estrada, a casa, a porta aberta e os três onde pararam
@@ -697,7 +697,7 @@ montadores.fuga = (p, audio) => {
   return { linha: tl, atores: { pipo, tico, bento }, provas: { lobo: w, casa: casa.raiz, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.32 + Math.sin(t * 12) * 0.14; pipo.idle(t); tico.idle(t); bento.idle(t); fum.idle(t); gira(t); } };
 };
 
-// ---- 10. A festa ------------------------------------------------------------------------------------
+// ---- 16. A festa ------------------------------------------------------------------------------------
 montadores.festa = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.5, 1.7], [0.5, 1.7], [1.1, 2.78], [0.6, 2.96], [0, 3.02], [-0.6, 2.96], [-1.1, 2.78]]), pat('dots', '#f2c88f', '#f7d9ac', 0.2), { edge: '#c79a67' });
@@ -714,9 +714,9 @@ montadores.festa = (p, audio) => {
   const fogo = O.fogueira(c, { x: 0.02, y: SOLO + 0.02, z: 2.24, s: 0.8 });
   const mae = porco(c, 'mae', { x: 0.7, y: SOLO, z: 2.3, s: 0.84, virado: true }); const vM = escondido(mae);
   // bolo
-  const bolo = rig(mae.bracoD, 'bolo', { x: 0.0, y: -0.3, z: 0.02 });
+  const bolo = rig(mae.corpo, 'bolo', { x: 0, y: 0.3, z: 0.16 }); // na frente da barriga: na mão de dentro, Kael o escondia
   piece(bolo, rrect(0.34, 0.03, 0.01), '#fff4dc', { t: 0.008 }); piece(bolo, rrect(0.27, 0.11, 0.02, 0, 0.07), pat('stripes', '#ff8fb1', '#ffb3c9', 0.08), { t: 0.01, z: 0.002 }); piece(bolo, rrect(0.19, 0.09, 0.02, 0, 0.17), pat('dots', '#fff4dc', '#ff8fb1', 0.08), { t: 0.01, z: 0.004 }); piece(bolo, flame(0.04, 0.08), '#ffb02e', { t: 0.004, y: 0.22, z: 0.006, glow: true });
-  mae.bracoD.rotation.z = 1.2;
+  mae.bracoD.rotation.z = 0.5; mae.bracoE.rotation.z = -0.5;
   const pipo = porco(c, 'pipo', { x: -0.74, y: SOLO, z: 2.42, s: 0.72 }); const tico = porco(c, 'tico', { x: -0.26, y: SOLO, z: 2.68, s: 0.78 }); const bento = porco(c, 'bento', { x: 0.32, y: SOLO, z: 2.68, s: 0.84, virado: true });
   // a flauta é de Tico, desde a página 2; Bento só aprende no fim
   const flauta = rig(tico.cabeca, 'flauta', { x: 0.12, y: -0.05, z: 0.2 }); piece(flauta, rrect(0.38, 0.032, 0.012, 0.12, -0.03), pat('stripes', '#f4cd5e', '#d9a93f', 0.06), { t: 0.008, jitter: 0 }); tico.bracoD.rotation.z = 2.2; tico.bracoE.rotation.z = -2.2;
@@ -749,7 +749,7 @@ montadores.festa = (p, audio) => {
   return { linha: tl, atores: { mae, pipo, tico, bento }, idle(t) { pipo.idle(t); tico.idle(t); bento.idle(t); mae.idle(t); fogo.idle(t, 1.15); lant.forEach((g, i) => { g.rotation.z = Math.sin(t * 1.3 + i) * 0.05; }); } };
 };
 
-// ---- 11. A casa que o vento não leva ----------------------------------------------------------------
+// ---- 17. A casa que o vento não leva ----------------------------------------------------------------
 montadores.juntos = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.34, 1.68], [0.34, 1.68], [0.84, 2.3], [1.0, 2.82], [0, 3.02], [-1.0, 2.82], [-0.84, 2.3]]), pat('dots', '#f7e3b4', '#fcefcd', 0.18), { edge: '#d9c18a' });
@@ -774,7 +774,7 @@ montadores.juntos = (p, audio) => {
   // Pipo e Tico assentam tijolo, cada um o seu quarto
   tl.grupo('quartos');
   [[pipo, quartos[0]], [tico, quartos[1]]].forEach(([q, g], i) => {
-    [0.2, 0.4, 0.6, 0.8, 1].forEach((alt, k) => { const t = 0.9 + i * 0.12 + k * 0.42; tl.pulse(q.bracoD, { rz: 1.3 }, t, 0.3); tl.pulse(q.corpo, { y: 0.05 }, t, 0.3); tl.to(g, { sy: 0.6 * alt }, t + 0.1, 0.2, ease.back); tl.call(() => audio.tocar(k % 2 ? 'tijolo2' : 'tijolo', { vol: 0.8 }), t + 0.12); });
+    [0.2, 0.4, 0.6, 0.8, 1].forEach((alt, k) => { const t = 0.9 + i * 0.12 + k * 0.42; tl.pulse(q.bracoD, { rz: 1.3 }, t, 0.3); tl.pulse(q.corpo, { y: 0.05 }, t, 0.3); tl.to(g, { sy: 0.84 * alt }, t + 0.1, 0.2, ease.back); tl.call(() => audio.tocar(k % 2 ? 'tijolo2' : 'tijolo', { vol: 0.8 }), t + 0.12); });
   });
   // Bento aprende a tocar flauta
   tl.grupo('flauta');
@@ -1009,7 +1009,7 @@ montadores['corrida-lulu'] = (p, audio) => {
   const so = O.solDePapel(c, { x: -0.1, y: 2.3, z: 0.74, s: 0.7, cor: '#ffc94a', raio: '#f79a33' });
   O.nuvem(c, { x: 0.16, y: 2.52, z: 0.72, s: 0.42 }); O.nuvem(c, { x: -0.2, y: 1.84, z: 0.76, s: 0.34 });
   // lá adiante, à direita, a casa de Lulu: é para lá que ele corre
-  const destino = O.casaMadeira(c, { x: 0.31, y: SOLO, z: 1.3, s: 0.34 });
+  const destino = O.casaMadeira(c, { x: 0.41, y: SOLO, z: 1.55, s: 0.34 });
   O.arvore(p.pe(-0.42, 1.5), { s: 0.8, altura: 1.4, copa: '#c9a03a', listra: '#b78f2c' }); O.arvore(p.pe(-0.76, 2.0), { s: 0.66, altura: 1.15, copa: '#8fb04a', listra: '#7f9f3e' }); O.arvore(p.pe(0.74, 1.9), { s: 0.7, altura: 1.2, copa: '#e8a93a', listra: '#d59729', frutas: '#e84a5f', flip: -1 });
   const ZB = 2.08; // atrás de quem corre, e acima da barra de controles
   const ponte = p.pe(0.03, ZB); const arco = [[-0.34, 0], [-0.2, 0.09], [0, 0.13], [0.2, 0.09], [0.34, 0]];
@@ -1033,7 +1033,7 @@ montadores['corrida-lulu'] = (p, audio) => {
   corre(tl, pipo, 0.5, 3.4, 1.0); solta(3, 3.5);
   // o Lobo vem de focinho baixo, seguindo as palhinhas; João já cansado, mas sem parar
   tl.grupo('lobo');
-  corre(tl, pipo, 0.72, 4.4, 2.8, { salto: 0.04, perna: 0.5, passada: 0.24 }); solta(4, 5.6);
+  corre(tl, pipo, 0.62, 4.4, 2.8, { salto: 0.04, perna: 0.5, passada: 0.24 }); solta(4, 5.6);
   tl.to(w.root, tam(w, vL), 4.4, 0.16, ease.out); tl.to(w.cabeca, { rz: -0.22 }, 4.4, 0.2); corre(tl, w, -0.56, 4.4, 1.2, { perna: 0.5, passada: 0.2 }); tl.pulse(w.root, { y: 0.22 }, 5.2, 0.4); tl.call(() => audio.tocar('inspira', { vol: 0.8, taxa: 1.2, pan: -0.7 }), 4.5);
   corre(tl, w, -0.2, 5.6, 1.6, { perna: 0.5, passada: 0.2 }); tl.call(() => audio.tocar('inspira', { vol: 0.8, taxa: 1.3, pan: -0.3 }), 6.0);
   tl.grupo('grita');

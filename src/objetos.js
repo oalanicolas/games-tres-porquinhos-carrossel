@@ -166,8 +166,20 @@ export function casaMadeira(parent, { x = 0, y = 0, z = 0, s = 1 } = {}) {
   piece(porta, rrect(0.32, 0.58, 0.02, 0, 0.29), pat('vstripes', '#8c4f2a', '#7b4323', 0.2), { t: 0.01 });
   piece(porta, ellipse(0.024, 0.024, 0.1, 0.27, 8), '#ffd24f', { t: 0.006, z: 0.01, jitter: 0 });
   tabuas.push(porta);
-  // telhado: duas águas de ripas
+  // a empena fechada, em tábuas que acompanham o telhado: sem ela, via-se a copa das árvores por dentro da casa
   const ripas = [];
+  const topoEmpena = (x) => 0.5 * (1 - Math.abs(x) / 0.68);
+  for (let i = 0; i < 6; i++) {
+    const w = 0.18; const px = -0.54 + (i + 0.5) * w; const a = px - w / 2; const b = px + w / 2;
+    const cor = cores[i % 4];
+    const r = rig(raiz, 'empena', { x: px, y: 0.88, z: 0.03 });
+    const contorno = [[-w / 2, -0.02], [w / 2, -0.02], [w / 2, topoEmpena(b)]];
+    if (a < 0 && b > 0) contorno.push([0, topoEmpena(0)]);
+    contorno.push([-w / 2, topoEmpena(a)]);
+    piece(r, poly(...contorno.map(([x, y]) => (a < 0 && b > 0 && x === 0 ? [-px, y] : [x, y]))), pat('wood', shade(cor, -0.12), shade(cor, -0.2), 0.2), { t: 0.01, edge: '#d9ab78', jitter: 0.004 });
+    ripas.push(r);
+  }
+  // telhado: duas águas de ripas
   for (const lado of [-1, 1]) for (let i = 0; i < 5; i++) {
     const a = (i + 0.5) / 5; const r = rig(raiz, 'ripa', { x: lado * (0.68 - a * 0.68), y: 0.88 + a * 0.5, z: 0.075 + (lado > 0 ? 0.008 : 0) + i * 0.001, rot: lado * -0.63 });
     const cor = i % 2 ? '#9c5a32' : '#b06a3c';

@@ -1,4 +1,4 @@
-// Percurso real pela interface: abre pelo botão, percorre as onze cenas com a ação de cada uma e confere o enquadramento fixo.
+// Percurso real pela interface: abre pelo botão, percorre as 17 cenas com a ação de cada uma e confere o enquadramento fixo.
 import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const base = process.env.LIVRO_URL || 'http://127.0.0.1:4291/';

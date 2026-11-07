@@ -1,6 +1,6 @@
 # Os Três Porquinhos, livro-carrossel
 
-Livro pop-up em 3D que abre em estrela e conta o conto inteiro em onze cenas. Cada cena tem uma ação de papel e a música muda conforme a história avança. No modo narrado, a voz conta e o livro vira sozinho. Por [Alan Nicolas](https://x.com/oalanicolas).
+Livro pop-up em 3D que abre em estrela e conta o conto inteiro em dezessete cenas. Cada cena tem uma ação de papel e a música muda conforme a história avança. No modo narrado, a voz conta e o livro vira sozinho. Por [Alan Nicolas](https://x.com/oalanicolas).
 
 João constrói a casa de palha, Lulu a de madeira e Kael a de tijolos. Texto e narração usam os mesmos nomes.
 
@@ -22,7 +22,7 @@ npm run build
 ## Como funciona
 
 - `src/book.js`: paredes radiais, abertura e quais cenas ficam visíveis.
-- `src/cenas.js`, `src/personagens.js`, `src/objetos.js`, `src/palco.js`, `src/paper.js`: recortes de papel e ações das onze cenas.
+- `src/cenas.js`, `src/personagens.js`, `src/objetos.js`, `src/palco.js`, `src/paper.js`: recortes de papel e ações das dezessete cenas.
 - `src/story.js`: o texto.
 - `src/audio.js`: música com fusão e emenda antes do fade, ambientes em laço, efeitos num bus que cede à voz, posição no estéreo, espaço e limitador. `src/sons.json` é gerado.
 - `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
@@ -63,19 +63,20 @@ python3 tools/narracao.py --cena 3    # grava uma cena, para ouvir antes das out
 python3 tools/narracao.py             # grava o que mudou no texto
 ```
 
-Sem as 11 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a conta direta, com o modelo Multilingual v2.
+Sem as 17 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a conta direta, com o modelo Multilingual v2.
 
 ## Testes
 
 | Arquivo | O que prova |
 |---|---|
-| `tests/sequencia.test.mjs` | o fim nunca aparece junto do começo, em 11 de 11 cenas e na abertura |
-| `tests/musica.test.mjs` | faixa certa nas 11 cenas, som na saída, troca no tchibum, botão de som e 5 laços sem salto |
+| `tests/sequencia.test.mjs` | o fim nunca aparece junto do começo, em 17 de 17 cenas e na abertura |
+| `tests/musica.test.mjs` | faixa certa nas 17 cenas, som na saída, troca no tchibum, botão de som e 5 laços sem salto |
 | `tests/sonoplastia.test.mjs` | uivo longo, batida de madeira, todo efeito usado, passos com variação e posição, som no primeiro clique |
 | `tests/lobo-referencia.test.mjs` | peças do Lobo, atlas nas cenas sem estampa antiga, gestos |
 | `tests/telas.test.mjs` | livro nítido e textos sem sobreposição em 4 tamanhos de tela |
 | `tests/livro.test.mjs` | nenhuma peça fora da cunha e percurso real pela interface |
-| `tests/texto-livre.test.mjs` | nada da cena tapa o texto da página, em 11 de 11 cenas |
+| `tests/coerencia-17.test.mjs` | a ordem das 17 cenas, cada casa nascendo onde será soprada, as corridas, o voo e a queda ao lado da casa |
+| `tests/texto-livre.test.mjs` | nada da cena tapa o texto da página, em 17 de 17 cenas |
 | `tests/furos.test.mjs` | a história se sustenta em cena: Kael entra por último antes do Lobo chegar, três janelas, Lobo alcança a porta, chaminé e caldeirão à vista, ninguém reaparece |
 | `tests/continuidade.test.mjs` | balões mantêm a ordem durante gestos; voz terminada durante a abertura ou antes do primeiro quadro e toque cancelado não prendem o avanço |
 
