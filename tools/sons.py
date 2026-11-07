@@ -23,21 +23,35 @@ EFEITOS = {
   'martelo': ('rubberduck-material-wood-hammer-01', 0, None, -18, ''), 'martelo2': ('rubberduck-material-wood-hammer-02', 0, None, -18, ''),
   'tijolo': ('rubberduck-sfx2-sfx100v2-stones-02', 0, None, -17, ''), 'tijolo2': ('rubberduck-sfx2-sfx100v2-stones-01', 0, None, -17, ''),
   'porco': ('foley-pig-1', 0, None, -18, ''), 'grunhido': ('foley-grunt', 0, None, -18, ''), 'guincho': ('foley-squeal', 0, None, -17, ''),
-  'uivo1': ('foley-howl-1', 0, None, -17, ''), 'uivo2': ('foley-howl-2', 0, None, -17, ''),
+  # a tomada integral de 23 s: foley-howl-1 e -2 são cortes de 1,6 s dela, em MP3 de 96 kbps
+  'uivo1': ('usc-wolf-howls-reverb', 1.2, 5.1, -17, ''), 'uivo2': ('usc-wolf-howls-reverb', 7.2, 4.7, -17, ''),
+  'uivo3': ('usc-wolf-howls-reverb', 12.6, 3.9, -17, ''), 'uivo4': ('usc-wolf-howls-reverb', 17.2, 4.0, -17, ''),
+  'choro1': ('foley-cry-1', 0, None, -18, ''), 'choro2': ('foley-cry-2', 0, None, -18, ''),
+  'engolir': ('foley-engolir', 0, None, -20, ''), 'corvo': ('zeroisnotnull-crow-crow-caw', 0, None, -20, ''),
+  # passos: 19 caminhadas eram mudas
+  'passo1': ('steps-dirt-1', 0, None, -20, ''), 'passo2': ('steps-dirt-2', 0, None, -20, ''),
+  'passo3': ('steps-dirt-3', 0, None, -20, ''), 'passo4': ('steps-dirt-4', 0, None, -20, ''),
+  # batida de nós de dedo na madeira, porta fechando e tranca: antes tudo era martelo
+  'bate1': ('bart-workshop-workshop-wood-clap', 0, None, -17, ''), 'bate2': ('bart-workshop-workshop-wood-clap-2', 0, None, -17, ''),
+  'porta': ('rubberduck-material-wood-close-02', 0, None, -18, ''), 'tranca': ('rubberduck-material-lock-open-01', 0, None, -19, ''),
+  # o sopro: ar de verdade, com a inspiração feita do mesmo ar ao contrário
+  'sopro': ('rubberduck-sfx2-sfx100v2-air-01', 0, None, -15, ''), 'sopro2': ('rubberduck-sfx2-sfx100v2-air-02', 0, None, -15, ''),
+  'puxa': ('rubberduck-sfx2-sfx100v2-air-02', 0, None, -20, 'areverse'),
+  'foguete': ('studio-rocket-ignite', 0, None, -17, ''), 'bolhas': ('rubberduck-water-loop-bubbles-02', 0, 3.0, -20, ''),
   'tchibum': ('rubberduck-water-splash-08', 0, None, -14, ''), 'tchibum2': ('rubberduck-water-splash-01', 0, None, -15, ''),
   'caldeirao': ('foley-cauldron', 0, 3.0, -20, ''),
   'chama': ('studio-boom-fuse-1', 0, None, -18, ''), 'lenha': ('bart-workshop-workshop-wood-clap', 0, None, -18, ''),
-  'fogos': ('studio-boom-explosion-body-1', 0, None, -20, ''), 'fogos2': ('studio-boom-explosion-low-1', 0, None, -20, ''),
+  'fogos': ('sardin-firecracker-1', 0, None, -22, ''), 'fogos2': ('nenad-distant-explosion', 0, 3.0, -22, ''),
   'viva': ('chardonnet-teens-cheer-2', 0, None, -18, ''), 'risos': ('sardin-children-laughter', 0, None, -18, ''),
   'sino': ('sardin-glockenspiel-slip', 0, 6.0, -22, ''), 'melro': ('tiroir-blackbird-23', 0, None, -22, ''),
 }
 # ambientes: laço sem emenda, fechado por fusão do fim sobre o começo
 AMBIENTES = {
-  'passaros': ('thimras-park-park-ambience-birds', 60, 40, -30, ''),
-  'brisa': ('thimras-park-park-ambience-wind', 60, 40, -30, 'highpass=f=120'),
-  'grilos': ('original-owlish-night-crickets-ambience-on-rural-property', 10, 40, -30, ''),
-  'fogo': ('foley-fire', 0, 2.4, -28, ''),
-  'fervura': ('original-owlish-kettle-boil', 20, 40, -30, ''),
+  'passaros': ('thimras-park-park-ambience-birds', 60, 40, -27, ''),
+  'brisa': ('thimras-park-park-ambience-wind', 60, 40, -27, 'highpass=f=120'),
+  'grilos': ('original-owlish-night-crickets-ambience-on-rural-property', 10, 40, -27, ''),
+  'fogo': ('foley-fire', 0, 2.4, -25, ''),
+  'fervura': ('original-owlish-kettle-boil', 20, 40, -27, ''),
 }
 # momento da história: música (bytes originais)
 # A trilha vem de tools/trilha.py: Alan recusou as faixas do acervo, que não têm nada de conto infantil.

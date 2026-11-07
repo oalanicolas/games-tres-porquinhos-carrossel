@@ -46,7 +46,7 @@ test('a voz entra, a ação acontece na fala, a música abaixa e virar a página
     assert.equal((await estado()).voz, null, 'a voz espera o livro abrir');
     await page.waitForFunction(() => window.__livro.audio.estado().voz?.tempo > 0.2, null, { timeout: 15000 });
     await page.waitForFunction(() => window.__livro.audio.estado().nivelMusica < 0.34, null, { timeout: 5000 });
-    await page.waitForFunction(() => window.__livro.audio.estado().nivelAmbiente < 0.56, null, { timeout: 5000 });
+    await page.waitForFunction(() => window.__livro.audio.estado().nivelAmbiente < 0.8, null, { timeout: 5000 }); // sob a voz o ambiente cai de 1 para 0,75: ele ficava inaudível (cerca de -40 LUFS)
     await page.waitForFunction(() => window.__livro.estado.tocouAcao.has(0), null, { timeout: 6000 });
     assert.ok((await estado()).voz.tempo >= 1, 'a ação não pode vir antes do trecho da fala');
     await page.click('#proxima');

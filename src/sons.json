@@ -1,90 +1,109 @@
 {
-  "efeitos": [
-    "flap1",
-    "flap2",
-    "abrir",
-    "vento",
-    "ar",
-    "inspira",
-    "palha",
-    "palha2",
-    "pano",
-    "range",
-    "range2",
-    "desaba",
-    "tabuas",
-    "martelo",
-    "martelo2",
-    "tijolo",
-    "tijolo2",
-    "porco",
-    "grunhido",
-    "guincho",
-    "uivo1",
-    "uivo2",
-    "tchibum",
-    "tchibum2",
-    "caldeirao",
-    "chama",
-    "lenha",
-    "fogos",
-    "fogos2",
-    "viva",
-    "risos",
-    "sino",
-    "melro"
-  ],
-  "ambientes": [
-    "passaros",
-    "brisa",
-    "grilos",
-    "fogo",
-    "fervura"
-  ],
-  "pad": 0.1,
-  "lacos": {
-    "passaros": 40,
-    "brisa": 40,
-    "grilos": 40,
-    "fogo": 2.4,
-    "fervura": 40
+ "efeitos": [
+  "flap1",
+  "flap2",
+  "abrir",
+  "vento",
+  "ar",
+  "inspira",
+  "palha",
+  "palha2",
+  "pano",
+  "range",
+  "range2",
+  "desaba",
+  "tabuas",
+  "martelo",
+  "martelo2",
+  "tijolo",
+  "tijolo2",
+  "porco",
+  "grunhido",
+  "guincho",
+  "uivo1",
+  "uivo2",
+  "uivo3",
+  "uivo4",
+  "choro1",
+  "choro2",
+  "engolir",
+  "corvo",
+  "passo1",
+  "passo2",
+  "passo3",
+  "passo4",
+  "bate1",
+  "bate2",
+  "porta",
+  "tranca",
+  "sopro",
+  "sopro2",
+  "puxa",
+  "foguete",
+  "bolhas",
+  "tchibum",
+  "tchibum2",
+  "caldeirao",
+  "chama",
+  "lenha",
+  "fogos",
+  "fogos2",
+  "viva",
+  "risos",
+  "sino",
+  "melro"
+ ],
+ "ambientes": [
+  "passaros",
+  "brisa",
+  "grilos",
+  "fogo",
+  "fervura"
+ ],
+ "pad": 0.1,
+ "lacos": {
+  "passaros": 40,
+  "brisa": 40,
+  "grilos": 40,
+  "fogo": 2.4,
+  "fervura": 40
+ },
+ "musicas": {
+  "era-uma-vez": {
+   "arquivo": "era-uma-vez.mp3",
+   "ganho_db": -10.9
   },
-  "musicas": {
-    "era-uma-vez": {
-      "arquivo": "era-uma-vez.mp3",
-      "ganho_db": -10.9
-    },
-    "partida": {
-      "arquivo": "partida.mp3",
-      "ganho_db": -10.8
-    },
-    "obra": {
-      "arquivo": "obra.mp3",
-      "ganho_db": -10.7
-    },
-    "lobo-chega": {
-      "arquivo": "lobo-chega.mp3",
-      "ganho_db": -11.1
-    },
-    "lobo-insiste": {
-      "arquivo": "lobo-insiste.mp3",
-      "ganho_db": -10.4
-    },
-    "lobo-teima": {
-      "arquivo": "lobo-teima.mp3",
-      "ganho_db": -10.4
-    },
-    "noite": {
-      "arquivo": "noite.mp3",
-      "ganho_db": -10.5
-    },
-    "fuga": {
-      "arquivo": "fuga.mp3",
-      "ganho_db": -10.7
-    },
-    "festa": {
-      "arquivo": "festa.mp3",
-      "ganho_db": -10.5
-    }
+  "partida": {
+   "arquivo": "partida.mp3",
+   "ganho_db": -10.8
+  },
+  "obra": {
+   "arquivo": "obra.mp3",
+   "ganho_db": -10.7
+  },
+  "lobo-chega": {
+   "arquivo": "lobo-chega.mp3",
+   "ganho_db": -11.1
+  },
+  "lobo-insiste": {
+   "arquivo": "lobo-insiste.mp3",
+   "ganho_db": -10.4
+  },
+  "lobo-teima": {
+   "arquivo": "lobo-teima.mp3",
+   "ganho_db": -10.4
+  },
+  "noite": {
+   "arquivo": "noite.mp3",
+   "ganho_db": -10.5
+  },
+  "fuga": {
+   "arquivo": "fuga.mp3",
+   "ganho_db": -10.7
+  },
+  "festa": {
+   "arquivo": "festa.mp3",
+   "ganho_db": -10.5
   }
+ }
 }

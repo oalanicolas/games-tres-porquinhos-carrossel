@@ -7,7 +7,11 @@ const base = import.meta.env.BASE_URL;
 const db = (v) => 10 ** (v / 20);
 const FUSAO = 1.6;
 const NIVEL_MUSICA = 0.72; const NIVEL_ACAO = 0.42; const NIVEL_SOB_VOZ = 0.3;
-const NIVEL_AMB = 0.8; const NIVEL_AMB_SOB_VOZ = 0.5;
+const NIVEL_AMB = 1; const NIVEL_AMB_SOB_VOZ = 0.75;
+// a voz vem primeiro: o efeito cede só enquanto ela está soando, e volta nas pausas da frase
+const NIVEL_EFEITO_SOB_VOZ = 0.62; const LIMIAR_VOZ = 0.1;
+const EMENDA_MUSICA = 4.5; // as faixas terminam em fade: a repetição funde antes dele, em vez de sumir e recomeçar
+const IMEDIATOS = ['abrir', 'flap1', 'flap2']; // tocam no primeiro clique: já vêm baixando antes dele
 // tempo até a voz entrar: da capa o livro ainda está abrindo; numa virada, só o giro
 const ATRASO_DA_CAPA = 2.6; const ATRASO_VIRADA = 0.6;
 
@@ -18,11 +22,22 @@ const AMBIENTE = [
   { brisa: 0.75 }, { grilos: 0.6, fogo: 0.3, fervura: 0.15 }, { grilos: 0.5, fogo: 0.55, fervura: 0.45 }, { grilos: 0.4, fogo: 0.55, fervura: 0.5 },
   { grilos: 0.6, brisa: 0.35 }, { grilos: 0.5, fogo: 0.45 }, { passaros: 0.6, brisa: 0.2 },
 ];
+// quanto de espaço cada cena dá aos efeitos: a noite é mais aberta
+const ESPACO = [0.1, 0.1, 0.1, 0.1, 0.12, 0.2, 0.2, 0.2, 0.22, 0.2, 0.1];
+
+/** Resposta curta de espaço aberto: faz gravações de lugares diferentes soarem no mesmo livro. */
+function respostaDeEspaco(ctx, seg = 1.1) {
+  const n = Math.floor(ctx.sampleRate * seg); const b = ctx.createBuffer(2, n, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let baixo = 0; for (let i = 0; i < n; i++) { const q = i / n; baixo += (Math.random() * 2 - 1 - baixo) * (0.5 - 0.42 * q); d[i] = baixo * (1 - q) ** 3.2; } }
+  return b;
+}
 
 export class Audio {
   constructor() {
     this.ligado = true; this.ctx = null; this.buffers = new Map(); this.camas = new Map(); this.faixas = new Map();
     this.atual = null; this.pedida = 'era-uma-vez'; this.ambPedido = {}; this.oculto = false; this.cenaAtual = null;
+    this.bytes = new Map(IMEDIATOS.map((n) => [n, fetch(`${base}sfx/${n}.mp3`).then((r) => r.arrayBuffer()).catch(() => null)]));
+    this.fila = []; this.registro = []; this.ultimoPasso = -1; this.nivelEfeitos = 1;
     this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.vozes = new Map(); this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoFalhaVoz = null; this.aoFimDaVoz = null;
   }
   destravar() {
@@ -31,7 +46,14 @@ export class Audio {
       const ctx = this.ctx = new AC();
       this.master = ctx.createGain(); this.master.gain.value = this.ligado ? 1 : 0;
       this.medidor = ctx.createAnalyser(); this.medidor.fftSize = 2048;
-      this.master.connect(this.medidor); this.medidor.connect(ctx.destination);
+      // o limitador só age na soma dos picos, quando muita coisa acontece junto
+      this.limitador = ctx.createDynamicsCompressor();
+      this.limitador.threshold.value = -2; this.limitador.knee.value = 0; this.limitador.ratio.value = 20; this.limitador.attack.value = 0.002; this.limitador.release.value = 0.12;
+      this.master.connect(this.limitador); this.limitador.connect(this.medidor); this.medidor.connect(ctx.destination);
+      this.busEfeitos = ctx.createGain(); this.busEfeitos.connect(this.master);
+      this.espaco = ctx.createConvolver(); this.espaco.buffer = respostaDeEspaco(ctx);
+      this.envioEspaco = ctx.createGain(); this.envioEspaco.gain.value = ESPACO[0];
+      this.busEfeitos.connect(this.envioEspaco); this.envioEspaco.connect(this.espaco); this.espaco.connect(this.master);
       this.busMusica = ctx.createGain(); this.busMusica.gain.value = NIVEL_MUSICA; this.busMusica.connect(this.master);
       this.busAmb = ctx.createGain(); this.busAmb.gain.value = NIVEL_AMB; this.busAmb.connect(this.master);
       this.busVoz = ctx.createGain(); this.busVoz.connect(this.master);
@@ -39,13 +61,44 @@ export class Audio {
       for (const n of SONS.efeitos) this._carregar(n);
       for (const n of SONS.ambientes) this._carregar(n).then(() => this._iniciarCama(n));
       document.addEventListener('visibilitychange', () => this._visibilidade());
+      setInterval(() => this._vigiar(), 60);
       this._tocarTrilha(this.pedida);
     }
     if (this.ctx.state === 'suspended') this.ctx.resume();
     if (this.atual && this.atual.el.paused && !this.oculto) this.atual.el.play().catch(() => {});
   }
   async _carregar(n) {
-    try { const r = await fetch(`${base}sfx/${n}.mp3`); this.buffers.set(n, await this.ctx.decodeAudioData(await r.arrayBuffer())); } catch (e) { console.warn('som', n, e); }
+    try {
+      const bytes = (await this.bytes.get(n)) ?? await (await fetch(`${base}sfx/${n}.mp3`)).arrayBuffer();
+      this.buffers.set(n, await this.ctx.decodeAudioData(bytes));
+      // o que foi pedido enquanto o som baixava ainda toca, se o momento não passou
+      const agora = this.ctx.currentTime; const prontos = this.fila.filter((f) => f.nome === n);
+      this.fila = this.fila.filter((f) => f.nome !== n);
+      for (const f of prontos) if (agora - f.em < 1.5) this.tocar(n, f.op);
+    } catch (e) { console.warn('som', n, e); }
+  }
+  /** A cada instante: o efeito cede à voz que está soando, e a música emenda antes do fim. */
+  _vigiar() {
+    if (this.ctx.state !== 'running') return;
+    const alvo = this.nivelVoz() > LIMIAR_VOZ ? NIVEL_EFEITO_SOB_VOZ : 1;
+    if (alvo !== this.nivelEfeitos) { this.nivelEfeitos = alvo; this.busEfeitos.gain.setTargetAtTime(alvo, this.ctx.currentTime, alvo < 1 ? 0.03 : 0.22); }
+    const f = this.atual;
+    if (f && !f.emendando && f.el.duration && !f.el.paused && f.el.duration - f.el.currentTime < EMENDA_MUSICA) this._emendar(f);
+  }
+  /** Repete a faixa fundindo uma cópia que recomeça. Se o navegador recusar, o laço do próprio elemento segue valendo. */
+  _emendar(f) {
+    f.emendando = true;
+    const el = new window.Audio(f.el.src); el.loop = true; el.preload = 'auto';
+    const g = this.ctx.createGain(); g.gain.value = 0; const fonte = this.ctx.createMediaElementSource(el); fonte.connect(g); g.connect(this.busMusica);
+    el.play().then(() => {
+      if (this.faixas.get(f.nome) !== f) return;
+      const t = this.ctx.currentTime; const velho = { el: f.el, g: f.g }; const nivel = this.atual === f ? db(SONS.musicas[f.nome].ganho_db) : 0;
+      velho.g.gain.cancelScheduledValues(t); velho.g.gain.setValueAtTime(velho.g.gain.value, t); velho.g.gain.linearRampToValueAtTime(0, t + 3);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(nivel, t + 3);
+      f.el = el; f.g = g; f.emendando = false;
+      if (this.atual !== f) el.pause();
+      setTimeout(() => { velho.el.pause(); velho.g.disconnect(); }, 3300);
+    }).catch(() => { fonte.disconnect(); g.disconnect(); });
   }
   _iniciarCama(n) {
     const b = this.buffers.get(n); if (!b || this.camas.has(n)) return;
@@ -93,6 +146,7 @@ export class Audio {
     this._narrar(i, daCapa ? ATRASO_DA_CAPA : ATRASO_VIRADA);
     this.trilha(i < 0 ? 'era-uma-vez' : TRILHA[i]);
     this.ambPedido = i < 0 ? {} : AMBIENTE[i]; this._aplicarAmbiente();
+    if (this.ctx) this.envioEspaco.gain.setTargetAtTime(ESPACO[Math.max(i, 0)], this.ctx.currentTime, 0.5);
     const prox = TRILHA[i + 1]; if (prox) this._faixa(prox);
   }
   /** A música cede lugar enquanto a cena age. */
@@ -177,15 +231,56 @@ export class Audio {
     if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume(); if (this.ligado) this.atual?.el.play().catch(() => {}); if (!this.interacao) this.voz?.el.play().catch(() => {}); }
   }
   alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado && !this.interacao ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
-  tocar(nome, { vol = 1, taxa = 1, depois = 0, dur = 0 } = {}) {
+  /**
+   * Um efeito. `pan` é a posição na página (-1 a 1), ou [de, até] quando o som atravessa a cena.
+   * Toda repetição varia um pouco a altura e o volume: gravação igual repetida é o que mais denuncia o efeito.
+   */
+  tocar(nome, { vol = 1, taxa = 1, depois = 0, dur = 0, pan = 0, varia = 1 } = {}) {
     if (!this.ctx || !this.ligado) return;
-    const b = this.buffers.get(nome); if (!b) return;
-    const s = this.ctx.createBufferSource(); s.buffer = b; s.playbackRate.value = taxa;
-    const g = this.ctx.createGain(); g.gain.value = vol; s.connect(g); g.connect(this.master);
+    const b = this.buffers.get(nome);
+    if (!b) { this.fila.push({ nome, em: this.ctx.currentTime, op: { vol, taxa, depois, dur, pan, varia } }); return; }
+    const s = this.ctx.createBufferSource(); s.buffer = b;
+    const rate = taxa * (1 + (Math.random() - 0.5) * 0.06 * varia); const nivel = vol * (1 + (Math.random() - 0.5) * 0.14 * varia);
+    s.playbackRate.value = rate;
+    const g = this.ctx.createGain(); g.gain.value = nivel; s.connect(g);
     const t = this.ctx.currentTime + depois;
+    const [de, ate] = Array.isArray(pan) ? pan : [pan, pan];
+    if ((de || ate) && this.ctx.createStereoPanner) {
+      const p = this.ctx.createStereoPanner(); p.pan.setValueAtTime(de, t);
+      if (ate !== de) p.pan.linearRampToValueAtTime(ate, t + (dur || b.duration / rate));
+      g.connect(p); p.connect(this.busEfeitos);
+    } else g.connect(this.busEfeitos);
     s.start(t);
-    if (dur) { g.gain.setValueAtTime(vol, t + Math.max(dur - 0.25, 0)); g.gain.linearRampToValueAtTime(0, t + dur); s.stop(t + dur + 0.02); }
+    if (dur) { g.gain.setValueAtTime(nivel, t + Math.max(dur - 0.25, 0)); g.gain.linearRampToValueAtTime(0, t + dur); s.stop(t + dur + 0.02); }
+    if (this.registro.length < 2000) this.registro.push({ nome, cena: this.cenaAtual, em: Number(t.toFixed(3)), vol: Number(nivel.toFixed(3)), taxa: Number(rate.toFixed(3)), pan: de });
   }
+  /** Um passo no chão: nunca a mesma gravação duas vezes seguidas. */
+  passo({ peso = 1, x = 0 } = {}) {
+    let k; do { k = Math.floor(Math.random() * 4); } while (k === this.ultimoPasso); this.ultimoPasso = k;
+    this.tocar(`passo${k + 1}`, { vol: 0.26 + 0.34 * peso, taxa: 1.42 - 0.62 * peso, pan: Math.max(-0.7, Math.min(0.7, x * 0.9)) });
+  }
+  /** Prepara as falas do modo sopro, que tocam com o resto do livro em silêncio. */
+  prepararFalas(nomes) {
+    this.falas ??= new Map();
+    for (const n of nomes) if (!this.falas.has(n)) this.falas.set(n, fetch(`${base}narracao/${n}.mp3`).then((r) => r.arrayBuffer()).catch(() => null));
+  }
+  /** Diz uma fala e resolve quando ela termina. Nunca prende quem espera: sem som, sem contexto ou com a aba escondida, resolve assim mesmo. */
+  async dizer(nome) {
+    this.calar();
+    if (!this.ctx || !this.ligado) return;
+    this.prepararFalas([nome]);
+    const senha = this.fala = {};
+    let dados = await this.falas.get(nome);
+    if (!dados || this.fala !== senha) return;
+    if (dados instanceof ArrayBuffer) { dados = await this.ctx.decodeAudioData(dados).catch(() => null); this.falas.set(nome, Promise.resolve(dados)); }
+    if (!dados || this.fala !== senha) return;
+    const s = this.ctx.createBufferSource(); s.buffer = dados;
+    s.connect(this.limitador); s.start(); senha.fonte = s;
+    this.falasDitas = [...(this.falasDitas ?? []), nome];
+    await new Promise((ok) => { s.onended = ok; setTimeout(ok, (dados.duration + 1) * 1000); });
+    if (this.fala === senha) this.calar();
+  }
+  calar() { const f = this.fala; this.fala = null; try { f?.fonte?.stop(); } catch { /* já terminou */ } }
   /** Para os testes: o que está tocando e quanto sinal chega à saída. */
   estado() {
     let dbfs = -Infinity;

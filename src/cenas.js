@@ -16,6 +16,7 @@ const montadores = {};
 // Altura livre sob o texto da página esquerda: o cenário colado nessa parede não passa na frente da história.
 let livreEsq = Infinity;
 export function montarCenas(livro, audio) {
+  somDaCena = audio;
   return livro.cunhas.map((c) => {
     livreEsq = (1 - livro.fimTexto[c.j] / 1276) * H - 0.09;
     const cena = montadores[c.j](palco(c.conteudo), audio);
@@ -85,11 +86,16 @@ function poste(p, lado, r, { alto = 1.1, cor = '#ffb02e' } = {}) {
 const tam = (q, v) => ({ sx: Math.sign(q.root.scale.x) * v, sy: v, sz: v });
 /** Escondido até a história chamar. Devolve a escala que ele terá em cena. */
 function escondido(q) { const v = q.root.scale.y; q.root.scale.set(Math.sign(q.root.scale.x) * 0.001, 0.001, 0.001); return v; }
+// Os gestos de andar valem para todos os atores e nas onze cenas: o som deles vem daqui, sem passar o áudio em cada chamada.
+let somDaCena = null;
 /** Passos: pernas e corpo. Serve a porquinhos (pernaE/pernaD) e ao Lobo (pernaF/pernaT). */
 function passos(tl, q, t, dur, { n = Math.max(2, Math.round(dur / 0.2)), salto = 0.05, perna = 0.42 } = {}) {
   const [a, b] = q.pernaF ? [q.pernaF, q.pernaT] : [q.pernaE, q.pernaD];
-  const d = dur / n;
-  for (let k = 0; k < n; k++) { tl.pulse(a, { rz: perna }, t + k * d, d); tl.pulse(b, { rz: -perna }, t + k * d + d * 0.15, d * 0.85); tl.pulse(q.corpo, { y: salto }, t + k * d, d); }
+  const d = dur / n; const peso = q.pernaF ? 1 : 0.15;
+  for (let k = 0; k < n; k++) {
+    tl.pulse(a, { rz: perna }, t + k * d, d); tl.pulse(b, { rz: -perna }, t + k * d + d * 0.15, d * 0.85); tl.pulse(q.corpo, { y: salto }, t + k * d, d);
+    tl.call(() => somDaCena?.passo({ peso, x: q.root.position.x }), t + k * d + d * 0.1);
+  }
 }
 /** Entra em cena pela borda da página, já andando até (x, z). */
 function entra(tl, q, v, { x, z, de = 0.24 }, t, dur, sinal = 1) {
@@ -107,12 +113,12 @@ function entraNaPorta(tl, q, porta, t, dur = 0.5) {
 function abrePorta(tl, porta, largura, t, dur = 0.24) { tl.to(porta, { sx: 0.1, x: -largura * 0.92 }, t, dur, ease.out); }
 function fechaPorta(tl, porta, t, dur = 0.2) { tl.to(porta, { sx: 1, x: 0 }, t, dur, ease.in); }
 /** Cabeça que sobe na janela, de dentro. */
-function surgeNaJanela(tl, q, t, v) { tl.to(q.root, { s: v }, t, 0.26, ease.back); tl.pulse(q.cabeca, { rz: 0.12 }, t + 0.1, 0.5, ease.wiggle); }
+function surgeNaJanela(tl, q, t, v) { tl.to(q.root, { s: v }, t, 0.26, ease.back); tl.pulse(q.cabeca, { rz: 0.12 }, t + 0.1, 0.5, ease.wiggle); tl.call(() => somDaCena?.tocar('porco', { vol: 0.32, taxa: 1.1 + Math.random() * 0.3 }), t + 0.08); }
 /** O Lobo chega pela borda e fica de pé em x0. */
 function loboChega(tl, w, x0, v, audio, t = 0) {
   tl.grupo('chega');
   entra(tl, w, v, { x: x0, de: 0.22 }, t, 1.0);
-  tl.call(() => audio.tocar('uivo2', { vol: 0.35, taxa: 1.3 }), t + 0.2);
+  tl.call(() => audio.tocar('uivo2', { vol: 0.35, taxa: 1.3, dur: 2.4, pan: -0.5 }), t + 0.2);
 }
 /** Vai até a porta, bate três vezes e volta para o seu lugar. */
 function loboBate(tl, w, x0, alvo, audio, somTaxa = 1.25, t = 0) {
@@ -121,7 +127,7 @@ function loboBate(tl, w, x0, alvo, audio, somTaxa = 1.25, t = 0) {
   tl.to(w.root, { x: alvo.x, z: alvo.z }, t, 0.42, ease.inOut); passos(tl, w, t, 0.42, { n: 3 });
   for (let k = 0; k < 3; k++) {
     tl.pulse(w.bracoF, { rz: 0.8 }, t + 0.44 + k * 0.25, 0.25);
-    tl.call(() => audio.tocar(k % 2 ? 'martelo2' : 'martelo', { vol: 0.5, taxa: somTaxa }), t + 0.54 + k * 0.25);
+    tl.call(() => audio.tocar(k % 2 ? 'bate2' : 'bate1', { vol: 0.62, taxa: somTaxa, dur: 0.3, pan: alvo.x * 0.9 }), t + 0.54 + k * 0.25);
   }
   tl.to(w.root, { x: x0, z: z0 }, t + 1.3, 0.4, ease.inOut); passos(tl, w, t + 1.3, 0.4, { n: 3 });
 }
@@ -165,9 +171,9 @@ function encherESoprar(tl, w, t0, enche, audio, x0, { gola = 1, grupos = ['enche
   tl.to(w.cabeca, { rz: 0.2, y: 0.91 }, t0, enche, ease.inOut);
   tl.to(w.bochecha, { s: 1 }, t0 + enche * 0.35, enche * 0.65, ease.back);
   tl.to(w.bracoF, { rz: 1.0 }, t0, enche, ease.inOut); tl.to(w.bracoT, { rz: -1.0 }, t0, enche, ease.inOut);
-  tl.call(() => audio.tocar('inspira', { vol: 1, taxa: 0.72 }), t0 + 0.08);
+  tl.call(() => { audio.tocar('inspira', { vol: 1, taxa: 0.72, pan: -0.45 }); audio.tocar('puxa', { vol: Math.min(1, enche * 0.8), taxa: 1.1 / Math.max(enche, 0.6), pan: -0.45 }); }, t0 + 0.08);
   tl.grupo(grupos[1]);
-  tl.call(() => { audio.tocar('vento', { vol: 1, dur: 1.5 }); audio.tocar('ar', { vol: 0.9, taxa: 0.42 }); }, S);
+  tl.call(() => { audio.tocar('sopro', { vol: 1, dur: 1.9, pan: [-0.5, 0.5] }); audio.tocar('sopro2', { vol: 0.7, taxa: 0.8, pan: [-0.4, 0.4] }); audio.tocar('vento', { vol: 0.7, dur: 1.7, pan: [-0.3, 0.5] }); audio.tocar('ar', { vol: 0.8, taxa: 0.42, pan: -0.45 }); }, S);
   tl.to(w.peito, { sx: 0.92, sy: 0.92 }, S, 0.55, ease.out);
   tl.to(w.cabeca, { rz: -0.1, y: 0.87 }, S, 0.3, ease.out);
   tl.to(w.bochecha, { s: 0.55 }, S, 0.5, ease.out);
@@ -242,7 +248,7 @@ montadores[0] = (p, audio) => {
   tl.grupo('estrada'); tl.pulse(pl.t, { rz: 0.16 }, 1.7, 1.2, ease.wiggle);
   tl.grupo('era'); tl.to(so.g, { y: 2.42 }, 0, 3.0, ease.out);
   tl.grupo('mae-diz', { soVoz: true }); tl.pulse(mae.corpo, { y: 0.1 }, 0, 0.4); tl.pulse(mae.bracoE, { rz: -0.5 }, 0, 0.7);
-  [['pipo-nome', pipo], ['tico-nome', tico], ['bento-nome', bento]].forEach(([g, q]) => { tl.grupo(g, { soVoz: true }); tl.pulse(q.corpo, { y: 0.14 }, 0, 0.36); tl.pulse(q.cabeca, { rz: 0.16 }, 0, 0.36); });
+  [['pipo-nome', pipo, 1.2], ['tico-nome', tico, 1.38], ['bento-nome', bento, 1]].forEach(([g, q, altura]) => { tl.grupo(g, { soVoz: true }); tl.call(() => audio.tocar('porco', { vol: 0.42, taxa: altura, pan: q.root.position.x * 0.9, varia: 0 }), 0.04); tl.pulse(q.corpo, { y: 0.14 }, 0, 0.36); tl.pulse(q.cabeca, { rz: 0.16 }, 0, 0.36); });
   tl.grupo('base');
   return { linha: tl, atores: { mae, pipo, tico, bento }, provas: { irmaos: [pipo, tico, bento] }, idle(t) { mae.idle(t); pipo.idle(t); tico.idle(t); bento.idle(t); fum.idle(t); so.raios.rotation.z = t * 0.1; } };
 };
@@ -347,7 +353,7 @@ montadores[2] = (p, audio) => {
   const pl = p.parede(-1, 2.2, 0.05); piece(pl, rrect(0.06, 0.9, 0.01, 0, 0.45), pat('wood', '#a0623a', '#8a5230', 0.18), { t: 0.01 }); piece(pl, poly([-0.28, 0.72], [0.24, 0.72], [0.36, 0.82], [0.24, 0.92], [-0.28, 0.92]), pat('wood', '#e7a95c', '#cf9147', 0.18), { t: 0.01, z: 0.01 });
   trepadeira(p, 1, 2.42, '#ff8fb1', { alto: 1.35 });
   // ação: chega, vai até a porta, bate, volta e sopra
-  loboChega(tl, w, x0, vL, audio, 0); loboBate(tl, w, x0, { x: xc - 0.34, z: zc + 0.26 }, audio, 1.25, 1.05);
+  loboChega(tl, w, x0, vL, audio, 0); tl.call(() => audio.tocar('corvo', { vol: 0.34, pan: 0.45 }), 0.02); loboBate(tl, w, x0, { x: xc - 0.34, z: zc + 0.26 }, audio, 1.25, 1.05);
   const S = encherESoprar(tl, w, 2.9, 0.95, audio, x0);
   const mx = x0 + 0.54 * 0.76 * ESC_L, my = SOLO + 0.92 * 0.76 * ESC_L;
   sopro(c, tl, S, 1.25, { x: mx, y: my, z: 2.5, alvoX: 0.8, alvoY: my + 0.22, alvoZ: 2.12, n: 13 });
@@ -359,7 +365,7 @@ montadores[2] = (p, audio) => {
   voar(tl, mj, 2, S + 0.3); tl.to(casa.vao, { sy: 0.001 }, S + 0.42, 0.28, ease.in);
   fugir(tl, pipo, S + 0.38);
   tl.grupo('calma'); acalmar(tl, w, S + 1.55, x0);
-  tl.call(() => audio.tocar('uivo1', { vol: 0.35 }), S + 1.6);
+  tl.call(() => audio.tocar('uivo1', { vol: 0.35, dur: 3.6, pan: -0.5 }), S + 1.6);
   tl.grupo('atras'); loboVaiAtras(tl, w, vL, S + 1.95); // "foi atrás", na página seguinte: ele sai pela mesma borda que Pipo
   tl.grupo('base');
   return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
@@ -398,7 +404,7 @@ montadores[3] = (p, audio) => {
   tl.grupo('entra');
   abrePorta(tl, casa.porta, 0.16, 1.05); tl.call(() => audio.tocar('range', { vol: 0.7, taxa: 1.15 }), 1.05);
   entraNaPorta(tl, corre, { x: xc, z: zc + 0.1 }, 1.15, 0.5);
-  fechaPorta(tl, casa.porta, 1.7); tl.call(() => audio.tocar('martelo2', { vol: 0.5, taxa: 0.7 }), 1.88);
+  fechaPorta(tl, casa.porta, 1.7); tl.call(() => audio.tocar('porta', { vol: 0.75 }), 1.88);
   surgeNaJanela(tl, pipo, 1.95, 0.44);
   loboChega(tl, w, x0, vL, audio, 2.4);
   loboBate(tl, w, x0, { x: xc - 0.36, z: zc + 0.24 }, audio, 1.25, 3.45);
@@ -429,7 +435,7 @@ montadores[3] = (p, audio) => {
   [mj1, mj2].forEach((m, i) => { m.userData.rig = true; tl.to(m, { x: m.position.x + 0.7 + i * 0.22, y: 0.15 }, S2 + 0.2, 0.55, ease.in); tl.to(m, { rz: -2 }, S2 + 0.2, 0.55, ease.linear); tl.to(m, { s: 0.001 }, S2 + 0.65, 0.15, ease.in); });
   [pipo, tico].forEach((q, i) => fugir(tl, q, S2 + 0.34 + i * 0.1));
   tl.grupo('calma2'); acalmar(tl, w, S2 + 1.35, x0);
-  tl.call(() => audio.tocar('uivo2', { vol: 0.35 }), S2 + 1.45);
+  tl.call(() => audio.tocar('uivo3', { vol: 0.35, dur: 3.2, pan: -0.5 }), S2 + 1.45);
   loboVaiAtras(tl, w, vL, S2 + 1.75);
   tl.grupo('base');
   return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo, tico }, provas: { corredor: corre, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); tico.idle(t); corre.idle(t); so.raios.rotation.z = t * 0.08; } };
@@ -487,7 +493,7 @@ montadores[4] = (p, audio) => {
   tl.grupo('entra-tico'); entraNaPorta(tl, tico, porta, 2.4);
   tl.grupo('entra-bento'); entraNaPorta(tl, bento, porta, 2.9);
   tl.grupo('tranca');
-  fechaPorta(tl, casa.porta, 3.42); tl.call(() => audio.tocar('martelo2', { vol: 0.6, taxa: 0.7 }), 3.6); tl.call(() => audio.tocar('martelo', { vol: 0.6, taxa: 0.6 }), 3.78);
+  fechaPorta(tl, casa.porta, 3.42); tl.call(() => audio.tocar('porta', { vol: 0.85, taxa: 0.9 }), 3.6); tl.call(() => audio.tocar('tranca', { vol: 0.7 }), 3.8);
   surgeNaJanela(tl, j1, 3.72, vJ); surgeNaJanela(tl, j2, 3.84, vJ); surgeNaJanela(tl, j3, 3.96, vJ);
   loboChega(tl, w, x0, vL, audio, 4.4);
   let t = 5.5;
@@ -504,7 +510,7 @@ montadores[4] = (p, audio) => {
   // a casa nem tremeu; o Lobo arria e, lá dentro, os três tomam sopa
   tl.grupo('firme', { soVoz: true }); [j1, j2, j3].forEach((q, i) => tl.pulse(q.cabeca, { rz: i % 2 ? 0.14 : -0.14 }, i * 0.08, 0.8, ease.wiggle));
   tl.grupo('cansado');
-  tl.call(() => audio.tocar('uivo1', { vol: 0.28, taxa: 0.72 }), t);
+  tl.call(() => audio.tocar('uivo4', { vol: 0.3, taxa: 0.8, dur: 3.4, pan: -0.5 }), t);
   tl.to(w.corpo, { rz: 0.12 }, t, 0.5, ease.bounce); tl.to(w.cabeca, { rz: -0.42, y: 0.77 }, t, 0.5, ease.bounce); tl.to(w.bracoF, { rz: -0.16 }, t, 0.4); tl.to(w.bracoT, { rz: 0.1 }, t, 0.4); tl.to(w.queixo, { rz: -0.22 }, t, 0.3); tl.to(w.fundoBoca, { sy: 1 }, t, 0.3);
   tl.grupo('sopa');
   tl.call(() => { audio.tocar('risos', { vol: 0.5, dur: 1.8 }); audio.tocar('grunhido', { vol: 0.5 }); }, t + 0.25);
@@ -542,7 +548,7 @@ montadores[5] = (p, audio) => {
   tl.grupo('olha');
   tl.call(() => audio.tocar('inspira', { vol: 0.6, taxa: 0.8 }), 0.05);
   tl.to(w.roxo, { s: 0.001 }, 0, 0.5); tl.to(w.corpo, { rz: 0 }, 0, 0.4); tl.to(w.cabeca, { rz: 0.5, y: 0.87 }, 0, 0.5, ease.out); tl.to(w.queixo, { rz: 0 }, 0, 0.3); tl.to(w.fundoBoca, { sy: 0.35 }, 0, 0.3); tl.to(w.bracoF, { rz: 0.25 }, 0, 0.4); tl.to(w.bracoT, { rz: -0.35 }, 0, 0.4); tl.to(w.pupila, { x: 0.03, y: 0.03 }, 0.1, 0.2);
-  tl.grupo('sorri');
+  tl.grupo('sorri'); tl.call(() => audio.tocar('engolir', { vol: 0.8 }), 0.1);
   tl.pulse(w.queixo, { rz: -0.16 }, 0.8, 0.7); tl.pulse(w.sobr, { rz: 0.22 }, 0.8, 0.7);
   // sobe: barril, beiral, telhas. A escala cai porque ele vai para o fundo da página
   tl.grupo('sobe');
@@ -640,7 +646,7 @@ montadores[6] = (p, audio) => {
   // Tico empurra o caldeirão até debaixo da chaminé
   tl.to(tico.root, { x: DX - 0.64 }, 1.9, 0.75, ease.inOut); passos(tl, tico, 1.9, 0.75, { n: 4, salto: 0.03 }); tl.to(tico.corpo, { rz: -0.14 }, 1.85, 0.12);
   tl.to(cal.g, { x: DX }, 1.9, 0.75, ease.inOut); tl.pulse(cal.g, { rz: 0.03 }, 1.9, 0.75, ease.wiggle);
-  tl.call(() => audio.tocar('caldeirao', { vol: 0.95 }), 1.95);
+  tl.call(() => { audio.tocar('caldeirao', { vol: 0.95 }); audio.tocar('bolhas', { vol: 0.7 }); }, 1.95);
   tl.to(tico.corpo, { rz: 0 }, 2.7, 0.15);
   tl.grupo('ferve');
   tl.to(fum.raiz, { s: 0.92 }, 2.7, 0.5, ease.out);
@@ -695,14 +701,14 @@ montadores[7] = (p, audio) => {
   [pipo, tico, bento].forEach((q, i) => { tl.pulse(q.corpo, { y: 0.19 }, CAI + 0.03 + i * 0.05, 0.42); tl.to(q.bracoD, { rz: 2.5 }, CAI, 0.15, ease.out); tl.to(q.bracoE, { rz: -2.5 }, CAI, 0.15, ease.out); });
   // uivo: a água está quente
   tl.grupo('uivo');
-  tl.call(() => audio.tocar('uivo1', { vol: 1, taxa: 1.25 }), CAI + 0.5);
-  tl.call(() => audio.tocar('uivo2', { vol: 0.9, taxa: 1.5, depois: 0.7 }), CAI + 0.5);
+  tl.call(() => audio.tocar('uivo1', { vol: 1, taxa: 1.2, dur: 3 }), CAI + 0.5);
+  tl.call(() => audio.tocar('uivo3', { vol: 0.8, taxa: 1.45, depois: 0.7, dur: 2.2 }), CAI + 0.5);
   tl.to(w.cabeca, { rz: 0.4 }, CAI + 0.5, 0.12, ease.out); tl.to(w.queixo, { rz: -0.3 }, CAI + 0.5, 0.05); tl.to(w.fundoBoca, { sy: 1 }, CAI + 0.5, 0.05); tl.to(w.olho, { sx: 1.25, sy: 1.3 }, CAI + 0.5, 0.05); tl.to(w.roxo, { s: 0.7 }, CAI + 0.5, 0.2);
   tl.pulse(w.root, { y: 0.03 }, CAI + 0.55, 0.6, ease.wiggle);
   // foguete: sobe pelo mesmo duto, com o rabo em chamas
   const SAI = CAI + 1.3;
   tl.grupo('foguete');
-  tl.call(() => { audio.trilha('fuga'); audio.tocar('chama', { vol: 1, taxa: 0.8 }); audio.tocar('ar', { vol: 1, taxa: 0.5 }); }, SAI); tl.call(() => audio.tocar('chama', { vol: 0.8 }), SAI + 0.3);
+  tl.call(() => { audio.trilha('fuga'); audio.tocar('foguete', { vol: 1 }); audio.tocar('chama', { vol: 1, taxa: 0.8 }); audio.tocar('ar', { vol: 1, taxa: 0.5 }); }, SAI); tl.call(() => audio.tocar('chama', { vol: 0.8 }), SAI + 0.3);
   tl.to(w.chama, { s: 1 }, SAI, 0.12, ease.back);
   tl.to(w.cabeca, { rz: 0 }, SAI, 0.1); tl.to(w.roxo, { s: 0.001 }, SAI, 0.2);
   tl.to(w.bracoF, { rz: 2.9 }, SAI, 0.08); tl.to(w.bracoT, { rz: -2.9 }, SAI, 0.08);
@@ -764,7 +770,7 @@ montadores[8] = (p, audio) => {
   trecho.forEach(([x, y, z, f], n) => {
     const t0 = 1.5 + n * 0.62; tl.grupo(`foge${n + 1}`);
     tl.to(w.root, { x, y, z, ...tam(w, vL * f) }, t0, 0.56, ease.inOut); passos(tl, w, t0, 0.56, { n: 4, salto: 0.09 * f + 0.02, perna: 0.7 });
-    tl.call(() => audio.tocar(n % 2 ? 'uivo2' : 'uivo1', { vol: 0.5 - n * 0.12, taxa: 1.3 }), t0);
+    tl.call(() => audio.tocar(n % 2 ? 'choro2' : 'choro1', { vol: 0.75 - n * 0.2, pan: x * 0.9 }), t0);
     const [bx, by, bz] = [ax, ay, az];
     fumas.slice(n * 4, n * 4 + 4).forEach((g, i) => { const q = (i + 0.5) / 4; tl.to(g, { x: bx + (x - bx) * q + 0.06 * f, y: by + (y - by) * q + 0.26 * f, z: bz + (z - bz) * q - 0.01, s: 0.9 * f }, t0 + q * 0.5, 0.04); tl.to(g, { s: 0.001 }, t0 + q * 0.5 + 0.8, 0.5, ease.in); });
     ax = x; ay = y; az = z;

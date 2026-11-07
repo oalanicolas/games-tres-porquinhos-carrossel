@@ -28,21 +28,40 @@ Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, ta
 - `porco`: Porquinho 01 (`foley-pig-1`), autor no catálogo, CC0-1.0, ganho 7.5 dB.
 - `grunhido`: Grunhido de porco (`foley-grunt`), autor no catálogo, CC0-1.0, ganho -2.6 dB.
 - `guincho`: Guincho de porco (`foley-squeal`), autor no catálogo, CC0-1.0, ganho 4.3 dB.
-- `uivo1`: Lobo uivando 01 (`foley-howl-1`), autor no catálogo, CC0-1.0, ganho 0.4 dB.
-- `uivo2`: Lobo uivando 02 (`foley-howl-2`), autor no catálogo, CC0-1.0, ganho 1.6 dB.
+- `uivo1`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho -0.9 dB.
+- `uivo2`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho 0.2 dB.
+- `uivo3`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho -0.8 dB.
+- `uivo4`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho 0.8 dB.
+- `choro1`: Cachorro choramingando 01 (`foley-cry-1`), autor no catálogo, CC0-1.0, ganho -0.4 dB.
+- `choro2`: Cachorro choramingando 02 (`foley-cry-2`), autor no catálogo, CC0-1.0, ganho -3.7 dB.
+- `engolir`: Engolir (`foley-engolir`), autor no catálogo, CC0-1.0, ganho -0.7 dB.
+- `corvo`: Corvo · grasnado (`zeroisnotnull-crow-crow-caw`), autor no catálogo, CC0-1.0, ganho 1.6 dB.
+- `passo1`: Passo · terra 01 (`steps-dirt-1`), autor no catálogo, CC0-1.0, ganho -6.0 dB.
+- `passo2`: Passo · terra 02 (`steps-dirt-2`), autor no catálogo, CC0-1.0, ganho -8.2 dB.
+- `passo3`: Passo · terra 03 (`steps-dirt-3`), autor no catálogo, CC0-1.0, ganho -10.4 dB.
+- `passo4`: Passo · terra 04 (`steps-dirt-4`), autor no catálogo, CC0-1.0, ganho -5.5 dB.
+- `bate1`: Madeira · batida seca (`bart-workshop-workshop-wood-clap`), autor no catálogo, CC0-1.0, ganho -1.4 dB.
+- `bate2`: Madeira · batida seca 2 (`bart-workshop-workshop-wood-clap-2`), autor no catálogo, CC0-1.0, ganho -0.7 dB.
+- `porta`: Madeira · fechamento 02 (`rubberduck-material-wood-close-02`), autor no catálogo, CC0-1.0, ganho -1.1 dB.
+- `tranca`: Fechadura abrindo 01 (`rubberduck-material-lock-open-01`), autor no catálogo, CC0-1.0, ganho -1.0 dB.
+- `sopro`: Ar em movimento 01 (`rubberduck-sfx2-sfx100v2-air-01`), autor no catálogo, CC0-1.0, ganho 0.1 dB.
+- `sopro2`: Ar em movimento 02 (`rubberduck-sfx2-sfx100v2-air-02`), autor no catálogo, CC0-1.0, ganho -2.0 dB.
+- `puxa`: Ar em movimento 02 (`rubberduck-sfx2-sfx100v2-air-02`), autor no catálogo, CC0-1.0, ganho -6.9 dB.
+- `foguete`: Propulsão · ignição com ar e impacto (`studio-rocket-ignite`), autor no catálogo, CC0-1.0, ganho 3.5 dB.
+- `bolhas`: Bolhas · loop 02 (`rubberduck-water-loop-bubbles-02`), autor no catálogo, CC0-1.0, ganho 6.5 dB.
 - `tchibum`: Respingo de água 08 (`rubberduck-water-splash-08`), autor no catálogo, CC0-1.0, ganho -1.2 dB.
 - `tchibum2`: Respingo de água 01 (`rubberduck-water-splash-01`), autor no catálogo, CC0-1.0, ganho -0.9 dB.
 - `caldeirao`: Água fervendo (`foley-cauldron`), autor no catálogo, CC0-1.0, ganho 6.3 dB.
 - `chama`: Boom · pavio 01 (`studio-boom-fuse-1`), autor no catálogo, CC0-1.0, ganho 1.8 dB.
 - `lenha`: Madeira · batida seca (`bart-workshop-workshop-wood-clap`), autor no catálogo, CC0-1.0, ganho -1.4 dB.
-- `fogos`: Boom · explosão · corpo 01 (`studio-boom-explosion-body-1`), autor no catálogo, CC0-1.0, ganho 7.0 dB.
-- `fogos2`: Boom · explosão · grave 01 (`studio-boom-explosion-low-1`), autor no catálogo, CC0-1.0, ganho 0.0 dB.
+- `fogos`: Petardo com pavio · detonação 1 (`sardin-firecracker-1`), autor no catálogo, CC0-1.0, ganho -2.3 dB.
+- `fogos2`: Explosão distante · tambor com reverberação (`nenad-distant-explosion`), autor no catálogo, CC0-1.0, ganho -0.9 dB.
 - `viva`: Adolescentes gritando 'yeah' e aplaudindo 2 (`chardonnet-teens-cheer-2`), autor no catálogo, CC0-1.0, ganho -2.6 dB.
 - `risos`: Risada de duas crianças (`sardin-children-laughter`), autor no catálogo, CC0-1.0, ganho -2.0 dB.
 - `sino`: Glockenspiel · glissandos (`sardin-glockenspiel-slip`), autor no catálogo, CC0-1.0, ganho -6.1 dB.
 - `melro`: Melro-preto · canto 23 (`tiroir-blackbird-23`), autor no catálogo, CC0-1.0, ganho -12.5 dB.
-- `passaros`: Parque · pássaros antes da chuva (`thimras-park-park-ambience-birds`), autor no catálogo, CC0-1.0, ganho 14.3 dB.
-- `brisa`: Parque · vento em campo aberto (`thimras-park-park-ambience-wind`), autor no catálogo, CC0-1.0, ganho 18.4 dB.
-- `grilos`: Grilos à noite no campo (`original-owlish-night-crickets-ambience-on-rural-property`), autor no catálogo, CC0-1.0, ganho 9.6 dB.
-- `fogo`: Fogo crepitando (`foley-fire`), autor no catálogo, CC0-1.0, ganho 1.3 dB.
-- `fervura`: Chaleira fervendo (`original-owlish-kettle-boil`), autor no catálogo, CC0-1.0, ganho -8.5 dB.
+- `passaros`: Parque · pássaros antes da chuva (`thimras-park-park-ambience-birds`), autor no catálogo, CC0-1.0, ganho 17.3 dB.
+- `brisa`: Parque · vento em campo aberto (`thimras-park-park-ambience-wind`), autor no catálogo, CC0-1.0, ganho 21.4 dB.
+- `grilos`: Grilos à noite no campo (`original-owlish-night-crickets-ambience-on-rural-property`), autor no catálogo, CC0-1.0, ganho 12.6 dB.
+- `fogo`: Fogo crepitando (`foley-fire`), autor no catálogo, CC0-1.0, ganho 4.3 dB.
+- `fervura`: Chaleira fervendo (`original-owlish-kettle-boil`), autor no catálogo, CC0-1.0, ganho -5.5 dB.

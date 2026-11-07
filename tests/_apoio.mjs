@@ -14,7 +14,9 @@ export async function abrir({ largura = 1280, altura = 800, url, antes, narrado 
   const page = await navegador.newPage({ viewport: { width: largura, height: altura } });
   const erros = [];
   page.on('pageerror', (e) => erros.push(String(e)));
-  page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
+  page.on('console', (m) => { if (m.type() === 'error') erros.push(`${m.text()} ${m.location().url ?? ''}`.trim()); });
+  // Servidor local não depende da rede: a etiqueta do Google responde vazia, e só um site publicado fala com o Google de verdade.
+  if (!url) await page.route(/googletagmanager\.com|google-analytics\.com/, (r) => r.fulfill({ status: 204, body: '' }));
   if (!narrado) await page.addInitScript(() => localStorage.setItem('porquinhos-narracao', 'nao'));
   await antes?.(page);
   const fechar = async () => { await navegador.close(); await servidor?.close(); };
