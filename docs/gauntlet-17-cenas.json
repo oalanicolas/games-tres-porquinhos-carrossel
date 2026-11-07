@@ -1,0 +1,560 @@
+{
+  "formato": "goal-gauntlet/1",
+  "objetivo": "Livro Os Três Porquinhos com 17 cenas coerentes, com narração, e 17 de 17 revisadas em captura e em movimento, com o Lobo voando e caindo do lado da casa e uma cena para cada casa construída.",
+  "alvo": {
+    "caminho": "prototypes/tres-porquinhos-carrossel",
+    "tipo": "jogo",
+    "modulo": "tres-porquinhos-carrossel",
+    "skill_de_trabalho": "game-dev"
+  },
+  "documento": "prototypes/tres-porquinhos-carrossel/docs/gauntlet-17-cenas.md",
+  "criado": "2026-11-06",
+  "regra": "Uma rodada por vez; só fechar conclui (gates verdes + prova); livro selado; duas tentativas sem evidência nova bloqueiam; decisão de Alan vira aguarda-alan.",
+  "pronto_quando": "python3 squads/goal-gauntlet/scripts/gauntlet.py placar imprime GAUNTLET FECHADO e os gates globais saem 0.",
+  "contexto": [
+    [
+      "python3",
+      "framework/scripts/game.py",
+      "context",
+      "prototypes/tres-porquinhos-carrossel",
+      "--event",
+      "resume"
+    ]
+  ],
+  "gates": [
+    {
+      "nome": "test",
+      "argv": [
+        "npm",
+        "run",
+        "test"
+      ],
+      "cwd": "prototypes/tres-porquinhos-carrossel",
+      "origem": "gameops gates prototypes/tres-porquinhos-carrossel (package.json)"
+    }
+  ],
+  "limites": [
+    "Commit local no main, sem worktree nem branch, a cada rodada fechada (o fechar imprime o comando, só com os arquivos desta sessão); push e publicação só com pedido de Alan (publicar é pelo gameops). Handoff em output/agentes/ ou ~/.claude/handoffs/, nunca em /tmp.",
+    "Caminhos portáveis (relativos, <repo-root>, ~); nenhum caminho absoluto de máquina, .env, chave ou credencial em arquivo versionado.",
+    "Preservar alterações de outras sessões: um escritor por área; não matar processo que esta sessão não iniciou.",
+    "Testes headless com a GPU real (--use-angle=metal --ignore-gpu-blocklist), sem Claude in Chrome e sem roubar foco.",
+    "O piso visual e sonoro aprovado não se troca por desempenho, custo ou prazo.",
+    "Vídeos, renders e capturas vão para o acervo do Drive, não para o Git.",
+    "Subagente só no modelo mais barato capaz, com brief fechado e conferência na fonte; julgamento visual e revisão crítica ficam na sessão principal.",
+    "Decisão de design aprovada só muda com Alan; uma variável por vez quando a causa importa.",
+    "Continuidade no canônico do framework (Devlog/plano); game.py context antes de cada fatia."
+  ],
+  "limites_goal": [],
+  "estado_inicial": [
+    "prototypes/tres-porquinhos-carrossel/AGENTS.md"
+  ],
+  "rodadas": [
+    {
+      "id": "R0",
+      "titulo": "Estado e prova",
+      "status": "concluida",
+      "fazer": [
+        "Rodar o contexto do alvo e os gates globais; registrar o ponto de partida.",
+        "Conferir 'Onde estamos' contra o disco e corrigir o que estiver desatualizado."
+      ],
+      "criterio": "Gates globais rodados com recibo; 'Onde estamos' confere com o disco.",
+      "gates": [],
+      "depende": [],
+      "prova": [
+        "Contexto lido; Onde estamos conferido: 11 cenas em src/story.js, último commit 2a1f22f, trabalho sem commit",
+        "gates verdes em 2026-11-07T02:27:09Z (1): test"
+      ],
+      "inicio": "2026-11-07T02:08:07Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T02:08:07Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "2a1f22fc775507c0823d00cf6c2eec2974f868b9"
+        }
+      },
+      "fim": "2026-11-07T02:27:09Z"
+    },
+    {
+      "id": "R1",
+      "titulo": "Fechar Lobo, som e sopro",
+      "fazer": [
+        "Corrigir a falha de sincronia (o balão do grito não pode contar como balão de fala) sem mudar o teste.",
+        "Comparação do Lobo em output/comparacao-lobo.jpg.",
+        "Nota em docs/pesquisas e commits em main, um por assunto."
+      ],
+      "criterio": "tests/sopro, sincronia e narracao verdes; 3 commits no main (Lobo, som, sopro); nota nova em docs/pesquisas com fontes e medições.",
+      "gates": [
+        {
+          "nome": "sopro-sincronia-narracao",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/sopro.test.mjs",
+            "tests/sincronia.test.mjs",
+            "tests/narracao.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        }
+      ],
+      "depende": [
+        "R0"
+      ],
+      "status": "em-andamento",
+      "prova": [],
+      "inicio": "2026-11-07T02:27:24Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T02:27:24Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "2a1f22fc775507c0823d00cf6c2eec2974f868b9"
+        }
+      }
+    },
+    {
+      "id": "R2",
+      "titulo": "Estrutura de 17 cenas",
+      "fazer": [
+        "Índices por id; CEUS, TRILHA, AMBIENTE, ESPACO e sopro nas novas posições.",
+        "Renomear as narrações existentes; roteiro e recibo nas novas chaves; narracao.py com 17.",
+        "Testes das cenas antigas nos novos índices, sem afrouxar nada."
+      ],
+      "criterio": "As 17 cenas montam, sem erro no console, e o teste de estrutura passa; as 10 cenas antigas passam os mesmos testes de antes nos novos índices.",
+      "gates": [
+        {
+          "nome": "estrutura",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=estrutura"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        },
+        {
+          "nome": "antigas",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/furos.test.mjs",
+            "tests/continuidade.test.mjs",
+            "tests/sopro.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        }
+      ],
+      "depende": [
+        "R1"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R3",
+      "titulo": "Uma cena para cada casa",
+      "fazer": [
+        "Montar obra-palha, obra-madeira e obra-tijolo no cenário e no lugar da cena em que a casa será soprada.",
+        "Remover a cena antiga das três casas."
+      ],
+      "criterio": "3 de 3 casas nascem do zero e terminam no mesmo lugar e no mesmo tamanho da cena do sopro; captura das 3 lida.",
+      "gates": [
+        {
+          "nome": "construcao",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=construção"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        }
+      ],
+      "depende": [
+        "R2"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R4",
+      "titulo": "Lobo espiando e as duas corridas",
+      "fazer": [
+        "Montar espia, corrida-lulu e corrida-kael conforme o plano.",
+        "Quem sai pela direita entra pela esquerda; porquinho sempre à frente do Lobo."
+      ],
+      "criterio": "Testes de espia e corridas verdes; captura das 3 cenas lida.",
+      "gates": [
+        {
+          "nome": "espia",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=espia"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        },
+        {
+          "nome": "corridas",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=corridas"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        }
+      ],
+      "depende": [
+        "R2"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R5",
+      "titulo": "O voo e o tombo do Lobo",
+      "fazer": [
+        "Rabo em brasa: ele sobe reto e sai por cima, sem encolher ao longe.",
+        "Montar tombo: chaminé, céu, queda rodopiando, ao lado da casa, poeira, porquinhos saem.",
+        "Correu, correu começa com ele no chão, onde caiu."
+      ],
+      "criterio": "Testes de voo e tombo verdes: fim do tombo igual ao início da fuga em posição e tamanho, do Lobo e dos 3 porquinhos; captura do voo inteiro lida.",
+      "gates": [
+        {
+          "nome": "voo",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=voo"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        },
+        {
+          "nome": "tombo",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=tombo"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        }
+      ],
+      "depende": [
+        "R2"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R6",
+      "titulo": "Narração nas 17 cenas",
+      "fazer": [
+        "Gravar as faixas novas na mesma voz, ancorar marcos e falas no roteiro.",
+        "Som novo do tombo; créditos atualizados.",
+        "Rodar conferir_ancoras nas cenas novas."
+      ],
+      "criterio": "17 de 17 faixas no manifesto, balões e gestos ancorados; narracao e sincronia verdes.",
+      "gates": [
+        {
+          "nome": "voz",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/narracao.test.mjs",
+            "tests/sincronia.test.mjs",
+            "tests/sonoplastia.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "teste nomeado"
+        }
+      ],
+      "depende": [
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R7",
+      "titulo": "Revisão de 17 de 17 cenas",
+      "entrega": true,
+      "colecao": true,
+      "fazer": [
+        "tests/revisao-cenas.mjs captura cada cena em 8 momentos com a voz; o script conta as cenas revisadas e imprime N/M.",
+        "Ler as 17 folhas, com lista numerada de defeitos em output/agentes/porquinhos-revisao-17.md; corrigir cada um."
+      ],
+      "criterio": "17/17 folhas capturadas pelo script e lidas, com defeitos numerados e corrigidos; suíte completa verde.",
+      "gates": [
+        {
+          "nome": "contagem",
+          "argv": [
+            "node",
+            "tests/revisao-cenas.mjs",
+            "--conferir"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "revisão"
+        },
+        {
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "gameops"
+        }
+      ],
+      "depende": [
+        "R6"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R8",
+      "titulo": "Revisão independente",
+      "fazer": [
+        "Um auditor em contexto separado confere as 17 folhas contra o plano, item por item, sem ver a minha lista.",
+        "Conferir na fonte e corrigir o que for real."
+      ],
+      "criterio": "Relatório em output/agentes/porquinhos-auditoria-17.md; cada apontamento corrigido ou recusado com o motivo; percurso real 3 vezes sem erro.",
+      "gates": [
+        {
+          "nome": "percurso",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/livro.test.mjs",
+            "tests/coerencia-17.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "revisão"
+        }
+      ],
+      "depende": [
+        "R7"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "R9",
+      "titulo": "Aprovação de Alan em movimento",
+      "fazer": [
+        "Entregar o site local rodando e pedir a aprovação das cenas em movimento."
+      ],
+      "criterio": "Mensagem de Alan aprovando as 17 cenas em movimento.",
+      "gates": [],
+      "depende": [
+        "R8"
+      ],
+      "status": "aberta",
+      "prova": []
+    },
+    {
+      "id": "RF",
+      "titulo": "Consolidação",
+      "status": "aberta",
+      "final": true,
+      "fazer": [
+        "Atualizar Devlog/plano canônico do framework e a continuidade.",
+        "Listar as decisões pendentes de Alan e o prompt da próxima sessão.",
+        "Rodar os gates finais; fazer o commit local da rodada no main (sem branch nem push)."
+      ],
+      "criterio": "Gates globais verdes; canônico atualizado com resultado, lacunas e próxima ação; commit local feito; nada enviado (push) nem publicado sem pedido.",
+      "gates": [
+        {
+          "nome": "build",
+          "argv": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel",
+          "origem": "gameops gates prototypes/tres-porquinhos-carrossel (package.json)"
+        }
+      ],
+      "depende": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "R8",
+        "R9"
+      ],
+      "prova": []
+    }
+  ],
+  "decisoes_pendentes_de_alan": [
+    "Aprovar as 17 cenas em movimento (só Alan aprova visual).",
+    "Publicar: deploy não foi pedido nesta rodada.",
+    "Ouvir a mixagem, os convites e as narrações novas; testar o grito com criança e microfone real."
+  ],
+  "selo": {
+    "sha256": "6beecb53267c37cc16146dc78a3add7b8c56888facb5a3d31adbc8c648a2c361",
+    "quando": "2026-11-07T02:05:41Z"
+  },
+  "recibos": [
+    {
+      "rodada": "R0",
+      "quando": "2026-11-07T02:27:09Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 1121.544,
+          "log_sha256": "809fba51faf879ab3f1ad4714d2b53add978903720f3e8fb87a728625f5de41d",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R0-20261107T020827Z/01-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R0-20261107T020827Z/01-test/01.log",
+          "ok": true,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Contexto lido; Onde estamos conferido: 11 cenas em src/story.js, último commit 2a1f22f, trabalho sem commit"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "2a1f22fc775507c0823d00cf6c2eec2974f868b9",
+          "ate": "2a1f22fc775507c0823d00cf6c2eec2974f868b9",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 63,
+          "sem_commit": [
+            "M AGENTS.md",
+            "M README.md",
+            "M docs/creditos-sons.md",
+            "M index.html",
+            "M public/sfx/brisa.mp3",
+            "M public/sfx/fervura.mp3",
+            "M public/sfx/fogo.mp3",
+            "M public/sfx/fogos.mp3",
+            "M public/sfx/fogos2.mp3",
+            "M public/sfx/grilos.mp3",
+            "M public/sfx/passaros.mp3",
+            "M public/sfx/uivo1.mp3",
+            "M public/sfx/uivo2.mp3",
+            "M src/audio.js",
+            "M src/cenas.js",
+            "M src/interacao.js",
+            "M src/palco.js",
+            "M src/personagens.js",
+            "M src/sons.json",
+            "M src/sopro.js",
+            "M src/style.css",
+            "M tests/_apoio.mjs",
+            "M tests/musica.test.mjs",
+            "M tests/narracao.test.mjs",
+            "M tests/sopro.test.mjs",
+            "M tools/sons.py",
+            "?? arte/",
+            "?? docs/convites-sopro-recibo.json",
+            "?? docs/gauntlet-17-cenas.json",
+            "?? docs/gauntlet-17-cenas.md",
+            "?? public/narracao/convite-de-novo.mp3",
+            "?? public/narracao/convite-madeira.mp3",
+            "?? public/narracao/convite-palha.mp3",
+            "?? public/narracao/convite-tijolos.mp3",
+            "?? public/sfx/bate1.mp3",
+            "?? public/sfx/bate2.mp3",
+            "?? public/sfx/bolhas.mp3",
+            "?? public/sfx/choro1.mp3",
+            "?? public/sfx/choro2.mp3",
+            "?? public/sfx/corvo.mp3",
+            "?? public/sfx/engolir.mp3",
+            "?? public/sfx/foguete.mp3",
+            "?? public/sfx/passo1.mp3",
+            "?? public/sfx/passo2.mp3",
+            "?? public/sfx/passo3.mp3",
+            "?? public/sfx/passo4.mp3",
+            "?? public/sfx/porta.mp3",
+            "?? public/sfx/puxa.mp3",
+            "?? public/sfx/sopro.mp3",
+            "?? public/sfx/sopro2.mp3",
+            "?? public/sfx/tranca.mp3",
+            "?? public/sfx/uivo3.mp3",
+            "?? public/sfx/uivo4.mp3",
+            "?? src/lobo-atlas.webp",
+            "?? src/lobo-pecas.json",
+            "?? src/lobo-recorte.js",
+            "?? tests/coerencia-17.test.mjs",
+            "?? tests/lobo-referencia.test.mjs",
+            "?? tests/mix-medida.mjs",
+            "?? tests/revisao-cenas.mjs",
+            "?? tests/sonoplastia.test.mjs",
+            "?? tools/convites_sopro.py",
+            "?? tools/lobo_pecas.py"
+          ]
+        }
+      ],
+      "arvore_sha256": "76a16c8917b13bd59e3fe59bdabed22d4f5335a6acae533dff993476eddd919c",
+      "head": "2a1f22fc775507c0823d00cf6c2eec2974f868b9",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
+    }
+  ],
+  "historico": [
+    {
+      "quando": "2026-11-07T02:04:06Z",
+      "evento": "criado",
+      "por": "gauntlet.py novo"
+    },
+    {
+      "quando": "2026-11-07T02:05:41Z",
+      "evento": "selado",
+      "motivo": "selo inicial"
+    },
+    {
+      "quando": "2026-11-07T02:08:07Z",
+      "evento": "R0 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T02:08:27Z",
+      "evento": "R0 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T02:27:09Z",
+      "evento": "R0 → concluida"
+    },
+    {
+      "quando": "2026-11-07T02:27:25Z",
+      "evento": "R1 → em-andamento"
+    }
+  ]
+}
