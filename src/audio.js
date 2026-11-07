@@ -39,7 +39,7 @@ export class Audio {
     this.atual = null; this.pedida = 'era-uma-vez'; this.ambPedido = {}; this.oculto = false; this.cenaAtual = null;
     this.bytes = new Map(IMEDIATOS.map((n) => [n, fetch(`${base}sfx/${n}.mp3`).then((r) => r.arrayBuffer()).catch(() => null)]));
     this.fila = []; this.registro = []; this.ultimoPasso = -1; this.nivelEfeitos = 1;
-    this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.vozes = new Map(); this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoFalhaVoz = null; this.aoFimDaVoz = null;
+    this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.playerVoz = null; this.preloadVoz = null; this.geracaoVoz = 0; this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoFimDaVoz = null;
   }
   destravar() {
     if (!this.ctx) {
@@ -65,8 +65,16 @@ export class Audio {
       setInterval(() => this._vigiar(), 60);
       this._tocarTrilha(this.pedida);
     }
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
     if (this.atual && this.atual.el.paused && !this.oculto) this.atual.el.play().catch(() => {});
+    if (this.temNarracao() && navigator.userActivation?.isActive !== false) {
+      if (this.voz) this._retomarVoz(true);
+      else if (!this.playerVoz) {
+        // A autorização do Safari pertence ao elemento. O mesmo player atravessa o livro inteiro.
+        const v = this._elementoVoz(0); const geracao = this.geracaoVoz;
+        v.el.play().then(() => { if (geracao === this.geracaoVoz && !this.voz) v.el.pause(); }).catch(() => {});
+      }
+    }
   }
   async _carregar(n) {
     try {
@@ -80,6 +88,7 @@ export class Audio {
   }
   /** A cada instante: o efeito cede à voz que está soando, e a música emenda antes do fim. */
   _vigiar() {
+    this._vigiarVoz();
     if (this.ctx.state !== 'running') return;
     const alvo = this.nivelVoz() > LIMIAR_VOZ ? NIVEL_EFEITO_SOB_VOZ : 1;
     if (alvo !== this.nivelEfeitos) { this.nivelEfeitos = alvo; this.busEfeitos.gain.setTargetAtTime(alvo, this.ctx.currentTime, alvo < 1 ? 0.03 : 0.22); }
@@ -167,14 +176,50 @@ export class Audio {
   /** Há narração gravada? Sem ela, o botão nem aparece. */
   temNarracao() { return Object.keys(this.faixasVoz).length > 0; }
   _elementoVoz(i) {
-    let v = this.vozes.get(i);
+    let v = this.playerVoz;
     if (!v) {
       const el = new window.Audio(`${base}narracao/${this.faixasVoz[i].arquivo}`); el.preload = 'auto';
-      v = { i, el, g: null }; this.vozes.set(i, v);
-      el.addEventListener('ended', () => { if (this.voz === v) { this.voz = null; this._aplicarNiveis(); this.aoFimDaVoz?.(i); } });
+      v = this.playerVoz = { i, el, g: null, arquivo: this.faixasVoz[i].arquivo, tentativa: false, tentarEm: 0 };
+      el.addEventListener('ended', () => this._finalizarVoz(v));
+      el.addEventListener('error', () => {
+        if (this.voz === v && el.error) { v.recarregar = true; v.retomarEm = el.currentTime; }
+      });
+      el.addEventListener('loadedmetadata', () => {
+        if (this.voz === v && v.retomarEm != null) { el.currentTime = v.retomarEm; v.retomarEm = null; }
+      });
     }
     if (this.ctx && !v.g) { v.g = this.ctx.createGain(); v.g.gain.value = 0; this.ctx.createMediaElementSource(v.el).connect(v.g); v.g.connect(this.busVoz); }
     return v;
+  }
+  _finalizarVoz(v) {
+    if (this.voz !== v || !v.el.ended) return;
+    this.voz = null; this.geracaoVoz++;
+    this._aplicarNiveis(); this.aoFimDaVoz?.(v.i);
+  }
+  _retomarVoz(forcar = false) {
+    const v = this.voz;
+    if (!v || !this.narrando || this.oculto || this.interacao || v.tentativa || (!forcar && performance.now() < v.tentarEm)) return;
+    const geracao = this.geracaoVoz;
+    v.tentativa = true; v.tentarEm = performance.now() + 1000;
+    if (v.recarregar) { v.recarregar = false; v.el.load(); }
+    if (this.ctx.state !== 'running') v.el.pause();
+    const tocar = () => { if (geracao === this.geracaoVoz && this.voz === v && !this.oculto && !this.interacao) return v.el.play(); };
+    const tentativa = this.ctx.state === 'running' ? tocar() : this.ctx.resume().then(tocar);
+    Promise.resolve(tentativa).catch(() => {
+      if (geracao === this.geracaoVoz && this.voz === v && v.el.error) { v.recarregar = true; v.retomarEm = v.el.currentTime; }
+    }).finally(() => { if (geracao === this.geracaoVoz) v.tentativa = false; });
+  }
+  _vigiarVoz() {
+    const v = this.voz; if (!v || !this.narrando) return;
+    const agora = performance.now();
+    if (this.oculto || this.interacao) { v.semProgressoDesde = agora; return; }
+    if (v.el.ended) { this._finalizarVoz(v); return; }
+    if (v.ultimoTempo !== v.el.currentTime) { v.ultimoTempo = v.el.currentTime; v.semProgressoDesde = agora; }
+    if (agora - v.semProgressoDesde > 8000) {
+      v.retomarEm = v.el.currentTime; v.recarregar = true; v.tentativa = false; v.semProgressoDesde = agora;
+      this.geracaoVoz++;
+    }
+    if (v.el.paused || v.recarregar || this.ctx.state !== 'running') this._retomarVoz();
   }
   /** O relógio da animação é o da fala: aba em segundo plano ou rede lenta pausam os dois juntos. */
   tempoVoz(i) { return this.voz && this.voz.i === i ? this.voz.el.currentTime : null; }
@@ -186,9 +231,10 @@ export class Audio {
     return Math.min(1, Math.sqrt(s / v.length) * 7);
   }
   _pararVoz() {
+    this.geracaoVoz++;
     clearTimeout(this.vozAgenda); this.vozAgenda = null;
     const v = this.voz; if (!v) return;
-    this.voz = null;
+    this.voz = null; v.tentativa = false;
     const t = this.ctx.currentTime;
     v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0, t, 0.12);
     clearTimeout(v.pausa); v.pausa = setTimeout(() => { if (this.voz !== v) v.el.pause(); }, 450);
@@ -200,16 +246,26 @@ export class Audio {
     this._pararVoz();
     if (!this.narrando || i < 0 || !this.faixasVoz[i]) return;
     const v = this._elementoVoz(i);
-    if (this.faixasVoz[i + 1]) this._elementoVoz(i + 1); // a próxima página já vem baixando
+    const geracao = this.geracaoVoz;
+    if (this.faixasVoz[i + 1]) {
+      this.preloadVoz ??= new window.Audio(); this.preloadVoz.preload = 'auto';
+      this.preloadVoz.src = `${base}narracao/${this.faixasVoz[i + 1].arquivo}`;
+    }
     this.vozAgenda = setTimeout(() => {
-      if (this.cenaAtual !== i || !this.narrando) return;
+      if (geracao !== this.geracaoVoz || this.cenaAtual !== i || !this.narrando) return;
+      this.vozAgenda = null;
       const t = this.ctx.currentTime;
       clearTimeout(v.pausa);
+      v.i = i; v.tentativa = false; v.tentarEm = 0; v.recarregar = false; v.retomarEm = null;
+      if (v.arquivo !== this.faixasVoz[i].arquivo) {
+        v.arquivo = this.faixasVoz[i].arquivo; v.el.src = `${base}narracao/${v.arquivo}`;
+      }
       v.el.currentTime = 0;
+      v.ultimoTempo = 0; v.semProgressoDesde = performance.now();
       v.g.gain.cancelScheduledValues(t); v.g.gain.setValueAtTime(db(this.faixasVoz[i].ganho_db || 0), t);
       this.voz = v; this._aplicarNiveis();
       this.aoComecarVoz?.(i);
-      if (!this.oculto && !this.interacao) v.el.play().catch((e) => { console.warn('voz', i, e.name); if (this.voz === v) { this._pararVoz(); this.aoFalhaVoz?.(i); } });
+      this._retomarVoz();
     }, atraso * 1000);
   }
   /** Liga ou desliga a leitura; ao religar, recomeça a cena atual. */
@@ -225,11 +281,11 @@ export class Audio {
     this.master.gain.cancelScheduledValues(this.ctx.currentTime);
     this.master.gain.setValueAtTime(pausada || !this.ligado ? 0 : 1, this.ctx.currentTime);
     if (pausada) this.voz?.el.pause();
-    else if (!this.oculto) this.voz?.el.play().catch(() => { this._pararVoz(); this.aoFalhaVoz?.(this.cenaAtual); });
+    else this._retomarVoz(true);
   }
   _visibilidade() {
     this.oculto = document.hidden; if (!this.ctx) return;
-    if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume(); if (this.ligado) this.atual?.el.play().catch(() => {}); if (!this.interacao) this.voz?.el.play().catch(() => {}); }
+    if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume().catch(() => {}); if (this.ligado) this.atual?.el.play().catch(() => {}); this._retomarVoz(true); }
   }
   alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado && !this.interacao ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
   /**

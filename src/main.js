@@ -297,7 +297,6 @@ function seguirLeitura(dt) {
   if (leitura.relogio >= c.linha.duration) leitura.segue = false;
 }
 audio.aoComecarVoz = (i) => { clearTimeout(viradaAuto); prepararLeitura(i); };
-audio.aoFalhaVoz = () => soltarLeitura();
 audio.aoFimDaVoz = (i) => {
   if (i !== estado.indice || !audio.narrando || !['abrindo', 'aberto'].includes(estado.modo)) return;
   clearTimeout(viradaAuto);
@@ -327,7 +326,6 @@ function alternarOlhar(v = !estado.olhar) {
 }
 $('olhar').addEventListener('click', () => alternarOlhar());
 $('voltar-olhar').addEventListener('click', () => alternarOlhar(false));
-let narracaoAntesDeLer = false;
 let tamanhoTexto = 1;
 function alternarLeitura(ativa = !estado.lendo) {
   estado.lendo = ativa;
@@ -340,12 +338,7 @@ function alternarLeitura(ativa = !estado.lendo) {
   $('ajuste-leitura').hidden = !ativa;
   $('pagina-texto').tabIndex = ativa ? 0 : -1;
   if (ativa) {
-    narracaoAntesDeLer = audio.narrando;
     interacao.cancelar();
-    clearTimeout(viradaAuto); soltarLeitura();
-    if (audio.narrando) audio.alternarNarracao();
-  } else if (narracaoAntesDeLer && !audio.narrando) {
-    audio.alternarNarracao();
   }
   atualizarBotaoNarrar(); atualizarUI();
   $(ativa ? 'pagina-texto' : 'ler').focus({ preventScroll: true });
@@ -483,8 +476,9 @@ function passo(dt) {
 function laco(agora) {
   requestAnimationFrame(laco);
   const dt = Math.min((agora - ultimo) / 1000, 0.05); ultimo = agora;
-  if (qsPausado || estado.lendo) return;
+  if (qsPausado) return;
   passo(dt);
+  if (estado.lendo) return;
   renderer.render(scene, camera);
   quadros.n++; quadros.soma += dt;
 }

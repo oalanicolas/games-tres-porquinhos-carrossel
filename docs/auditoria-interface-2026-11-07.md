@@ -11,7 +11,7 @@ A auditoria inicial encontrou seis defeitos e atribuiu 13/20 à interface. Os se
 - Controles com área acionável mínima de 44 × 44 px. Em retrato, os grupos ocupam linhas separadas.
 - Leitura ampliada até 200%, com rolagem vertical dentro da página e sem ampliar a cena.
 
-Pinça, dois toques e gestos de zoom continuam bloqueados por pedido de Alan. O ajuste A−/A+ altera apenas o texto no modo de leitura. Ao entrar nesse modo, a narração e a renderização da cena pausam. Ao voltar, a preferência anterior da narração é restaurada na página escolhida.
+Pinça, dois toques e gestos de zoom continuam bloqueados por pedido de Alan. O ajuste A−/A+ altera apenas o texto no modo de leitura. Na auditoria inicial, esse modo pausava a narração. O pedido posterior de continuidade substituiu esse comportamento. A voz e a passagem automática continuam durante a leitura, e somente seu botão altera a preferência. A renderização da cena fica suspensa.
 
 ## Vinte verificações
 
@@ -29,7 +29,7 @@ Pinça, dois toques e gestos de zoom continuam bloqueados por pedido de Alan. O 
 12. Interface sem transbordamento horizontal nas seis dimensões testadas.
 13. Texto ampliado a 200% cabe horizontalmente.
 14. Rolagem de leitura funciona com roda e toque sintetizado.
-15. Preferência de narração é restaurada ao sair da leitura.
+15. Preferência de narração é preservada ao entrar e sair da leitura.
 16. Entrada na leitura durante a abertura mantém navegação funcional.
 17. Pinça e dois toques mantêm escala 1 e permitem continuar a história.
 18. Cancelamento de gesto e perda de foco liberam o arrasto.

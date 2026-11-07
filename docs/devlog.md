@@ -99,3 +99,13 @@ registro de quem pediu essa publicação.
 | Decisão | Afeta | Mudança | Evidência | Próximo passo |
 |---|---|---|---|---|
 | DEC-001 | `src/cenas.js`, `src/roteiro.json`, `src/narracao.json`, `src/objetos.js`, `src/audio.js` | 17 cenas, uma obra por casa, voo e queda coerentes | Livro `docs/gauntlet-17-cenas.json` (recibos R0 a R8), `tests/coerencia-17.test.mjs`, `tests/paredes.mjs` | Aprovação de Alan (R9) |
+
+## Narração contínua — 7 de novembro de 2026
+
+Alan relatou paradas depois de algumas páginas e pediu que apenas o botão de narração desligue a leitura automática. Dois casos foram reproduzidos antes da correção em `output/narracao-continua/antes.log`, autorização restrita ao primeiro player e pausa inesperada. Ambos deixavam o livro sem recuperação.
+
+A voz agora reutiliza um elemento autorizado no gesto inicial. Falhas transitórias preservam a posição e são tentadas novamente. Pausa inesperada e suspensão de áudio são monitoradas; respostas atrasadas de páginas anteriores são descartadas. O modo de leitura mantém a narração e oferece o botão para desligá-la, substituindo a pausa automática escolhida na auditoria anterior.
+
+A regressão está em `tests/narracao-continua.test.mjs`. O teste de acessibilidade foi atualizado para o pedido novo, de narração mantida durante a leitura. A validação completa e o percurso narrado real são registrados em `output/narracao-continua/`.
+
+Verificado em Chrome headless com GPU Metal. O percurso real leu 17 de 17 cenas em 393.547 s, sem interação depois de abrir, e fechou o livro mantendo a preferência ligada. A suíte completa passou em 77 de 77 testes, com 0 falhas. Celular físico e Safari real continuam pendentes.

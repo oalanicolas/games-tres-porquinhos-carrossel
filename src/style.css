@@ -98,7 +98,7 @@ html.lendo-texto, html.lendo-texto body { touch-action: pan-y; }
 .pagina-texto h1 { max-width: 24ch; margin-bottom: 1em; font: 600 1.6em/1.14 var(--display); text-wrap: balance; overflow-wrap: anywhere; hyphens: auto; }
 .pagina-texto p { max-width: 68ch; margin: 0 0 1em; overflow-wrap: break-word; hyphens: auto; }
 .pagina-texto .fala { padding-inline-start: 1em; }
-.lendo-texto #acao, .lendo-texto #olhar, .lendo-texto #interagir, .lendo-texto #narrar, .lendo-texto #pontos, .lendo-texto .baloes, .lendo-texto .sopro-grito { display: none; }
+.lendo-texto #acao, .lendo-texto #olhar, .lendo-texto #interagir, .lendo-texto #pontos, .lendo-texto .baloes, .lendo-texto .sopro-grito { display: none; }
 .ajuste-leitura button { font-weight: 600; font-size: 1rem; }
 .ajuste-leitura button:disabled { opacity: .5; }
 @media (max-width: 1000px) {

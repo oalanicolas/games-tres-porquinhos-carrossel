@@ -34,7 +34,7 @@ Os controles têm área mínima de 44 × 44 px. Em retrato, navegação e opçõ
 
 O ícone de livro abre a leitura em uma página de papel integrada à tela. Títulos, parágrafos e falas vêm da mesma lista `CENAS` usada pelas ilustrações. O texto também fica disponível para tecnologia assistiva durante a apresentação ilustrada.
 
-Os botões A− e A+ ajustam a leitura de 100% a 200%. A página aceita rolagem vertical e seleção de texto. Pinça e dois toques mantêm o enquadramento fixo, inclusive durante a leitura. A narração automática fica pausada durante a leitura e sua preferência é retomada ao voltar para o livro ilustrado. O desenho 3D pausa durante a leitura.
+Os botões A− e A+ ajustam a leitura de 100% a 200%. A página aceita rolagem vertical e seleção de texto. Pinça e dois toques mantêm o enquadramento fixo, inclusive durante a leitura. A narração continua no modo de leitura e leva o texto para a próxima página. Seu botão permanece acessível para desligá-la manualmente. O desenho 3D pausa durante a leitura, enquanto o relógio da história continua.
 
 O modo “Só olhar” transfere o foco para “Mostrar controles” e torna a navegação oculta inerte. Escape recupera a navegação e seu foco. As abas de cenas usam uma única parada de Tab e permitem navegação pelas setas, Home e End.
 

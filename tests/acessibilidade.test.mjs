@@ -39,13 +39,13 @@ test('acessibilidade: o texto das 17 cenas está no HTML e os estados ocultos sa
   } finally { await fechar(); }
 });
 
-test('acessibilidade: leitura amplia até 200%, rola e devolve a narração na página escolhida', async () => {
+test('acessibilidade: leitura amplia até 200%, rola e mantém a narração na página escolhida', async () => {
   const { page, erros, fechar } = await abrir({ largura: 320, altura: 568, narrado: true });
   try {
     await page.click('#acao');
     await page.click('#ler');
     assert.equal(await page.evaluate(() => window.__livro.estado.modo), 'aberto');
-    assert.equal(await page.evaluate(() => window.__livro.audio.narrando), false);
+    assert.equal(await page.evaluate(() => window.__livro.audio.narrando), true);
     const inicial = await page.locator('#pagina-texto').evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
     for (let i = 0; i < 4; i++) await page.click('#texto-maior');
     const ampliado = await page.locator('#pagina-texto').evaluate((e) => ({ fonte: parseFloat(getComputedStyle(e).fontSize), largura: e.clientWidth, conteudo: e.scrollWidth }));

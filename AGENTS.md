@@ -52,6 +52,7 @@ Auditoria pedida por Alan em 06/11/2026. Nada aqui foi ouvido por quem fez: é e
 
 ## Regras do conteúdo
 
+- Narração contínua, pedido de Alan em 07/11/2026: só o botão de narração desliga a preferência. Leitura textual, virada manual, sopro e falha temporária preservam a narração; ao voltar de interrupções ela retoma automaticamente. O mesmo player atravessa as páginas. Checagem: `tests/narracao-continua.test.mjs`.
 - Zoom desativado por pedido de Alan em 06/11/2026: sem lupa/cartão de texto e sem ampliação por gestos. Checagem: `tests/jornada.mjs`, passar sobre o texto não abre sobreposição; pinça e roda com Ctrl não mudam a escala nem prendem a navegação.
 - Créditos só no `README.md`, nunca sobre a mesa (pedido de Alan, 06/11/2026). `tests/telas.test.mjs` confere.
 - Versão infantil: nenhum porquinho é comido e o Lobo foge.
