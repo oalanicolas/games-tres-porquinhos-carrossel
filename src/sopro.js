@@ -1,29 +1,37 @@
+// O público é criança pequena: ela grita "Fuuuu!" com voz, em sopradinhas curtas, e longe do microfone.
+// `nivel` é o mínimo para contar, igual e baixo; a diferença entre as casas é quanto grito cada uma pede.
 export const CASAS_SOPRO = {
-  2: { nome: 'Casa de palha do João', grupo: 'sopro', nivel: 0.16, energia: 0.55, resultado: 'A palha voou!' },
-  3: { nome: 'Casa de madeira da Lulu', grupo: 'sopro1', nivel: 0.3, energia: 1.05, resultado: 'A madeira cedeu!' },
-  4: { nome: 'Casa de tijolos do Kael', grupo: 'sopro0', nivel: 0.4, energia: 1.6, resultado: 'Os tijolos resistem ao vento!' },
+  2: { nome: 'Casa de palha do João', grupo: 'sopro', nivel: 0.1, energia: 0.5, inclina: 0.04, convite: 'convite-palha', resultado: 'A palha voou!' },
+  3: { nome: 'Casa de madeira da Lulu', grupo: 'sopro1', nivel: 0.1, energia: 1, inclina: 0.025, convite: 'convite-madeira', resultado: 'A madeira cedeu!' },
+  4: { nome: 'Casa de tijolos do Kael', grupo: 'sopro0', nivel: 0.12, energia: 1.5, inclina: 0.004, convite: 'convite-tijolos', resultado: 'Os tijolos resistem ao vento!' },
 };
+export const FALAS_SOPRO = [...Object.values(CASAS_SOPRO).map((c) => c.convite), 'convite-de-novo'];
+// Sem voz nenhuma, um apito ou um bipe puro: o único som contínuo que continua de fora.
+const PLANURA_MINIMA = 0.0005;
+const SUSTENTA = 0.06; // mais curto que isso é estalo, não sopradinha
+// Grito fraco ou forte andam quase igual: ninguém fica para trás por ter pouco fôlego.
+const RITMO_MINIMO = 0.35; const RITMO_MAXIMO = 0.6;
 
 export class MedidorSopro {
-  constructor(limiar = 0.12) { this.limiar = limiar; this.ruido = 0.002; this.nivel = 0; this.energia = 0; this.sustentado = 0; }
+  constructor(limiar = 0.1) { this.limiar = limiar; this.ruido = 0.002; this.nivel = 0; this.energia = 0; this.sustentado = 0; }
   medir(amostras, espectro, dt, sampleRate = 48000) {
     const media = amostras.reduce((s, v) => s + v, 0) / amostras.length;
     const rms = Math.sqrt(amostras.reduce((s, v) => s + (v - media) ** 2, 0) / amostras.length);
-    // Não penalizar microfones que cortam as frequências altas, comuns nos telefones.
+    // Não penalizar microfones que cortam as frequências altas, comuns nos telefones, nem voz: "Fuuuu!" gritado também vale.
     const bin = sampleRate / (espectro.length * 2);
     const banda = espectro.subarray(Math.ceil(250 / bin), Math.min(espectro.length, Math.ceil(3000 / bin)));
     let soma = 0; let log = 0;
     for (const db of banda) { const p = Math.max(1e-12, 10 ** (db / 10)); soma += p; log += Math.log(p); }
     const plano = Math.exp(log / banda.length) / Math.max(1e-12, soma / banda.length);
     const minimo = Math.max(0.008, this.ruido * 2.5);
-    const bruto = plano > 0.12 ? Math.max(0, Math.min(1, (rms - minimo) / Math.max(0.04, minimo * 4))) : 0;
+    const bruto = plano > PLANURA_MINIMA ? Math.max(0, Math.min(1, (rms - minimo) / Math.max(0.04, minimo * 4))) : 0;
     return { rms, ...this.avancar(bruto, dt) };
   }
   avancar(bruto, dt) {
     dt = Math.max(0, Math.min(dt, 0.05));
     this.nivel += (bruto - this.nivel) * (1 - Math.exp(-dt * 18));
     this.sustentado = bruto >= this.limiar ? this.sustentado + dt : 0;
-    if (this.sustentado >= 0.15) this.energia += this.nivel * dt;
+    if (this.sustentado >= SUSTENTA) this.energia += Math.min(RITMO_MAXIMO, Math.max(RITMO_MINIMO, this.nivel)) * dt;
     return { nivel: this.nivel, energia: this.energia };
   }
 }

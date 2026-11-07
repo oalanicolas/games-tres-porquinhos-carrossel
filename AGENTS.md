@@ -7,7 +7,7 @@ Herda as regras de `../../AGENTS.md`. Este arquivo lista só o que é próprio d
 - `npm test` e `npm run build`. Os arquivos de teste rodam um por vez (cerca de 10 min): em paralelo, cinco Chromes com GPU na máquina ocupada derrubam navegador e carga, sem ser defeito do livro.
 - Servidor local: `npm start`, porta 4291.
 - Narração: `python3 tools/narracao.py --estimar` conta o texto e `python3 tools/narracao.py` grava pela Magnific. Sem as 11 cenas gravadas, o manifesto fica vazio e o botão não aparece. Mudou o texto de `src/story.js`? Rode de novo: só a cena alterada é regravada. Depois de gravar, confira a fala com `whisper-cli` em português.
-- Sons novos entram por `tools/sons.py`, nunca à mão. Só o acervo licenciado de `shared/sfx`; o acervo `universal` é extraído de jogos e serve apenas para estudo.
+- Sons novos entram por `tools/sons.py`, nunca à mão. Só o acervo licenciado de `shared/sfx`; o acervo `universal` é extraído de jogos e serve apenas para estudo. Antes de aceitar um corte curto do acervo (`foley-*`), procure a gravação de origem no campo `sources`: o uivo de 1,6 s vinha de uma tomada de 23 s. Checagem: `tests/sonoplastia.test.mjs`.
 
 ## Desvios da referência
 
@@ -21,7 +21,7 @@ Pedidos por Alan:
 - Terceira janela para Bento e entrada Pipo → Tico → Bento antes de o Lobo chegar (06/11/2026): "bento ta fora de casa, o logo iria pegar ele". Checagem: `tests/furos.test.mjs`.
 - Página a mais sempre que a história precisar, para não ter furo (06/11/2026): "nem que precise adicionar mais páginas". Checagem: `tests/furos.test.mjs`.
 - Narração por voz feminina calma da ElevenLabs (06/11/2026). A conta direta ficou sem créditos e Alan mandou tentar outro serviço, como a Magnific: as 11 cenas foram gravadas por ela, que usa vozes da ElevenLabs.
-- Lobo inspirado nas duas fotos de pelúcia enviadas por Alan em 06/11/2026: cinza, barriga e patas claras, nariz grande carvão, orelhas altas e lenço azul; continua feito de papel e usa o mesmo rig de fala, sopro, subida e fuga.
+- Lobo recortado da referência que Alan mandou (`arte/lobo-referencia.png`, 06/11/2026): "bem longe de ficar parecido com a referencia". Peças articuladas tiradas da própria imagem (`tools/lobo_pecas.py`, `src/lobo-recorte.js`), com o rig de fala, sopro, subida e fuga de antes. Ainda sem aprovação de Alan. Checagem: `tests/lobo-referencia.test.mjs`.
 
 Decididos na construção, ainda sem aprovação de Alan:
 
@@ -30,14 +30,22 @@ Decididos na construção, ainda sem aprovação de Alan:
 - O Lobo menor em cena, para caber na cunha sem atravessar as paredes do livro. Checagem: `tests/paredes.mjs`.
 - Voz Yasmin Alves, escolhida pelos metadados, sem ouvir. A rota da Magnific só oferece o modelo Turbo v2.5 e não aceita `previous_text`, `next_text` nem `style`.
 - Modo narrado (pedido de Alan, 06/11/2026: "no modo narrado o livro deve ir sozinho folhando"): vem ligado; a voz conduz e a página vira sozinha quando voz e gestos terminam. Mexer à mão continua valendo e desligar o botão devolve o ritmo a quem lê.
-- Quem gesticula em cada palavra (`src/roteiro.json`), a boca dos porquinhos, que não existia, e os gestos só de narração (`soVoz` em `src/cenas.js`): entrada do Lobo, batida na porta com som de martelo, porque o acervo não tem batida, e o "Fuuuu!" do Lobo em balão.
+- Quem gesticula em cada palavra (`src/roteiro.json`), a boca dos porquinhos, que não existia, e os gestos só de narração (`soVoz` em `src/cenas.js`): entrada do Lobo, batida na porta e o "Fuuuu!" do Lobo em balão.
 - A respiração dos personagens agora soma ao que a linha do tempo escreve. Antes, ela apagava pulos e gestos de cabeça, inclusive sem voz: esses gestos autorais passam a aparecer.
 
 ## Recusado por Alan
 
-- A primeira adaptação geométrica do Lobo às fotos de pelúcia (06/11/2026): "Esse lobo ficou muito feio". Não é arte aprovada. Alan pediu concluir e conferir o deploy atual antes de uma nova adaptação às quatro fotos adicionais.
+- As adaptações geométricas do Lobo às fotos de pelúcia (06/11/2026): "Esse lobo ficou muito feio" e "bem longe de ficar parecido com a referencia". Não refazer o Lobo em formas desenhadas à mão.
 - A trilha anterior, de Kevin MacLeod no acervo (06/11/2026): "as musicas de fundo nao fazem sentido algum" com a história. Música de ação de jogo e gênero trocando a cada cena não voltam.
 - A última cena ou a contracapa aparecendo ao lado da primeira cena. Checagem: `tests/sequencia.test.mjs`.
+
+## Sonoplastia
+
+Auditoria pedida por Alan em 06/11/2026. Nada aqui foi ouvido por quem fez: é escolha por catálogo e medição, e Alan decide de ouvido.
+
+- Efeitos passam por `busEfeitos`: cedem 4 dB enquanto a voz soa e voltam nas pausas. Voz fica seca, efeitos ganham espaço leve, e o limitador está na saída.
+- Todo `tocar` varia altura e volume; `passo()` nunca repete a gravação. `pan` usa a posição na página, ou `[de, até]` quando o som atravessa a cena.
+- Sem gravação no acervo, ainda hoje: palha (usa papel amassado), rajada de sopro de boca (usa ar em movimento), barriga roncando e torcida infantil (`viva` são adolescentes).
 
 ## Regras do conteúdo
 
@@ -52,6 +60,9 @@ Decididos na construção, ainda sem aprovação de Alan:
 
 - Alan pediu níveis de sopro nas casas: palha cede antes da madeira; tijolos nunca caem. Reusar animações e cronologia existentes.
 - Recusado: painel pop-up, mesmo sem textos. A interação deve ser clean e integrada ao livro: vento real na cena e autorização discreta presa ao Lobo, sem miniaturas ou barra.
-- Última orientação de Alan (06/11/2026): o botão de ligar/desligar o modo sopro é importante e permanece discreto na barra do livro. Isso substitui a orientação anterior de removê-lo. Com o modo ligado, somente o microfone faz a ação; não restaurar botão de segurar ou simular sopro.
-- Captura local, calibração de 1,2 s, energia preservada entre sopros, sem gravação ou envio. Compartilhar o AudioContext existente do livro; parar tracks ao concluir/sair/ocultar sem encerrar o áudio da história.
-- `tests/sopro.test.mjs`: silêncio/tom/estalo, três casas por PCM, ausência de controle manual, contexto compartilhado, retomada, permissão tardia, projeção sem HUD e segunda leitura. Microfone físico ainda precisa de teste; não declarar distinção perfeita entre sopro e fala.
+- O botão de ligar/desligar o modo sopro é importante e permanece discreto na barra do livro. Não restaurar botão de segurar ou simular sopro.
+- O público é criança, e criança não sabe assoprar (Alan, 06/11/2026): "deixar bem claro que a criança tem que gritar fuuuuuuuu!". A voz da narração pede o grito (`tools/convites_sopro.py`), um balão enorme "Fuuuu!" sai do Lobo e cresce com o grito. Vale qualquer "fuuu" forte, com voz ou sopradinhas curtas somadas; grito, fala alta ou TV também derrubam, escolha de Alan. Só apito ou bipe puro fica de fora.
+- A criança sopra junto com o Lobo: ele para de peito cheio, olha para ela, mostra o gesto enquanto a voz convida, e o grito dela sai da boca dele. A casa balança e inclina conforme ela grita.
+- Quem não conseguir nunca fica preso (escolha de Alan, 06/11/2026): sem microfone, de imediato; tentando, depois de cerca de 8 s; o Lobo termina sozinho e a história segue. Isso substitui "somente o microfone faz a ação".
+- O microfone é pedido quando o adulto liga o modo, não no meio da história. Captura local, calibração de 0,5 s com ruído limitado (a criança pode já estar gritando), energia preservada entre sopros, sem gravação ou envio. Compartilhar o AudioContext existente do livro; parar tracks ao concluir/sair/ocultar sem encerrar o áudio da história.
+- `tests/sopro.test.mjs`: silêncio/apito/estalo, "fuuu" com voz, convite claro, Lobo termina sozinho, três casas por PCM, ausência de controle manual, contexto compartilhado, retomada, permissão tardia, projeção sem HUD e segunda leitura. Microfone físico e criança de verdade ainda precisam de teste: níveis e tempos saíram de sinal simulado.

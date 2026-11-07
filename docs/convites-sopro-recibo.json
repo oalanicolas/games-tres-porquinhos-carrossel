@@ -1,0 +1,34 @@
+{
+ "convite-palha": {
+  "texto": "Agora é com você! Ajude o Lobo! Grite bem forte: Fuuuuuuuu!",
+  "voz": "Yasmin Alves",
+  "servico": "magnific",
+  "tarefa": "6fa74f43-c090-46a5-8b5b-8e63cd01a91c",
+  "assinatura": "9fc689b20b4001f7",
+  "duracao": 5.944308
+ },
+ "convite-madeira": {
+  "texto": "A madeira é mais forte! Grite de novo: Fuuuuuuuu!",
+  "voz": "Yasmin Alves",
+  "servico": "magnific",
+  "tarefa": "5c54b2b2-72a0-4215-9505-8343f99b20c6",
+  "assinatura": "577318986e9ea564",
+  "duracao": 4.783311
+ },
+ "convite-tijolos": {
+  "texto": "Agora, os tijolos! Grite com toda a força! Grite: Fuuuuuuuu!",
+  "voz": "Yasmin Alves",
+  "servico": "magnific",
+  "tarefa": "c287055c-4f07-411f-8e58-c7437bea6ca8",
+  "assinatura": "9194cb55d015106f",
+  "duracao": 5.29415
+ },
+ "convite-de-novo": {
+  "texto": "Mais forte! Grite: Fuuuuuuuu!",
+  "voz": "Yasmin Alves",
+  "servico": "magnific",
+  "tarefa": "62e7d496-ccfa-46ca-9faf-464e98109250",
+  "assinatura": "c34b6dd02c38a232",
+  "duracao": 3.622313
+ }
+}

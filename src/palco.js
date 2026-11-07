@@ -60,7 +60,7 @@ export function ventoInterativo(conteudo, boca, casa) {
   });
   const inicio = boca.position.clone(), fim = casa.position.clone();
   return {
-    raiz,
+    raiz, casa,
     quadro(nivel, t) {
       raiz.visible = nivel > 0.035;
       if (!raiz.visible) return;

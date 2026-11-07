@@ -116,6 +116,13 @@ body.so-olhar .barra { transform: translate(-50%, 6px); }
 @media (max-width: 375px) { .acao { padding: 9px 11px; font-size: 13px; margin: 0; } .seta, .icone { width: 30px; height: 30px; } }
 @media (prefers-reduced-motion: reduce) { .pilula, .abertura, .acao, .pontos button { transition: none; } }
 
+/* O convite que nem precisa saber ler: o grito do Lobo, enorme, cresce com o da criança */
+.sopro-grito { position: fixed; z-index: 3; max-width: none; padding: 10px 20px 12px; font-size: clamp(26px, 3.6vw, 44px); font-weight: 800; line-height: 1; white-space: nowrap; pointer-events: none; transform: scale(var(--forca, 1)); transform-origin: 50% 100%; }
+.sopro-grito[hidden] { display: none; }
+.sopro-grito span { animation: grito-chama 1s ease-in-out infinite; }
+.sopro-grito[data-gritando="true"] span { animation: none; }
+@keyframes grito-chama { 50% { transform: scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .sopro-grito span { animation: none; } }
 .sopro-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 body.soprando .legenda, body.soprando #acao { display: none; }
 body.sopro-na-pagina #acao, body.sopro-na-pagina #narrar { display: none; }

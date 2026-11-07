@@ -6,7 +6,7 @@ João constrói a casa de palha, Lulu a de madeira e Kael a de tijolos. Texto e 
 
 O enquadramento é fixo: não há lupa do texto nem zoom por gestos. Arrastar continua virando as páginas.
 
-O Lobo de papel é inspirado nas fotos da pelúcia enviadas por Alan: cinza, focinho e nariz grandes, barriga clara e lenço azul.
+O Lobo de papel é recortado da imagem de referência enviada por Alan (`arte/lobo-referencia.png`), em peças articuladas: cinza, focinho e nariz grandes, barriga clara e lenço azul.
 
 Referência de forma: o vídeo de Techartist sobre um livro-carrossel (<https://x.com/techartist_/status/2116407421065482362>). A arte, o texto e o código daqui são originais.
 
@@ -24,18 +24,26 @@ npm run build
 - `src/book.js`: paredes radiais, abertura e quais cenas ficam visíveis.
 - `src/cenas.js`, `src/personagens.js`, `src/objetos.js`, `src/palco.js`, `src/paper.js`: recortes de papel e ações das onze cenas.
 - `src/story.js`: o texto.
-- `src/audio.js`: música com fusão, ambientes em laço e efeitos. `src/sons.json` é gerado.
+- `src/audio.js`: música com fusão e emenda antes do fade, ambientes em laço, efeitos num bus que cede à voz, posição no estéreo, espaço e limitador. `src/sons.json` é gerado.
 - `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
 
 ## Brincar de soprar
 
-Com o modo sopro ligado pelo ícone de vento na barra, a história espera a criança assoprar nas três casas. O Lobo enche as bochechas e o vento de papel sai da sua boca rumo à casa. Não há HUD pop-up, miniaturas, barra de energia nem botão para substituir o sopro. O ícone de vento na barra do livro liga ou desliga esse modo. O único controle junto do Lobo serve para autorizar ou tentar novamente o microfone quando o navegador exigir; depois da autorização, ele desaparece e as próximas casas escutam automaticamente. Mesmo com a narração desligada, entrar numa casa inicia a preparação sem botão de ação.
+Criança pequena não sabe assoprar, então a brincadeira é gritar **"Fuuuuuu!"**. Com o modo ligado pelo ícone de vento na barra, o microfone é pedido na hora de ligar, e não no meio da história. Em cada casa o Lobo para de peito cheio e olha para a criança; a voz da narração pede o grito ("Agora é com você. Ajude o lobo. Grite bem forte: fuuu!") e um balão "Fuuuu!" sai da cabeça dele.
 
-Palha pede intensidade mínima de 16% e 0,55 unidade de energia, madeira 30% e 1,05, tijolos 40% e 1,6. São valores internos calibrados pelo ambiente, não medidas físicas. A criança pode respirar entre tentativas sem perder o progresso. Os tijolos resistem, como no conto; ao cumprir a tentativa, a narração continua. Uma nova leitura desde a capa aceita novos sopros.
+Enquanto a criança grita, ela sopra junto com o Lobo: o vento de papel sai da boca dele, o balão cresce, a casa balança e inclina para longe dele. Vale qualquer "fuuu" forte, com voz ou com sopradinhas, e o progresso não se perde quando ela para para respirar. Grito, fala alta ou TV também podem derrubar a casa: isso foi escolhido de propósito. Só apito ou bipe puro ficam de fora, e estalos curtos não contam.
 
-A captura é local, sem gravação nem envio, e para ao concluir, mudar de página ou ocultar a aba. Antes de escutar, o jogo silencia sua saída e mede 1,2 s de ruído. RMS e distribuição espectral reduzem disparos por tons e estalos; não reconhecem toda fala nem todo ruído. A sensibilidade em telefones físicos continua pendente.
+| Casa | Nível mínimo | Energia | Inclinação |
+|---|---|---|---|
+| Palha | 0,10 | 0,5 | a maior |
+| Madeira | 0,10 | 1,0 | média |
+| Tijolos | 0,12 | 1,5 | quase nada: resiste, como no conto |
 
-`node --test tests/sopro.test.mjs` verifica captura PCM, três casas, ausência de controles manuais, projeção no livro, interrupção e retomada. As verificações de texto/narração usam a leitura comum; os testes de sopro ativam o modo pelo mesmo botão disponível no livro.
+São valores internos, não medidas físicas. Ninguém fica preso: sem microfone, o Lobo sopra sozinho na hora; tentando, a voz reforça depois de 4 s, e o Lobo termina sozinho depois de cerca de 8 s (até 14 s se a criança ainda estiver gritando). Não há botão de simular sopro nem HUD; o único controle junto do Lobo autoriza o microfone quando o navegador exige.
+
+A captura é local, sem gravação nem envio, e para ao concluir, mudar de página ou ocultar a aba. Enquanto escuta, o livro fica mudo, senão o alto-falante dispararia o detector; a voz do convite toca por fora e o livro espera ela acabar. A sensibilidade com criança de verdade, microfone físico e telefone continua sem teste.
+
+`node --test tests/sopro.test.mjs` verifica silêncio, apito, estalo, "fuuu" com voz, convite, Lobo terminando sozinho, as três casas por áudio simulado, balão dentro da tela a 390 px e retomada da narração.
 
 ## Modo narrado e trilha
 
@@ -63,6 +71,8 @@ Sem as 11 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a co
 |---|---|
 | `tests/sequencia.test.mjs` | o fim nunca aparece junto do começo, em 11 de 11 cenas e na abertura |
 | `tests/musica.test.mjs` | faixa certa nas 11 cenas, som na saída, troca no tchibum, botão de som e 5 laços sem salto |
+| `tests/sonoplastia.test.mjs` | uivo longo, batida de madeira, todo efeito usado, passos com variação e posição, som no primeiro clique |
+| `tests/lobo-referencia.test.mjs` | peças do Lobo, atlas nas cenas sem estampa antiga, gestos |
 | `tests/telas.test.mjs` | livro nítido e textos sem sobreposição em 4 tamanhos de tela |
 | `tests/livro.test.mjs` | nenhuma peça fora da cunha e percurso real pela interface |
 | `tests/texto-livre.test.mjs` | nada da cena tapa o texto da página, em 11 de 11 cenas |
