@@ -109,7 +109,7 @@ body.so-olhar .barra { transform: translate(-50%, 6px); }
 .baloes { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
 .balao { position: absolute; left: 0; top: 0; max-width: min(250px, 58vw); padding: 9px 14px 10px; background: #fffdf4; color: var(--tinta); font: 500 clamp(14px, 1.3vw, 19px)/1.24 var(--display); text-align: center; text-wrap: balance; border: 1px solid #e8d9c4; border-radius: 18px; box-shadow: 0 2px 0 #e8d9c4, 0 9px 20px rgba(30, 12, 2, .3); will-change: transform; }
 .balao::after { content: ''; position: absolute; left: var(--cauda, 50%); bottom: -11px; width: 18px; height: 13px; margin-left: -9px; background: #fffdf4; clip-path: polygon(0 0, 100% 0, 40% 100%); filter: drop-shadow(0 1px 0 #e8d9c4); }
-.balao span { display: block; animation: balao-entra .22s cubic-bezier(.3, 1.6, .5, 1) both; }
+.balao span { display: block; white-space: pre-line; animation: balao-entra .22s cubic-bezier(.3, 1.6, .5, 1) both; }
 .balao.saindo { opacity: 0; transition: opacity .16s; }
 @keyframes balao-entra { from { opacity: 0; transform: scale(.72); } }
 @media (prefers-reduced-motion: reduce) { .balao span { animation: none; } }

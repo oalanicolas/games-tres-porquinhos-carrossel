@@ -189,8 +189,7 @@
           "em": 15.47
         },
         "vai": {
-          "em": 17.69,
-          "ate": 19.78
+          "em": 18.96
         }
       },
       "falas": [
@@ -284,13 +283,20 @@
       "ganho_db": 0.9,
       "marcos": {
         "corre": {
-          "em": 0
+          "em": 0,
+          "ate": 3.35
         },
         "pedra": {
-          "em": 3.98
+          "em": 3.98,
+          "ate": 5.18
         },
         "ponte": {
-          "em": 5.59
+          "em": 5.59,
+          "ate": 7.63
+        },
+        "olhar": {
+          "em": 7.63,
+          "ate": 9.32
         },
         "lobo": {
           "em": 10.04,
@@ -702,7 +708,7 @@
             "tico",
             "bento"
           ],
-          "texto": "E não volte nunca mais!",
+          "texto": "E não volte\nnunca mais!",
           "de": 0.0,
           "ate": 1.56
         }

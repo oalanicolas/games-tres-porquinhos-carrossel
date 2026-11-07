@@ -193,8 +193,7 @@
         "em": "lambendo os beicos"
       },
       "vai": {
-        "em": "vou comecar",
-        "ate": "mais facil"
+        "em": "mais facil"
       }
     }
   },
@@ -275,13 +274,20 @@
     ],
     "marcos": {
       "corre": {
-        "em": "joao correu"
+        "em": "joao correu",
+        "ate": "perninhas deixavam"
       },
       "pedra": {
-        "em": "pulou uma pedra"
+        "em": "pulou uma pedra",
+        "ate": "uma pedra"
       },
       "ponte": {
-        "em": "atravessou a ponte"
+        "em": "atravessou a ponte",
+        "ate": "do riacho"
+      },
+      "olhar": {
+        "em": "e nem olhou",
+        "ate": "para tras"
       },
       "lobo": {
         "em": "atras dele",
@@ -645,7 +651,7 @@
           "tico",
           "bento"
         ],
-        "texto": "E não volte nunca mais!",
+        "texto": "E não volte\nnunca mais!",
         "de": "e nao volte",
         "ate": "volte nunca mais"
       }

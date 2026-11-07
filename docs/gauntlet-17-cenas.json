@@ -390,8 +390,22 @@
       "depende": [
         "R6"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "17/17 folhas capturadas e lidas (output/revisao/contagem.txt), defeitos numerados e corrigidos em output/agentes/porquinhos-revisao-17.md; tests/musica.test.mjs mudou depois da falha só para migrar a lista de faixas de 11 para 17 cenas, sem afrouxar a asserção",
+        "gates verdes em 2026-11-07T05:31:29Z (3): contagem, test, test"
+      ],
+      "inicio": "2026-11-07T03:41:17Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T03:41:17Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "d7860ae836e07319223a4b0900f70a7a36c98de9"
+        }
+      },
+      "tentativas": 1,
+      "sem_progresso": 0,
+      "ultima_arvore_vermelha": "624786cbb8e06eec0347305d9d397f859471d3ce57fefd3bf182fc175b784b0b",
+      "fim": "2026-11-07T05:31:29Z"
     },
     {
       "id": "R8",
@@ -1136,6 +1150,255 @@
       "head": "6fbde40c778d19258fbc7cb3daa7301833757ab1",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "R7",
+      "quando": "2026-11-07T04:42:36Z",
+      "ok": false,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 0.047,
+          "log_sha256": "9c185c3ec53b4472badd160026acc009404e59ca59017a4693ff49637362ad76",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/01-contagem/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/01-contagem/01.log",
+          "ok": true,
+          "nome": "contagem",
+          "argv": [
+            "node",
+            "tests/revisao-cenas.mjs",
+            "--conferir"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 1,
+          "segundos": 1324.951,
+          "log_sha256": "8c7d5f194c4abf8d47509e993505b805dbf77baa89e44c84f41c6df154b9f3a9",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/02-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/02-test/01.log",
+          "ok": false,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 1,
+          "segundos": 1321.627,
+          "log_sha256": "77f19f48ed599cb25b712ac16df22955e19fb1d04f3f2a8ca0902591ebfab919",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/03-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/03-test/01.log",
+          "ok": false,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "17/17 folhas capturadas e lidas (output/revisao/contagem.txt), defeitos numerados e corrigidos em output/agentes/porquinhos-revisao-17.md"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "d7860ae836e07319223a4b0900f70a7a36c98de9",
+          "ate": "d7860ae836e07319223a4b0900f70a7a36c98de9",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 6,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "M src/cenas.js",
+            "M src/narracao.json",
+            "M src/roteiro.json",
+            "M src/style.css",
+            "M tests/sincronia.test.mjs"
+          ]
+        }
+      ],
+      "arvore_sha256": "624786cbb8e06eec0347305d9d397f859471d3ce57fefd3bf182fc175b784b0b",
+      "head": "d7860ae836e07319223a4b0900f70a7a36c98de9",
+      "artefatos_gate": {},
+      "entrega": {
+        "saidas": [
+          {
+            "caminho": "prototypes/tres-porquinhos-carrossel/output/revisao/contagem.txt",
+            "sha256": "9c185c3ec53b4472badd160026acc009404e59ca59017a4693ff49637362ad76"
+          }
+        ],
+        "contagens_citadas": [
+          "17/17"
+        ],
+        "cobertura": {
+          "n": 17,
+          "m": 17,
+          "saida_sha256": [
+            "9c185c3ec53b4472badd160026acc009404e59ca59017a4693ff49637362ad76"
+          ]
+        },
+        "capturas": [
+          {
+            "caminho": "prototypes/tres-porquinhos-carrossel/output/revisao/tombo.jpg",
+            "sha256": "7e0aa5335dd7ae5753d10e1dd7e84ee1f1aa37ecb4efff3c38eea01be0664296"
+          }
+        ],
+        "url": {
+          "url": "http://127.0.0.1:4291/",
+          "http": 200,
+          "commit": "commit não conferido",
+          "motivo_commit": "o servidor não expõe o commit",
+          "aviso": "há alterações locais sem commit: a URL serve o HEAD, não o que está na pasta"
+        }
+      },
+      "testes_alterados_apos_falha": false,
+      "testes_snapshot": {
+        "total": 23,
+        "mapa": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/testes.json",
+        "copia": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T035828Z/testes"
+      }
+    },
+    {
+      "rodada": "R7",
+      "quando": "2026-11-07T05:31:29Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 0.049,
+          "log_sha256": "9c185c3ec53b4472badd160026acc009404e59ca59017a4693ff49637362ad76",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/01-contagem/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/01-contagem/01.log",
+          "ok": true,
+          "nome": "contagem",
+          "argv": [
+            "node",
+            "tests/revisao-cenas.mjs",
+            "--conferir"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 1382.897,
+          "log_sha256": "f32027dbde09d9798cab7e2cc8822425b7febbfda2d6b09664fce9fcb6f54767",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/02-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/02-test/01.log",
+          "ok": true,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 1399.985,
+          "log_sha256": "7176f2ca941aafbbad31f22406472bf8def6d0c7468f9eed1081d19f1810fc7d",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/03-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/03-test/01.log",
+          "ok": true,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "17/17 folhas capturadas e lidas (output/revisao/contagem.txt), defeitos numerados e corrigidos em output/agentes/porquinhos-revisao-17.md; tests/musica.test.mjs mudou depois da falha só para migrar a lista de faixas de 11 para 17 cenas, sem afrouxar a asserção"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "d7860ae836e07319223a4b0900f70a7a36c98de9",
+          "ate": "d7860ae836e07319223a4b0900f70a7a36c98de9",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 7,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "M src/cenas.js",
+            "M src/narracao.json",
+            "M src/roteiro.json",
+            "M src/style.css",
+            "M tests/musica.test.mjs",
+            "M tests/sincronia.test.mjs"
+          ]
+        }
+      ],
+      "arvore_sha256": "e2ec2cbe16291dc84a6673e091aeb16d17b001844911a863329ff2442692beba",
+      "head": "d7860ae836e07319223a4b0900f70a7a36c98de9",
+      "artefatos_gate": {},
+      "entrega": {
+        "saidas": [
+          {
+            "caminho": "prototypes/tres-porquinhos-carrossel/output/revisao/contagem.txt",
+            "sha256": "9c185c3ec53b4472badd160026acc009404e59ca59017a4693ff49637362ad76"
+          }
+        ],
+        "contagens_citadas": [
+          "17/17"
+        ],
+        "cobertura": {
+          "n": 17,
+          "m": 17,
+          "saida_sha256": [
+            "9c185c3ec53b4472badd160026acc009404e59ca59017a4693ff49637362ad76"
+          ]
+        },
+        "capturas": [
+          {
+            "caminho": "prototypes/tres-porquinhos-carrossel/output/revisao/tombo.jpg",
+            "sha256": "7e0aa5335dd7ae5753d10e1dd7e84ee1f1aa37ecb4efff3c38eea01be0664296"
+          }
+        ],
+        "url": {
+          "url": "http://127.0.0.1:4291/",
+          "http": 200,
+          "commit": "commit não conferido",
+          "motivo_commit": "o servidor não expõe o commit",
+          "aviso": "há alterações locais sem commit: a URL serve o HEAD, não o que está na pasta"
+        }
+      },
+      "testes_alterados_apos_falha": false,
+      "testes": {
+        "base": "2026-11-07T04:42:36Z",
+        "alterados": [
+          "tests/musica.test.mjs"
+        ],
+        "adicionados": [],
+        "removidos": [],
+        "afrouxado": [],
+        "diff_arquivo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R7-20261107T044505Z/testes.diff",
+        "diff_sha256": "678e8a68c10800d504d319941626864d150a694ebf529cc44026869938f732f8",
+        "diff_linhas": 10,
+        "diff_resumo": [
+          "-const ESPERADA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'festa', 'era-uma-vez'];",
+          "+// Migrada das 11 cenas antigas para as 17, sem mudar a asserção: as antigas mantêm a faixa, e cada cena nova herda a da cena que ela prepara.",
+          "+const ESPERADA = ['partida', 'obra', 'obra', 'obra', 'lobo-chega', 'lobo-chega', 'lobo-insiste', 'lobo-insiste', 'lobo-teima', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'fuga', 'festa', 'era-u"
+        ]
+      }
     }
   ],
   "historico": [
@@ -1213,6 +1476,19 @@
     {
       "quando": "2026-11-07T03:41:06Z",
       "evento": "R6 → concluida"
+    },
+    {
+      "quando": "2026-11-07T03:41:17Z",
+      "evento": "R7 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T04:42:36Z",
+      "evento": "R7 gate vermelho",
+      "tentativas": 1
+    },
+    {
+      "quando": "2026-11-07T05:31:29Z",
+      "evento": "R7 → concluida"
     }
   ]
 }
