@@ -33,6 +33,8 @@ export const CEUS = [
   { faixas: [['#6fcbf0', '#88d6f3'], ['#a6e4f2', '#bcebf5'], ['#fff0c4', '#fff6dc'], ['#ffd9b5', '#ffe5c9'], ['#ffc2c6', '#ffd3d5']], estrelas: 0, aves: 5, borda: '#ef6f8e', chao: pat('grass', '#b0e06a', '#9ad257', 0.5), disco: '#94cf56' },
 ];
 
+for (const ceu of CEUS) ceu.tinta = `#${new THREE.Color(ceu.borda).multiplyScalar(0.25).getHexString()}`;
+
 // ---- pintura em canvas ---------------------------------------------------------------------------
 function papelBase(ctx, w, h, seed) {
   ctx.fillStyle = '#fbf0e0'; ctx.fillRect(0, 0, w, h);
@@ -105,7 +107,7 @@ function pintaTexto(i) {
   const limite = PX_L * (1 - CEU_FRACAO);
   pintaCeu(ctx, ceu, limite, PX_L, true, 300 + i);
   const m = 74; const larg = limite - m - 40;
-  ctx.fillStyle = ceu.borda; ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '4px'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = ceu.tinta; ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '4px'; ctx.textBaseline = 'alphabetic';
   ctx.fillText(`CENA ${algarismo(i)}  ·  ${cena.parte.toUpperCase()}`, m, 96); ctx.letterSpacing = '0px';
   ctx.fillStyle = '#2a1c33'; ctx.font = 'italic 500 66px "Fraunces Variable"'; ctx.fillText(cena.titulo, m, 176);
   [ceu.borda, '#f2a93b', '#7a5fc4'].forEach((cor, k) => { ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(m + 8 + k * 30, 216, 6, 0, TAU); ctx.fill(); });
@@ -117,7 +119,7 @@ function pintaTexto(i) {
       // capitular
       const prim = l.t[0] === '—' ? '' : l.t[0];
       if (prim) {
-        ctx.fillStyle = ceu.borda; ctx.font = '700 100px "Libre Caslon Text"'; const cw = ctx.measureText(prim).width + 10; ctx.fillText(prim, m, y + 56);
+        ctx.fillStyle = ceu.tinta; ctx.font = '700 100px "Libre Caslon Text"'; const cw = ctx.measureText(prim).width + 10; ctx.fillText(prim, m, y + 56);
         ctx.font = `400 ${fonte}px "Libre Caslon Text"`; ctx.fillStyle = '#2f2336';
         const resto = l.t.slice(1); let linhas = quebraLinhas(ctx, resto, larg - cw);
         const primeiras = linhas.slice(0, 2); primeiras.forEach((ln, k) => { ctx.fillText(ln, m + cw, y + k * lh); });
@@ -142,7 +144,7 @@ function pintaLegenda(i) {
   const limite = PX_L * CEU_FRACAO;
   pintaCeu(ctx, ceu, 0, limite, false, 300 + i);
   const d = PX_L - 70;
-  ctx.textAlign = 'right'; ctx.fillStyle = ceu.borda; ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '4px';
+  ctx.textAlign = 'right'; ctx.fillStyle = ceu.tinta; ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '4px';
   ctx.fillText(cena.legenda.toUpperCase(), d, 98); ctx.letterSpacing = '0px';
   ctx.fillStyle = '#3a2b40'; ctx.font = 'italic 400 39px "Libre Caslon Text"';
   let y = 160; quebraLinhas(ctx, cena.dica, PX_L - limite - 170).forEach((ln) => { ctx.fillText(ln, d, y); y += 52; });

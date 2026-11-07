@@ -42,12 +42,20 @@ for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular p
       const minimo = largura > altura ? 1.5 : 1.2;
       assert.ok(leitura.aberta.largura >= leitura.antiga.largura * minimo, `página com ${leitura.aberta.largura.toFixed(0)}px, antes ${leitura.antiga.largura.toFixed(0)}px`);
       assert.ok(Math.abs(leitura.aberta.ponta) <= 1.02, `a ponta da parede de texto sai da tela (${leitura.aberta.ponta.toFixed(3)})`);
-      // Com o botão do modo narrado, a seta da direita caía para outra linha em 360 px.
-      const linhaDaBarra = await page.evaluate(async () => {
+      // Cada grupo conserva sua linha; no celular são duas linhas com alvos de 44 px.
+      const linhasDaBarra = await page.evaluate(async () => {
         window.__livro.abrirNaHora(4); await new Promise((f) => setTimeout(f, 300));
-        return [...document.querySelectorAll('#barra button:not(#pontos button)')].filter((e) => e.offsetWidth).map((e) => { const q = e.getBoundingClientRect(); return q.top + q.height / 2; });
+        return ['.barra-navegacao', '.barra-opcoes'].map((grupo) =>
+          [...document.querySelector(grupo).children].filter((e) => e.tagName === 'BUTTON' && e.offsetWidth).map((e) => {
+            const q = e.getBoundingClientRect();
+            return { centro: q.top + q.height / 2, largura: q.width, altura: q.height };
+          }));
       });
-      assert.ok(Math.max(...linhaDaBarra) - Math.min(...linhaDaBarra) < 6, `botões da barra em mais de uma linha: ${linhaDaBarra.map((v) => v.toFixed(0))}`);
+      for (const linha of linhasDaBarra) {
+        const centros = linha.map((botao) => botao.centro);
+        assert.ok(Math.max(...centros) - Math.min(...centros) < 6, 'grupo de controles desalinhado');
+        assert.ok(linha.every((botao) => botao.largura >= 44 && botao.altura >= 44), 'área de toque menor que 44 px');
+      }
       // Pedido de Alan: nenhum crédito sobre a mesa; eles vivem no README.
       const textoNaTela = await page.evaluate(async () => {
         window.__livro.abrirNaHora(10); await new Promise((f) => setTimeout(f, 300));

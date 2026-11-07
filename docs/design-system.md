@@ -28,6 +28,18 @@ O céu percorre o dia ao longo do livro: manhã, meio-dia, tarde, fim da tarde, 
 
 Pílulas translúcidas sobre a mesa: título à esquerda, momento do dia à direita, navegação embaixo. Em celular deitado, a barra vira uma única linha para não cobrir o livro.
 
+Os controles têm área mínima de 44 × 44 px. Em retrato, navegação e opções formam grupos separados. O cabeçalho quebra em linhas quando o título e o momento do dia precisam de mais espaço. As cores da interface vêm dos tokens em `src/style.css`, com uma superfície de papel suficientemente opaca para manter o contraste sobre qualquer cena.
+
+## Leitura e acessibilidade
+
+O ícone de livro abre a leitura em uma página de papel integrada à tela. Títulos, parágrafos e falas vêm da mesma lista `CENAS` usada pelas ilustrações. O texto também fica disponível para tecnologia assistiva durante a apresentação ilustrada.
+
+Os botões A− e A+ ajustam a leitura de 100% a 200%. A página aceita rolagem vertical e seleção de texto. Pinça e dois toques mantêm o enquadramento fixo, inclusive durante a leitura. A narração automática fica pausada durante a leitura e sua preferência é retomada ao voltar para o livro ilustrado. O desenho 3D pausa durante a leitura.
+
+O modo “Só olhar” transfere o foco para “Mostrar controles” e torna a navegação oculta inerte. Escape recupera a navegação e seu foco. As abas de cenas usam uma única parada de Tab e permitem navegação pelas setas, Home e End.
+
+O alto contraste do sistema usa cores semânticas do navegador. A redução de movimento preserva a mudança de estado, com abertura e giro imediatos e animações decorativas suprimidas.
+
 ## Som
 
 - A trilha é uma peça só: pizzicato, flauta, clarinete, fagote, harpa e glockenspiel, com um tema de fagote para o Lobo. Cada momento tem a sua faixa, com fusão de 1,6 s. O mapa está em `src/audio.js`.

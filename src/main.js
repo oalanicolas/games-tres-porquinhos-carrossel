@@ -52,7 +52,9 @@ const estado = {
   indice: -1, // -1 capa; 0..N-1 cena
   giro: 0, giroAlvo: 0,
   arrastando: false, arrasto: 0, movido: 0, ultimoX: 0, velo: 0,
+  ponteiro: null,
   olhar: false,
+  lendo: false,
   mouse: new THREE.Vector2(0, 0), mouseS: new THREE.Vector2(0, 0),
   tocouAcao: new Set(),
 };
@@ -61,7 +63,14 @@ const DUR_ABRIR = reduzido ? 0.01 : 2.55;
 let livro; let cenas = [];
 const audio = new Audio();
 const interacao = new InteracaoSopro(audio, () => cenas);
-new ResizeObserver(([entrada]) => document.documentElement.style.setProperty('--barra-altura', `${entrada.target.getBoundingClientRect().height}px`)).observe($('barra'));
+const medidasInterface = new ResizeObserver((entradas) => {
+  for (const entrada of entradas) {
+    const propriedade = entrada.target.id === 'barra' ? '--barra-altura' : '--cabecalho-altura';
+    document.documentElement.style.setProperty(propriedade, `${entrada.target.getBoundingClientRect().height}px`);
+  }
+});
+medidasInterface.observe($('barra'));
+medidasInterface.observe($('cabecalho-livro'));
 
 // ---- enquadramento -------------------------------------------------------------------------------
 const camCapa = { pos: new THREE.Vector3(), alvo: new THREE.Vector3() };
@@ -122,18 +131,55 @@ const alvoAtual = new THREE.Vector3();
 const pontos = [];
 for (let i = -1; i < N; i++) {
   const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab');
+  b.id = `aba-cena-${i + 1}`;
+  b.setAttribute('aria-controls', 'pagina-texto');
   b.setAttribute('aria-label', i < 0 ? 'Capa' : `Cena ${i + 1}: ${CENAS[i].titulo}`);
   b.addEventListener('click', () => irPara(i)); $('pontos').append(b); pontos.push(b);
+  b.addEventListener('keydown', (evento) => {
+    const deslocamento = { ArrowLeft: -1, ArrowRight: 1, Home: -N, End: N }[evento.key];
+    if (deslocamento === undefined) return;
+    evento.preventDefault(); evento.stopPropagation();
+    const destino = clamp(i + deslocamento, -1, N - 1);
+    irPara(destino); pontos[destino + 1].focus({ preventScroll: true });
+  });
+}
+let textoExibido = -2;
+function atualizarTexto(i) {
+  if (textoExibido === i) return;
+  textoExibido = i;
+  $('pagina-texto').hidden = i < 0;
+  if (i < 0) return;
+  const cena = CENAS[i];
+  $('texto-titulo').textContent = cena.titulo;
+  const paragrafos = cena.linhas.map((linha) => {
+    const p = document.createElement('p');
+    p.textContent = linha.t;
+    if (linha.fala) p.className = 'fala';
+    return p;
+  });
+  $('texto-paragrafos').replaceChildren(...paragrafos);
+  $('pagina-texto').scrollTop = 0;
 }
 function atualizarUI() {
   const mudouDeCena = interacao.entrar(estado.indice);
   audio.cena(estado.indice);
   if (estado.indice < 0) soltarLeitura(); else if (audio.narrando && estado.modo !== 'capa') prepararLeitura(estado.indice);
   const i = estado.indice; const capa = i < 0;
-  const casaInterativa = interacao.ativa && !!CASAS_SOPRO[i];
+  const casaInterativa = !estado.lendo && interacao.ativa && !!CASAS_SOPRO[i];
   document.body.classList.toggle('sopro-na-pagina', casaInterativa);
   if (mudouDeCena && casaInterativa && !audio.narrando) cenas[i].linha.play();
-  pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
+  pontos.forEach((b, k) => {
+    const selecionado = k === i + 1;
+    b.setAttribute('aria-selected', String(selecionado));
+    b.tabIndex = selecionado ? 0 : -1;
+  });
+  pontos[i + 1].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  atualizarTexto(i);
+  const focoNoLeitor = document.activeElement === $('ler');
+  $('ler').hidden = capa;
+  $('abertura').inert = !capa;
+  $('abertura').setAttribute('aria-hidden', String(!capa));
+  $('aviso-pagina').textContent = capa ? 'Capa do livro' : `Cena ${i + 1} de ${N}. ${CENAS[i].titulo}`;
   document.body.classList.toggle('aberto', !capa);
   document.body.classList.toggle('fechando', estado.modo === 'fechando'); // o título da capa só volta com o livro já fechado
   $('capitulo').hidden = capa;
@@ -143,6 +189,7 @@ function atualizarUI() {
   if (capa) ac.textContent = CAPA.acao;
   else ac.textContent = estado.tocouAcao.has(i) ? 'De novo' : CENAS[i].acao;
   ac.setAttribute('aria-label', ac.textContent);
+  if (capa && focoNoLeitor) ac.focus({ preventScroll: true });
   if (!capa) {
     $('capitulo-texto').textContent = `Cena ${romano(i)} · ${CENAS[i].parte}`;
     const f = CENAS[i].fase; // fase: de sol pleno a lua; desloca o disco escuro
@@ -159,6 +206,7 @@ function abrirLivro() {
 }
 function fecharLivro() {
   if (estado.modo !== 'aberto') return;
+  if (estado.lendo) alternarLeitura(false);
   estado.modo = 'fechando'; estado.indice = -1; estado.giroAlvo = 0; audio.tocar('abrir', { vol: 0.7, taxa: 1.15 }); atualizarUI();
 }
 function irPara(i) {
@@ -167,7 +215,8 @@ function irPara(i) {
   if (estado.modo === 'capa') { abrirLivro(); estado.indice = i; estado.giroAlvo = i * CUNHA; atualizarUI(); return; }
   if (estado.modo !== 'aberto' && estado.modo !== 'abrindo') return;
   if (i === estado.indice) return;
-  estado.indice = i; estado.giroAlvo = i * CUNHA; estado.virando = true;
+  estado.indice = i; estado.giroAlvo = i * CUNHA; estado.virando = !estado.lendo;
+  if (estado.lendo) estado.giro = estado.giroAlvo;
   audio.tocar(Math.random() > 0.5 ? 'flap1' : 'flap2', { vol: 0.9 }); atualizarUI();
 }
 function agir() {
@@ -264,20 +313,89 @@ audio.aoFimDaVoz = (i) => {
   };
   viradaAuto = setTimeout(virar, (ultima ? PAUSA_ANTES_DE_FECHAR : PAUSA_ANTES_DE_VIRAR) * 1000);
 };
-function alternarOlhar(v = !estado.olhar) { estado.olhar = v; document.body.classList.toggle('so-olhar', v); $('olhar').setAttribute('aria-pressed', String(v)); $('voltar-olhar').hidden = !v; }
+function alternarOlhar(v = !estado.olhar) {
+  if (v && estado.lendo) alternarLeitura(false);
+  estado.olhar = v;
+  document.body.classList.toggle('so-olhar', v);
+  $('olhar').setAttribute('aria-pressed', String(v));
+  $('barra').inert = v;
+  $('barra').setAttribute('aria-hidden', String(v));
+  $('cabecalho-livro').inert = v;
+  $('cabecalho-livro').setAttribute('aria-hidden', String(v));
+  $('voltar-olhar').hidden = !v;
+  $(v ? 'voltar-olhar' : 'olhar').focus({ preventScroll: true });
+}
 $('olhar').addEventListener('click', () => alternarOlhar());
 $('voltar-olhar').addEventListener('click', () => alternarOlhar(false));
+let narracaoAntesDeLer = false;
+let tamanhoTexto = 1;
+function alternarLeitura(ativa = !estado.lendo) {
+  estado.lendo = ativa;
+  if (ativa && estado.modo === 'abrindo') {
+    estado.modo = 'aberto'; estado.tAbrir = 1; estado.giro = estado.giroAlvo;
+  }
+  document.documentElement.classList.toggle('lendo-texto', ativa);
+  $('ler').setAttribute('aria-pressed', String(ativa));
+  $('ler').setAttribute('aria-label', ativa ? 'Voltar ao livro ilustrado' : 'Ler o texto da história');
+  $('ajuste-leitura').hidden = !ativa;
+  $('pagina-texto').tabIndex = ativa ? 0 : -1;
+  if (ativa) {
+    narracaoAntesDeLer = audio.narrando;
+    interacao.cancelar();
+    clearTimeout(viradaAuto); soltarLeitura();
+    if (audio.narrando) audio.alternarNarracao();
+  } else if (narracaoAntesDeLer && !audio.narrando) {
+    audio.alternarNarracao();
+  }
+  atualizarBotaoNarrar(); atualizarUI();
+  $(ativa ? 'pagina-texto' : 'ler').focus({ preventScroll: true });
+}
+$('ler').addEventListener('click', () => { audio.destravar(); alternarLeitura(); });
+function ajustarTexto(delta) {
+  tamanhoTexto = clamp(tamanhoTexto + delta, 1, 2);
+  document.documentElement.style.setProperty('--escala-leitura', tamanhoTexto);
+  $('texto-menor').disabled = tamanhoTexto === 1;
+  $('texto-maior').disabled = tamanhoTexto === 2;
+}
+$('texto-menor').addEventListener('click', () => ajustarTexto(-0.25));
+$('texto-maior').addEventListener('click', () => ajustarTexto(0.25));
+ajustarTexto(0);
 addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight') { if (estado.indice < N - 1) irPara(estado.indice + 1); else e.preventDefault(); } else if (e.key === 'ArrowLeft') { irPara(estado.indice - 1); } else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); agir(); } else if (e.key === 'Escape') { if (estado.olhar) alternarOlhar(false); } else if (e.key.toLowerCase() === 'o') alternarOlhar();
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === 'ArrowRight') { if (estado.indice < N - 1) irPara(estado.indice + 1); else e.preventDefault(); } else if (e.key === 'ArrowLeft') { irPara(estado.indice - 1); } else if (e.key === ' ' && e.target === document.body && !estado.lendo) { e.preventDefault(); agir(); } else if (e.key === 'Escape') { if (estado.olhar) alternarOlhar(false); else if (estado.lendo) alternarLeitura(false); } else if (e.key.toLowerCase() === 'o') alternarOlhar();
 });
 
 // ---- ponteiro: arrastar gira, tocar na cena age -----------------------------------------------------
 for (const evento of ['gesturestart', 'gesturechange', 'gestureend']) addEventListener(evento, (e) => e.preventDefault(), { passive: false });
 addEventListener('wheel', (e) => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive: false });
+let inicioToque = null;
+let ultimoToque = null;
+addEventListener('touchstart', (e) => {
+  if (e.touches.length > 1) {
+    e.preventDefault(); inicioToque = null; ultimoToque = null; return;
+  }
+  if (e.target.closest('button, a')) { inicioToque = null; return; }
+  const toque = e.touches[0];
+  inicioToque = { x: toque.clientX, y: toque.clientY };
+}, { passive: false });
+addEventListener('touchmove', (e) => {
+  if (e.touches.length > 1) { e.preventDefault(); inicioToque = null; return; }
+  const toque = e.touches[0];
+  if (inicioToque && Math.hypot(toque.clientX - inicioToque.x, toque.clientY - inicioToque.y) > 10) inicioToque = null;
+}, { passive: false });
+addEventListener('touchend', (e) => {
+  if (!inicioToque || e.touches.length) return;
+  if (ultimoToque && e.timeStamp - ultimoToque.em < 350 && Math.hypot(inicioToque.x - ultimoToque.x, inicioToque.y - ultimoToque.y) < 24) e.preventDefault();
+  ultimoToque = { ...inicioToque, em: e.timeStamp };
+  inicioToque = null;
+}, { passive: false });
+addEventListener('touchcancel', () => { inicioToque = null; ultimoToque = null; });
+canvas.addEventListener('dblclick', (e) => e.preventDefault());
 canvas.addEventListener('pointerdown', (ev) => {
   if (!ev.isPrimary) return;
   audio.destravar();
   estado.arrastando = true; estado.movido = 0; estado.ultimoX = ev.clientX; estado.velo = 0; canvas.setPointerCapture(ev.pointerId);
+  estado.ponteiro = ev.pointerId;
   if (estado.modo === 'aberto') canvas.classList.add('arrastando');
 });
 canvas.addEventListener('pointermove', (ev) => {
@@ -298,7 +416,7 @@ canvas.addEventListener('pointermove', (ev) => {
 canvas.addEventListener('pointerup', (ev) => {
   if (!ev.isPrimary) return;
   const foiToque = estado.movido <= 6;
-  estado.arrastando = false; canvas.classList.remove('arrastando');
+  estado.arrastando = false; estado.ponteiro = null; canvas.classList.remove('arrastando');
   if (estado.modo === 'capa' && foiToque) { abrirLivro(); return; }
   if (estado.modo !== 'aberto') return;
   if (foiToque) {
@@ -310,11 +428,16 @@ canvas.addEventListener('pointerup', (ev) => {
   if (destino !== estado.indice) { estado.indice = destino; audio.tocar('flap1', { vol: 0.7 }); atualizarUI(); }
   estado.giroAlvo = destino * CUNHA;
 });
-for (const evento of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(evento, () => {
+function cancelarArrasto() {
   if (!estado.arrastando) return;
   estado.arrastando = false; estado.velo = 0; estado.giroAlvo = Math.max(0, estado.indice) * CUNHA;
+  const ponteiro = estado.ponteiro;
+  estado.ponteiro = null;
+  if (ponteiro !== null && canvas.hasPointerCapture(ponteiro)) canvas.releasePointerCapture(ponteiro);
   canvas.classList.remove('arrastando');
-});
+}
+for (const evento of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(evento, cancelarArrasto);
+addEventListener('blur', cancelarArrasto);
 
 // ---- laço -------------------------------------------------------------------------------------------
 let ultimo = performance.now(); let relogio = 0;
@@ -360,7 +483,7 @@ function passo(dt) {
 function laco(agora) {
   requestAnimationFrame(laco);
   const dt = Math.min((agora - ultimo) / 1000, 0.05); ultimo = agora;
-  if (qsPausado) return;
+  if (qsPausado || estado.lendo) return;
   passo(dt);
   renderer.render(scene, camera);
   quadros.n++; quadros.soma += dt;
@@ -401,6 +524,8 @@ async function iniciar() {
   if (pag !== null) window.__livro.abrirNaHora(clamp(Number(pag), 0, N - 1));
   renderer.compile(scene, camera);
   $('carregando').classList.add('fora');
+  $('carregando').inert = true;
+  $('carregando').setAttribute('aria-hidden', 'true');
   ultimo = performance.now(); requestAnimationFrame(laco);
 }
 iniciar().catch((e) => { console.error(e); $('carregando').textContent = 'O papel não dobrou: este navegador precisa de WebGL 2.'; });
