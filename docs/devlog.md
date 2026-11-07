@@ -47,9 +47,10 @@ e acessibilidade (`docs/auditoria-interface-2026-11-07.md`). Ele entrou no `main
 final rodaram com esse commit.
 
 O reflog registra pushes de `origin/main` às 02:31:53 (`1cba9d1`), 03:14:49 (`218c1f7`) e 03:42:10 (`ff49a06`), que
-não saíram desta sessão, cujo goal proíbe push. Por isso as rodadas R1 a R8 já estão no GitHub. Um `gameops deploy`
-do módulo também começou às 03:42 fora desta sessão, e às 03:50 o site público já servia o texto novo das 17 cenas
-(`last-modified` de 07/11/2026 03:14:56 GMT). O autor não foi identificado.
+não saíram desta sessão, cujo goal proíbe push. Por isso as rodadas R1 a R8 já estão no GitHub. Às 03:50 o site público
+já servia o texto novo das 17 cenas (`last-modified` de 07/11/2026 03:14:56 GMT) e um deploy do módulo, iniciado às
+03:42 por um processo do Codex (`output/deploy-20261107-r8/deploy.py`), ainda rodava seus testes. Nesta conversa não há
+registro de quem pediu essa publicação.
 
 ## Continuidade
 
