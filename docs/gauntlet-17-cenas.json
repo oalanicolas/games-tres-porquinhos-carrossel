@@ -298,8 +298,19 @@
       "depende": [
         "R2"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "Testes voo e tombo em tests/coerencia-17.test.mjs; captura do voo inteiro lida em output/revisao/voo-inteiro.jpg: sobe reto em Rabo em brasa, sai por cima do livro, reaparece saindo da chaminé, para no céu, despenca rodopiando e cai ao lado da casa; a página seguinte começa com o Lobo e os três no mesmo lugar",
+        "gates verdes em 2026-11-07T03:21:18Z (2): voo, tombo"
+      ],
+      "inicio": "2026-11-07T03:16:04Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T03:16:04Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "94d694937d08a41c6ecbc0a4b70de1c3a0b79bfe"
+        }
+      },
+      "fim": "2026-11-07T03:21:18Z"
     },
     {
       "id": "R6",
@@ -988,6 +999,72 @@
         "removidos": [],
         "afrouxado": []
       }
+    },
+    {
+      "rodada": "R5",
+      "quando": "2026-11-07T03:21:18Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 70.186,
+          "log_sha256": "14f2bd32b231cf02a823f9b8ab259a54c6490651ce5643c536be2778b8ca39c9",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R5-20261107T031858Z/01-voo/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R5-20261107T031858Z/01-voo/01.log",
+          "ok": true,
+          "nome": "voo",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=voo"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 69.987,
+          "log_sha256": "27dec71f3f939b658bd1073e1df895f54d5e71432b7deab5135d060eb4c71d1e",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R5-20261107T031858Z/02-tombo/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R5-20261107T031858Z/02-tombo/01.log",
+          "ok": true,
+          "nome": "tombo",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=tombo"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Testes voo e tombo em tests/coerencia-17.test.mjs; captura do voo inteiro lida em output/revisao/voo-inteiro.jpg: sobe reto em Rabo em brasa, sai por cima do livro, reaparece saindo da chaminé, para no céu, despenca rodopiando e cai ao lado da casa; a página seguinte começa com o Lobo e os três no mesmo lugar"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "94d694937d08a41c6ecbc0a4b70de1c3a0b79bfe",
+          "ate": "94d694937d08a41c6ecbc0a4b70de1c3a0b79bfe",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 2,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "M src/cenas.js"
+          ]
+        }
+      ],
+      "arvore_sha256": "ac91b8356d0712f5a5290dac76688192d72ebe3dbb2eeffb48d5047098a23e3e",
+      "head": "94d694937d08a41c6ecbc0a4b70de1c3a0b79bfe",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -1049,6 +1126,14 @@
     {
       "quando": "2026-11-07T03:15:59Z",
       "evento": "R4 → concluida"
+    },
+    {
+      "quando": "2026-11-07T03:16:04Z",
+      "evento": "R5 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T03:21:18Z",
+      "evento": "R5 → concluida"
     }
   ]
 }
