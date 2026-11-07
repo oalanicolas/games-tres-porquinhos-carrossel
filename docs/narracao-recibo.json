@@ -1,6 +1,6 @@
 {
   "faixas": {
-    "2": {
+    "5": {
       "hash": "ccda2cfa05458a9f",
       "tarefa": "9297092a-dbe3-4b8f-8999-a1e5d1787c0d",
       "caracteres": 292,
@@ -14,63 +14,56 @@
       "duracao": 29.07,
       "lufs": -19.5
     },
-    "1": {
-      "hash": "41a22b35968c731d",
-      "tarefa": "ab05bbcd-cb31-4948-93b0-2b8476dad48b",
-      "caracteres": 291,
-      "duracao": 24.71,
-      "lufs": -19.1
-    },
-    "3": {
+    "7": {
       "hash": "d8c54675bdece93f",
       "tarefa": "2533369c-594f-40ab-a3fc-4fbbc33a20fc",
       "caracteres": 376,
       "duracao": 32.28,
       "lufs": -19.2
     },
-    "4": {
+    "9": {
       "hash": "52c5c2f8a8d70684",
       "tarefa": "956d9293-62ff-4276-8836-ea43986a1d1f",
       "caracteres": 379,
       "duracao": 38.13,
       "lufs": -19.3
     },
-    "5": {
+    "10": {
       "hash": "004e6a4e9add0729",
       "tarefa": "cece1dca-7882-4ffd-b22d-ff0c51dc98c9",
       "caracteres": 125,
       "duracao": 10.5,
       "lufs": -19.0
     },
-    "6": {
+    "11": {
       "hash": "cbc223e65229d158",
       "tarefa": "d5ce70fa-a255-4b59-a00d-4a9b6f4dd6c0",
       "caracteres": 193,
       "duracao": 17.69,
       "lufs": -19.0
     },
-    "7": {
+    "12": {
       "hash": "4c6fdef4c123fdd0",
       "tarefa": "aad8a1fe-ac55-48ec-9e4e-f9092806e414",
       "caracteres": 185,
       "duracao": 17.0,
       "lufs": -18.6
     },
-    "8": {
+    "14": {
       "hash": "722a30bc5ace4dda",
       "tarefa": "ad90be52-b50d-46f8-bdbd-bc3aa07fe576",
       "caracteres": 119,
       "duracao": 10.36,
       "lufs": -20.0
     },
-    "9": {
+    "15": {
       "hash": "ecf75d517c224dbb",
       "tarefa": "3cd69b8b-d000-49dc-98f9-14cdb1bcba53",
       "caracteres": 110,
       "duracao": 8.73,
       "lufs": -18.6
     },
-    "10": {
+    "16": {
       "hash": "faf7b2ed033edb1c",
       "tarefa": "476cb685-df5e-4699-bce3-010127d03789",
       "caracteres": 178,

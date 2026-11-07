@@ -21,31 +21,31 @@ const inicioGrupo = (page, i, g, voz) => page.evaluate(([i, g, voz, f]) => {
   const t = Math.min(...[...l._trilhas(), ...(l.chamadas ?? l.calls)].filter((x) => x.g === g).map((x) => x.start ?? x.at)); l.desancorar(); return t;
 }, [i, g, voz, faixas[i]]);
 
-test('Bento não fica fora de casa: página 5, entram Pipo, Tico e Bento por último, e só então chega o Lobo', async () => {
+test('Bento não fica fora de casa: casa de tijolos, entram Pipo, Tico e Bento por último, e só então chega o Lobo', async () => {
   const { page, erros, fechar } = await abrir();
   try {
     for (const [nome, voz] of MODOS) {
       const ordem = [];
-      for (const g of ['entra-pipo', 'entra-tico', 'entra-bento', 'tranca', 'chega']) ordem.push(await inicioGrupo(page, 4, g, voz));
+      for (const g of ['entra-pipo', 'entra-tico', 'entra-bento', 'tranca', 'chega']) ordem.push(await inicioGrupo(page, 9, g, voz));
       assert.deepEqual([...ordem].sort((a, b) => a - b), ordem, `${nome}: ordem das entradas ${ordem}`);
       const le = (c) => ({ lobo: c.atores.lobo.root.scale.y, fora: Object.values(c.provas.deFora).map((q) => q.root.scale.y), janelas: c.provas.janelas.map((q) => q.root.scale.y) });
-      const antes = await emCena(page, 4, ordem[4] - 0.02, voz, le);
+      const antes = await emCena(page, 9, ordem[4] - 0.02, voz, le);
       assert.ok(antes.lobo < FORA, `${nome}: o Lobo já está em cena`);
       assert.ok(antes.fora.every((v) => v < FORA), `${nome}: porquinho do lado de fora ${antes.fora}`);
       assert.ok(antes.janelas.every((v) => v > 0.05), `${nome}: rosto faltando nas 3 janelas ${antes.janelas}`);
-      const fim = await emCena(page, 4, 1e4, voz, le);
+      const fim = await emCena(page, 9, 1e4, voz, le);
       assert.ok(fim.fora.every((v) => v < FORA) && fim.janelas.every((v) => v > 0.05), `${nome}: ao fim, os três dentro`);
     }
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
 
-test('página 4: Pipo chega e entra antes de o Lobo aparecer', async () => {
+test('casa de madeira: Pipo chega e entra antes de o Lobo aparecer', async () => {
   const { page, fechar } = await abrir();
   try {
     for (const [nome, voz] of MODOS) {
-      const t = await inicioGrupo(page, 3, 'chega', voz);
-      const r = await emCena(page, 3, t - 0.02, voz, (c) => ({ lobo: c.atores.lobo.root.scale.y, fora: c.provas.corredor.root.scale.y, janela: c.atores.pipo.root.scale.y }));
+      const t = await inicioGrupo(page, 7, 'chega', voz);
+      const r = await emCena(page, 7, t - 0.02, voz, (c) => ({ lobo: c.atores.lobo.root.scale.y, fora: c.provas.corredor.root.scale.y, janela: c.atores.pipo.root.scale.y }));
       assert.ok(r.lobo < FORA && r.fora < FORA && r.janela > 0.05, `${nome}: ${JSON.stringify(r)}`);
     }
   } finally { await fechar(); }
@@ -54,7 +54,7 @@ test('página 4: Pipo chega e entra antes de o Lobo aparecer', async () => {
 test('o Lobo vai até a porta para bater, nas casas de palha e de madeira', async () => {
   const { page, fechar } = await abrir();
   try {
-    for (const i of [2, 3]) for (const [nome, voz] of MODOS) {
+    for (const i of [5, 7]) for (const [nome, voz] of MODOS) {
       const t = await inicioGrupo(page, i, 'bate', voz); const f = await page.evaluate(([i, t, voz, ff]) => { const l = window.__livro.cenas[i].linha; l.desancorar(); if (voz) l.ancorar(ff.marcos, ff.acao_em); const fim = Math.max(...l._trilhas().filter((x) => x.g === 'bate').map((x) => x.start + x.dur)); l.desancorar(); return fim; }, [i, t, voz, faixas[i]]);
       let perto = 9;
       for (let k = 0; k <= 12; k++) perto = Math.min(perto, await emCena(page, i, t + (f - t) * (k / 12), voz, (c) => Math.abs(c.atores.lobo.root.position.x - c.provas.porta)));
@@ -66,11 +66,11 @@ test('o Lobo vai até a porta para bater, nas casas de palha e de madeira', asyn
 test('o Lobo não cobre nenhuma janela enquanto sopra a casa de tijolos', async () => {
   const { page, fechar } = await abrir();
   try {
-    const f = faixas[4]; const r = await page.evaluate(async ([f, de, ate]) => {
+    const f = faixas[9]; const r = await page.evaluate(async ([f, de, ate]) => {
       const T = await import('/node_modules/three/build/three.module.js');
-      const L = window.__livro; const c = L.cenas[4]; c.linha.ancorar(f.marcos, f.acao_em); const cobertas = [];
+      const L = window.__livro; const c = L.cenas[9]; c.linha.ancorar(f.marcos, f.acao_em); const cobertas = [];
       for (let k = 0; k <= 30; k++) {
-        const t = de + (ate - de) * (k / 30); L.cenaEm(4, t); L.scene.updateMatrixWorld(true);
+        const t = de + (ate - de) * (k / 30); L.cenaEm(9, t); L.scene.updateMatrixWorld(true);
         const caixa = new T.Box3().setFromObject(c.atores.lobo.cabeca); const a = caixa.min.clone().project(L.camera); const b = caixa.max.clone().project(L.camera);
         const [x0, x1] = [Math.min(a.x, b.x), Math.max(a.x, b.x)]; const [y0, y1] = [Math.min(a.y, b.y), Math.max(a.y, b.y)];
         for (const j of c.provas.janelas) { const p = j.root.getWorldPosition(new T.Vector3()); p.y += 0.04; p.project(L.camera); if (p.x > x0 && p.x < x1 && p.y > y0 && p.y < y1) cobertas.push(t); }
@@ -85,14 +85,14 @@ test('a chaminé é a mesma por fora e no corte, e o Lobo cai dentro do caldeir�
   const { page, fechar } = await abrir();
   try {
     for (const [nome, voz] of MODOS) {
-      const fim = await emCena(page, 6, 1e4, voz, (c) => ({ x: c.provas.caldeirao.position.x, duto: c.provas.duto }));
+      const fim = await emCena(page, 11, 1e4, voz, (c) => ({ x: c.provas.caldeirao.position.x, duto: c.provas.duto }));
       assert.ok(Math.abs(fim.x - fim.duto) < 0.001, `${nome}: o caldeirão não chegou à chaminé`);
-      const t = await inicioGrupo(page, 7, 'tchibum', voz);
-      const queda = await emCena(page, 7, t - 0.02, voz, (c) => ({ x: c.atores.lobo.root.position.x, duto: c.provas.duto }));
+      const t = await inicioGrupo(page, 12, 'tchibum', voz);
+      const queda = await emCena(page, 12, t - 0.02, voz, (c) => ({ x: c.atores.lobo.root.position.x, duto: c.provas.duto }));
       assert.ok(Math.abs(queda.x - queda.duto) < 0.001, `${nome}: o Lobo cai fora do duto`);
     }
-    const u = faixas[7].marcos.uivo.em + 0.6;
-    const r = await emCena(page, 7, u, true, (c, L) => { L.scene.updateMatrixWorld(true); const y = (o) => o.matrixWorld.elements[13]; return { cabeca: y(c.atores.lobo.cabeca), aro: y(c.provas.caldeirao) + 0.4, escala: c.atores.lobo.root.scale.y }; });
+    const u = faixas[12].marcos.uivo.em + 0.6;
+    const r = await emCena(page, 12, u, true, (c, L) => { L.scene.updateMatrixWorld(true); const y = (o) => o.matrixWorld.elements[13]; return { cabeca: y(c.atores.lobo.cabeca), aro: y(c.provas.caldeirao) + 0.4, escala: c.atores.lobo.root.scale.y }; });
     assert.ok(r.cabeca > r.aro, `o Lobo some dentro do caldeirão: cabeça ${r.cabeca.toFixed(2)}, aro ${r.aro.toFixed(2)}`);
     assert.ok(r.escala > 0.15, 'o Lobo está à vista no uivo');
   } finally { await fechar(); }
@@ -104,7 +104,7 @@ test('ninguém fica para trás nem aparece de novo: irmãos saem na página 1 e 
     for (const [nome, voz] of MODOS) {
       const a = await emCena(page, 0, 1e4, voz, (c) => c.provas.irmaos.map((q) => q.root.scale.y));
       assert.ok(a.every((v) => v < FORA), `${nome}: irmão parado na página 1 ${a}`);
-      const b = await emCena(page, 8, 1e4, voz, (c) => c.provas.lobo.root.scale.y);
+      const b = await emCena(page, 14, 1e4, voz, (c) => c.provas.lobo.root.scale.y);
       assert.ok(b < FORA, `${nome}: o Lobo continua à vista no fim da página 9`);
     }
   } finally { await fechar(); }

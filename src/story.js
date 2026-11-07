@@ -1,7 +1,7 @@
 // O texto do conto. Cada `linhas` vira parágrafo na parede e no cartão de leitura; `fala: true` recua a linha.
 export const CAPA = {
   titulo: 'Os Três Porquinhos',
-  sub: 'Conto popular · um livro-carrossel em onze cenas',
+  sub: 'Conto popular · um livro-carrossel em dezessete cenas',
   acao: 'Abrir o livro',
 };
 
@@ -16,13 +16,38 @@ export const CENAS = [
     ],
   },
   {
-    id: 'obra', titulo: 'Três casas', sub: 'Levante a palha, a madeira e o tijolo.', acao: 'Construir', legenda: 'Três casas', dica: 'Levante as três casas: uma de palha, uma de madeira e uma de tijolo.', fase: 0.2, parte: 'Meio-dia',
+    id: 'obra-palha', titulo: 'A casa de João', sub: 'Junte a palha e veja a casa subir.', acao: 'Juntar palha', legenda: 'A casa de João', dica: 'João amarra a palha de qualquer jeito e sai dando cambalhotas.', fase: 0.14, parte: 'Fim da manhã',
     linhas: [
-      { t: 'João só queria brincar. Juntou um monte de palha e, em cinco minutos, a casa estava pronta.' },
-      { t: 'Lulu pregou umas tábuas às pressas e foi tocar flauta.' },
+      { t: 'João só queria brincar.' },
+      { t: 'Juntou um monte de palha, amarrou de qualquer jeito e, em cinco minutos, a casa estava pronta.' },
+      { t: '— Pronto! Agora é só brincar! — disse João.', fala: true },
+      { t: 'E saiu dando cambalhotas pelo campo.' },
+    ],
+  },
+  {
+    id: 'obra-madeira', titulo: 'A casa de Lulu', sub: 'Pregue as tábuas, mesmo tortas.', acao: 'Pregar', legenda: 'A casa de Lulu', dica: 'Lulu prega as tábuas às pressas e vai tocar flauta.', fase: 0.2, parte: 'Meio-dia',
+    linhas: [
+      { t: 'Um pouco adiante, Lulu catou umas tábuas e pregou tudo às pressas.' },
+      { t: 'Uma tábua ficou torta, outra ficou sobrando.' },
+      { t: '— Está ótimo assim! — disse Lulu.', fala: true },
+      { t: 'E foi tocar flauta debaixo de uma árvore.' },
+    ],
+  },
+  {
+    id: 'obra-tijolo', titulo: 'A casa de Kael', sub: 'Tijolo por tijolo, sem pressa.', acao: 'Assentar', legenda: 'A casa de Kael', dica: 'Kael sobe a casa tijolo por tijolo, e os irmãos passam rindo.', fase: 0.25, parte: 'Começo da tarde',
+    linhas: [
       { t: 'Kael carregou tijolo por tijolo, o dia inteiro.' },
-      { t: '— Para que tanto trabalho? — riram os irmãos.', fala: true },
+      { t: 'João e Lulu passaram por ali e riram:' },
+      { t: '— Para que tanto trabalho?', fala: true },
       { t: '— Vocês vão ver — disse Kael, e passou mais massa.', fala: true },
+    ],
+  },
+  {
+    id: 'espia', titulo: 'Alguém espiando', sub: 'Tem alguém atrás da moita.', acao: 'Espiar', legenda: 'Alguém espiando', dica: 'Atrás da moita, o Lobo fareja o ar e escolhe por onde começar.', fase: 0.3, parte: 'Tarde',
+    linhas: [
+      { t: 'O que ninguém viu foi que, atrás de uma moita, dois olhos espiavam tudo.' },
+      { t: 'Era o Lobo, de focinho no vento, farejando o cheiro de porquinho.' },
+      { t: '— Palha, madeira e tijolo — sussurrou, lambendo os beiços. — Vou começar pela mais fácil.', fala: true },
     ],
   },
   {
@@ -36,6 +61,15 @@ export const CENAS = [
     ],
   },
   {
+    id: 'corrida-lulu', titulo: 'Corre, João!', sub: 'João corre, e o Lobo vem atrás.', acao: 'Correr', legenda: 'Corre, João!', dica: 'João pula a pedra e atravessa a ponte. O Lobo vem farejando o rastro.', fase: 0.38, parte: 'Tarde',
+    linhas: [
+      { t: 'João correu o mais rápido que suas perninhas deixavam.' },
+      { t: 'Pulou uma pedra, atravessou a ponte do riacho e nem olhou para trás.' },
+      { t: 'Atrás dele vinha o Lobo, farejando o rastro de palha.' },
+      { t: '— Lulu! Lulu! Abra a porta! — gritava João.', fala: true },
+    ],
+  },
+  {
     id: 'madeira', titulo: 'A casa de madeira', sub: 'João chega correndo. Lá vem o Lobo atrás.', acao: 'Soprar forte', legenda: 'A casa de madeira', dica: 'João entra correndo. Depois, duas sopradas: as tábuas rangem e a casa vem abaixo.', fase: 0.42, parte: 'Fim da tarde',
     linhas: [
       { t: 'João chegou sem fôlego à casa de Lulu, e os dois trancaram a porta.' },
@@ -44,6 +78,15 @@ export const CENAS = [
       { t: '— Não, não e não! — gritaram os dois.', fala: true },
       { t: '— Então eu vou soprar, e soprar, e a sua casa derrubar!', fala: true },
       { t: 'Soprou uma vez, e as tábuas rangeram. Soprou outra, e a casa despencou inteirinha. João e Lulu dispararam para a casa de Kael.' },
+    ],
+  },
+  {
+    id: 'corrida-kael', titulo: 'Corram, corram!', sub: 'Morro acima, e o Lobo tropeça.', acao: 'Correr morro acima', legenda: 'Corram, corram!', dica: 'João e Lulu pulam o tronco. O Lobo não tem a mesma sorte.', fase: 0.46, parte: 'Fim da tarde',
+    linhas: [
+      { t: 'João e Lulu correram morro acima, tropeçando nos próprios pés.' },
+      { t: 'O Lobo vinha logo atrás, mas, pulando um tronco caído… plaft! Foi de focinho no chão.' },
+      { t: '— Ai! — resmungou, e levantou bufando.', fala: true },
+      { t: 'Lá no alto, a chaminé de Kael soltava fumaça. Estavam quase lá.' },
     ],
   },
   {
@@ -80,6 +123,16 @@ export const CENAS = [
     linhas: [
       { t: 'O Lobo desceu pela chaminé, escorregou e… tchibum! Caiu direto no caldeirão.' },
       { t: 'Deu um uivo que se ouviu em sete montanhas e saiu pela chaminé como um foguete, com o rabo soltando fumaça.' },
+    ],
+  },
+  {
+    id: 'tombo', titulo: 'Cataplof!', sub: 'Tudo o que sobe, desce.', acao: 'Olhar para cima', legenda: 'Cataplof!', dica: 'O Lobo sobe até o meio do céu, olha para baixo e despenca ao lado da casa.', fase: 0.84, parte: 'Noite',
+    linhas: [
+      { t: 'O Lobo subiu, subiu, subiu… até parar lá no alto, no meio do céu.' },
+      { t: 'Olhou para baixo e engoliu em seco.' },
+      { t: '— Ih… — disse o Lobo.', fala: true },
+      { t: 'E despencou lá de cima, rodopiando. Cataplof! Caiu bem do lado da casa, no meio de uma nuvem de poeira.' },
+      { t: 'Os três porquinhos abriram a porta e vieram ver.' },
     ],
   },
   {

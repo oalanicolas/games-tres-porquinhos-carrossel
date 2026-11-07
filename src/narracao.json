@@ -57,59 +57,8 @@
       ],
       "acao_em": 22.87
     },
-    "1": {
-      "arquivo": "cena-1.mp3?v=4dc37ecc4125a448",
-      "duracao": 24.71,
-      "ganho_db": 1.1,
-      "marcos": {
-        "brincar": {
-          "em": 0
-        },
-        "palha": {
-          "em": 2.14,
-          "ate": 7.7
-        },
-        "madeira": {
-          "em": 8.47,
-          "ate": 10.87
-        },
-        "flauta": {
-          "em": 11.17
-        },
-        "tijolo": {
-          "em": 13.09,
-          "ate": 16.47
-        },
-        "riem": {
-          "em": 19.2
-        },
-        "massa": {
-          "em": 23.24
-        }
-      },
-      "falas": [
-        {
-          "quem": [
-            "pipo",
-            "tico"
-          ],
-          "texto": "Para que tanto trabalho?",
-          "de": 17.45,
-          "ate": 18.65
-        },
-        {
-          "quem": [
-            "bento"
-          ],
-          "texto": "Vocês vão ver!",
-          "de": 21.03,
-          "ate": 21.85
-        }
-      ],
-      "acao_em": 2.14
-    },
-    "2": {
-      "arquivo": "cena-2.mp3?v=86cc7b7aebdcf1b3",
+    "5": {
+      "arquivo": "cena-5.mp3?v=86cc7b7aebdcf1b3",
       "duracao": 29.12,
       "ganho_db": 1.0,
       "marcos": {
@@ -173,8 +122,8 @@
       ],
       "acao_em": 21.98
     },
-    "3": {
-      "arquivo": "cena-3.mp3?v=6dacda46e11c4071",
+    "7": {
+      "arquivo": "cena-7.mp3?v=6dacda46e11c4071",
       "duracao": 32.28,
       "ganho_db": 1.2,
       "marcos": {
@@ -243,8 +192,8 @@
       ],
       "acao_em": 21.12
     },
-    "4": {
-      "arquivo": "cena-4.mp3?v=789eb9fa28a0affe",
+    "9": {
+      "arquivo": "cena-9.mp3?v=789eb9fa28a0affe",
       "duracao": 38.13,
       "ganho_db": 1.3,
       "marcos": {
@@ -331,8 +280,8 @@
       ],
       "acao_em": 27.81
     },
-    "5": {
-      "arquivo": "cena-5.mp3?v=33cffce2894beb5e",
+    "10": {
+      "arquivo": "cena-10.mp3?v=33cffce2894beb5e",
       "duracao": 10.5,
       "ganho_db": 1.0,
       "marcos": {
@@ -365,8 +314,8 @@
       ],
       "acao_em": 5.06
     },
-    "6": {
-      "arquivo": "cena-6.mp3?v=f9f9934e9fa6053d",
+    "11": {
+      "arquivo": "cena-11.mp3?v=f9f9934e9fa6053d",
       "duracao": 17.69,
       "ganho_db": 1.0,
       "marcos": {
@@ -398,8 +347,8 @@
       ],
       "acao_em": 4.18
     },
-    "7": {
-      "arquivo": "cena-7.mp3?v=ae1846b4f46ec591",
+    "12": {
+      "arquivo": "cena-12.mp3?v=ae1846b4f46ec591",
       "duracao": 17.0,
       "ganho_db": 0.6,
       "marcos": {
@@ -437,8 +386,8 @@
       ],
       "acao_em": 4.04
     },
-    "8": {
-      "arquivo": "cena-8.mp3?v=df978a9ae9354ec0",
+    "14": {
+      "arquivo": "cena-14.mp3?v=df978a9ae9354ec0",
       "duracao": 10.36,
       "ganho_db": 2.0,
       "marcos": {
@@ -475,8 +424,8 @@
       ],
       "acao_em": 5.76
     },
-    "9": {
-      "arquivo": "cena-9.mp3?v=8c3234818c26ebb8",
+    "15": {
+      "arquivo": "cena-15.mp3?v=8c3234818c26ebb8",
       "duracao": 8.73,
       "ganho_db": 0.6,
       "marcos": {
@@ -496,8 +445,8 @@
       "falas": [],
       "acao_em": 6.1
     },
-    "10": {
-      "arquivo": "cena-10.mp3?v=77e02b1fa37ce4e2",
+    "16": {
+      "arquivo": "cena-16.mp3?v=77e02b1fa37ce4e2",
       "duracao": 15.19,
       "ganho_db": 1.0,
       "marcos": {

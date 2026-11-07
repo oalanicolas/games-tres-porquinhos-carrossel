@@ -7,7 +7,7 @@ const ESPERADA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima',
 const som = (page) => page.evaluate(() => window.__livro.audio.estado());
 const espera = (page, ms) => page.waitForTimeout(ms);
 
-test('faixa certa em 11 de 11 cenas, avançando e com sinal na saída', async () => {
+test('faixa certa em 17 de 17 cenas, avançando e com sinal na saída', async () => {
   const { page, erros, fechar } = await abrir();
   try {
     await page.keyboard.press('Shift');
@@ -17,7 +17,7 @@ test('faixa certa em 11 de 11 cenas, avançando e com sinal na saída', async ()
     assert.equal(capa.trilha, 'era-uma-vez'); assert.equal(capa.contexto, 'running'); assert.ok(capa.tempo > 0, 'a música da capa não andou');
     await page.evaluate(() => window.__livro.abrirNaHora(0));
     let certas = 0;
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 17; i++) {
       await page.evaluate((i) => window.__livro.irPara(i), i);
       await espera(page, 2300);
       const a = await som(page); await espera(page, 500); const b = await som(page);
@@ -26,7 +26,7 @@ test('faixa certa em 11 de 11 cenas, avançando e com sinal na saída', async ()
       assert.ok(b.dbfs > -60, `silêncio na cena ${i}: ${b.dbfs} dBFS`);
       certas++;
     }
-    assert.equal(certas, 11);
+    assert.equal(certas, 17);
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
@@ -35,20 +35,20 @@ test('o tchibum troca a música, repetir volta ao início e sair e voltar també
   const { page, fechar } = await abrir();
   try {
     await page.keyboard.press('Shift');
-    await page.evaluate(() => window.__livro.abrirNaHora(7));
+    await page.evaluate(() => window.__livro.abrirNaHora(12));
     await espera(page, 400);
     assert.equal((await som(page)).trilha, 'noite');
     await page.evaluate(() => window.__livro.agir());
     await page.waitForFunction(() => window.__livro.audio.estado().trilha === 'fuga', null, { timeout: 15000 });
-    await page.waitForFunction(() => { const l = window.__livro.cenas[7].linha; return l.t >= l.duration - 0.01; }, null, { timeout: 20000 });
+    await page.waitForFunction(() => { const l = window.__livro.cenas[12].linha; return l.t >= l.duration - 0.01; }, null, { timeout: 20000 });
     await espera(page, 300);
     assert.equal((await som(page)).trilha, 'fuga', 'o fim da ação não pode desfazer a troca');
     await page.evaluate(() => window.__livro.agir());
     await espera(page, 200);
     assert.equal((await som(page)).trilha, 'noite');
-    await page.evaluate(() => window.__livro.irPara(9)); await espera(page, 200);
+    await page.evaluate(() => window.__livro.irPara(15)); await espera(page, 200);
     assert.equal((await som(page)).trilha, 'festa');
-    await page.evaluate(() => window.__livro.irPara(7)); await espera(page, 200);
+    await page.evaluate(() => window.__livro.irPara(12)); await espera(page, 200);
     assert.equal((await som(page)).trilha, 'noite');
   } finally { await fechar(); }
 });

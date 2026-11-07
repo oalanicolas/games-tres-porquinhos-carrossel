@@ -23,7 +23,7 @@ const somCapa = await (async () => { await page.keyboard.press('Shift'); await p
 await page.click('#acao');
 const abertura = await fps(2600); rel.abertura = abertura;
 await page.waitForFunction(() => window.__livro.estado.modo === 'aberto', null, { timeout: 8000 });
-for (let i = 0; i < 11; i++) {
+for (let i = 0; i < 17; i++) {
   await page.waitForTimeout(700);
   const antes = await page.evaluate(() => ({ i: window.__livro.estado.indice, acao: document.querySelector('#acao').textContent, titulo: document.querySelector('#cena-titulo').textContent }));
   const s0 = await som(); await page.waitForTimeout(500); const s1 = await som();
@@ -51,7 +51,7 @@ for (let i = 0; i < 11; i++) {
     if (!rel.semZoom) throw new Error('zoom ou sobreposição ativada sobre o texto');
     await page.mouse.move(5, 5);
   }
-  if (i < 10) { await page.click('#proxima'); await page.waitForTimeout(800); }
+  if (i < 16) { await page.click('#proxima'); await page.waitForTimeout(800); }
 }
 rel.erros = erros;
 writeFileSync(`${saida}/relatorio.json`, JSON.stringify(rel, null, 1));

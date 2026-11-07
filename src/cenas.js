@@ -6,6 +6,7 @@ import { H } from './book.js';
 import { palco, sopro, revoada, ease, SOLO, meiaLargura, ventoInterativo } from './palco.js';
 import { porco as porcoBase, porcoNaJanela, lobo as loboBase } from './personagens.js';
 import * as O from './objetos.js';
+import { CENAS } from './story.js';
 
 // Personagens menores e um pouco recuados: a cena respira e o cenário fica à vista.
 const ESC_P = 0.74, ESC_L = 0.76;
@@ -19,7 +20,7 @@ export function montarCenas(livro, audio) {
   somDaCena = audio;
   return livro.cunhas.map((c) => {
     livreEsq = (1 - livro.fimTexto[c.j] / 1276) * H - 0.09;
-    const cena = montadores[c.j](palco(c.conteudo), audio);
+    const cena = montadores[CENAS[c.j].id](palco(c.conteudo), audio);
     encaixar(c.conteudo);
     return cena;
   });
@@ -86,7 +87,7 @@ function poste(p, lado, r, { alto = 1.1, cor = '#ffb02e' } = {}) {
 const tam = (q, v) => ({ sx: Math.sign(q.root.scale.x) * v, sy: v, sz: v });
 /** Escondido até a história chamar. Devolve a escala que ele terá em cena. */
 function escondido(q) { const v = q.root.scale.y; q.root.scale.set(Math.sign(q.root.scale.x) * 0.001, 0.001, 0.001); return v; }
-// Os gestos de andar valem para todos os atores e nas onze cenas: o som deles vem daqui, sem passar o áudio em cada chamada.
+// Os gestos de andar valem para todos os atores e em todas as cenas: o som deles vem daqui, sem passar o áudio em cada chamada.
 let somDaCena = null;
 /** Passos: pernas e corpo. Serve a porquinhos (pernaE/pernaD) e ao Lobo (pernaF/pernaT). */
 function passos(tl, q, t, dur, { n = Math.max(2, Math.round(dur / 0.2)), salto = 0.05, perna = 0.42 } = {}) {
@@ -203,7 +204,7 @@ function voar(tl, g, i, t, alcance = 1.15) {
 }
 
 // ---- 1. Hora de partir ------------------------------------------------------------------------------
-montadores[0] = (p, audio) => {
+montadores.partida = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.05, 1.1], [0.05, 1.1], [0.28, 1.7], [0.1, 2.3], [0.42, 3.02], [-0.3, 3.02], [-0.34, 2.3], [-0.1, 1.7]]), pat('stripes', '#f7e3b4', '#f0d69b', 0.2), { edge: '#d9c18a' });
   colinas(p, { atras: ['#8ed27a', '#7bc369'], meio: ['#b2e476', '#9dd662'] });
@@ -254,7 +255,7 @@ montadores[0] = (p, audio) => {
 };
 
 // ---- 2. Três casas ----------------------------------------------------------------------------------
-montadores[1] = (p, audio) => {
+montadores.obra = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.34, 1.68], [0.34, 1.68], [0.84, 2.3], [1.0, 2.82], [0, 3.02], [-1.0, 2.82], [-0.84, 2.3]]), pat('dots', '#f7e3b4', '#fcefcd', 0.18), { edge: '#d9c18a' });
   colinas(p, { atras: ['#79c7a4', '#68b793'], meio: ['#a6dd80', '#90cd6c'] });
@@ -332,7 +333,7 @@ montadores[1] = (p, audio) => {
 };
 
 // ---- 3. A casa de palha ----------------------------------------------------------------------------
-montadores[2] = (p, audio) => {
+montadores.palha = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[0.02, 1.8], [0.34, 1.8], [0.5, 2.2], [0.1, 2.6], [0.1, 3.02], [-0.5, 3.02], [-0.16, 2.5], [0.1, 2.15]]), pat('stripes', '#f5dfa7', '#efd492', 0.2), { edge: '#d9c18a' });
   colinas(p);
@@ -372,7 +373,7 @@ montadores[2] = (p, audio) => {
 };
 
 // ---- 4. A casa de madeira ---------------------------------------------------------------------------
-montadores[3] = (p, audio) => {
+montadores.madeira = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.34, 1.75], [0.06, 1.75], [0.24, 2.3], [0.34, 3.02], [-0.44, 3.02], [-0.2, 2.3]]), pat('stripes', '#f0cd8b', '#e8c076', 0.2), { edge: '#c9a764' });
   colinas(p, { atras: ['#b69a5a', '#a48a4d'], meio: ['#cdbb5a', '#bcaa4a'] });
@@ -451,7 +452,7 @@ function casaDeBento(c) {
   const fum = O.fumaca(c, 6, { x: x + 0.27, y: 1.6, z: zc + 0.01, altura: 0.8 });
   return { casa, fum, jan: janelasDeBento(c, { x, zc, s, casa }) };
 }
-montadores[4] = (p, audio) => {
+montadores.tijolo = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.2, 1.8], [0.3, 1.8], [0.34, 2.3], [0.36, 2.92], [-0.56, 2.92], [-0.3, 2.3]]), pat('stripes', '#f6d7c2', '#f0c9ad', 0.2), { edge: '#cda38a' });
   colinas(p, { atras: ['#8c70b8', '#7c60aa'], meio: ['#b986ad', '#a9769d'] });
@@ -521,7 +522,7 @@ montadores[4] = (p, audio) => {
 };
 
 // ---- 6. A chaminé! ----------------------------------------------------------------------------------
-montadores[5] = (p, audio) => {
+montadores.telhado = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.2, 1.8], [0.3, 1.8], [0.34, 2.3], [0.36, 2.92], [-0.56, 2.92], [-0.3, 2.3]]), pat('stripes', '#dcb7c8', '#cfa7ba', 0.2), { edge: '#a98498' });
   colinas(p, { atras: ['#5f4c9c', '#53428e'], meio: ['#8a6aa6', '#7a5c98'] });
@@ -601,7 +602,7 @@ function casaEmCorte(p, zc = 1.62) {
 }
 
 // ---- 7. Depressa! -----------------------------------------------------------------------------------
-montadores[6] = (p, audio) => {
+montadores.chamine = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.68, 1.68], [0.68, 1.68], [1.12, 2.78], [0.6, 2.96], [0, 3.02], [-0.6, 2.96], [-1.12, 2.78]]), pat('wood', '#a06a42', '#8c5a36', 0.34), { edge: '#7c4d2e' });
   colinas(p, { atras: ['#3e3a7e', '#34306e'], meio: ['#55509a', '#48448c'] });
@@ -660,7 +661,7 @@ montadores[6] = (p, audio) => {
 };
 
 // ---- 8. Rabo em brasa -------------------------------------------------------------------------------
-montadores[7] = (p, audio) => {
+montadores.rabo = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.68, 1.68], [0.68, 1.68], [1.12, 2.78], [0.6, 2.96], [0, 3.02], [-0.6, 2.96], [-1.12, 2.78]]), pat('wood', '#8c5a3e', '#7a4d33', 0.34), { edge: '#6c4229' });
   colinas(p, { atras: ['#26245e', '#201e52'], meio: ['#37347a', '#2d2b6c'] });
@@ -730,7 +731,7 @@ montadores[7] = (p, audio) => {
 };
 
 // ---- 9. Correu, correu ------------------------------------------------------------------------------
-montadores[8] = (p, audio) => {
+montadores.fuga = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   // a estrada sai da porta e vai até o pé do morro
   p.chao(blob([[-0.3, 1.14], [-0.08, 1.14], [-0.02, 1.7], [0.14, 2.2], [0.4, 2.94], [-0.3, 2.96], [-0.32, 2.2], [-0.44, 1.7]]), pat('stripes', '#7f8fb8', '#7283ac', 0.2), { edge: '#5f7098' });
@@ -788,7 +789,7 @@ montadores[8] = (p, audio) => {
 };
 
 // ---- 10. A festa ------------------------------------------------------------------------------------
-montadores[9] = (p, audio) => {
+montadores.festa = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.5, 1.7], [0.5, 1.7], [1.1, 2.78], [0.6, 2.96], [0, 3.02], [-0.6, 2.96], [-1.1, 2.78]]), pat('dots', '#f2c88f', '#f7d9ac', 0.2), { edge: '#c79a67' });
   colinas(p, { atras: ['#4a3a92', '#3f3082'], meio: ['#6f4ea8', '#603f98'] });
@@ -840,7 +841,7 @@ montadores[9] = (p, audio) => {
 };
 
 // ---- 11. A casa que o vento não leva ----------------------------------------------------------------
-montadores[10] = (p, audio) => {
+montadores.juntos = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.34, 1.68], [0.34, 1.68], [0.84, 2.3], [1.0, 2.82], [0, 3.02], [-1.0, 2.82], [-0.84, 2.3]]), pat('dots', '#f7e3b4', '#fcefcd', 0.18), { edge: '#d9c18a' });
   colinas(p, { atras: ['#8ed27a', '#7bc369'], meio: ['#b2e476', '#9dd662'] });
@@ -886,6 +887,8 @@ montadores[10] = (p, audio) => {
 };
 
 // ---- capa: arte renderizada de recortes reais ------------------------------------------------------------
+for (const id of ['obra-palha', 'obra-madeira', 'obra-tijolo', 'espia', 'corrida-lulu', 'corrida-kael', 'tombo']) montadores[id] ??= () => ({ linha: new Timeline(), atores: {}, idle() {} });
+
 export function arteDaCapa(renderer) {
   const W = 1200, A = 1140; const rt = new THREE.WebGLRenderTarget(W, A, { samples: 4 }); rt.texture.colorSpace = THREE.SRGBColorSpace;
   const s = new THREE.Scene(); s.background = new THREE.Color('#ffc4c9');

@@ -18,11 +18,11 @@ test('sopro: silêncio, tom de voz e estalo não acumulam; sopros curtos somam s
   assert.equal(m.energia, energia);
   for (let i = 0; i < 30; i++) m.avancar(0.7, 0.02);
   assert.ok(m.energia > energia);
-  assert.ok(CASAS_SOPRO[2].energia < CASAS_SOPRO[3].energia && CASAS_SOPRO[3].energia < CASAS_SOPRO[4].energia);
+  assert.ok(CASAS_SOPRO[5].energia < CASAS_SOPRO[7].energia && CASAS_SOPRO[7].energia < CASAS_SOPRO[9].energia);
   // criança: o mesmo grito fraco derruba a palha antes da madeira, e nenhuma casa pede mais de 5 s de grito somado
   const segundos = (i, forca) => { const m = new MedidorSopro(CASAS_SOPRO[i].nivel); let t = 0; while (m.energia < CASAS_SOPRO[i].energia && t < 60) { m.avancar(forca, 0.02); t += 0.02; } return t; };
-  assert.ok(segundos(2, 0.2) < segundos(3, 0.2) && segundos(3, 0.2) < segundos(4, 0.2));
-  for (const i of [2, 3, 4]) assert.ok(segundos(i, 0.2) < 5, `casa ${i}: ${segundos(i, 0.2)} s de grito fraco`);
+  assert.ok(segundos(5, 0.2) < segundos(7, 0.2) && segundos(7, 0.2) < segundos(9, 0.2));
+  for (const i of [5, 7, 9]) assert.ok(segundos(i, 0.2) < 5, `casa ${i}: ${segundos(i, 0.2)} s de grito fraco`);
   const filtrado = new Float32Array(1024).fill(-100); filtrado.fill(-30, 10, 140);
   const telefone = new MedidorSopro();
   for (let i = 0; i < 100; i++) telefone.medir(tom, filtrado, 0.02);
@@ -76,7 +76,7 @@ test('sopro: três casas funcionam somente pelo microfone, com modo alternável 
   try {
     assert.equal(await page.locator('#sopro-botao, #sopro-pular').count(), 0);
     await microfoneSimulado(page);
-    for (const i of [2, 3, 4]) {
+    for (const i of [5, 7, 9]) {
       await page.evaluate((i) => { window.__livro.irPara(i); }, i);
       await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo', null, { timeout: 15000 });
       assert.equal(await page.locator('#acao').isVisible(), false, 'não exige botão de ação mesmo sem narração');
@@ -105,13 +105,13 @@ test('sopro: microfone recusado não prende a criança, e permissão tardia não
   const { page, fechar } = await abrir({ interativo: true });
   try {
     await page.click('#acao');
-    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('negado', 'NotAllowedError'); }; const L = window.__livro; L.abrirNaHora(2); L.interacao.limitar(2, 100); });
+    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('negado', 'NotAllowedError'); }; const L = window.__livro; L.abrirNaHora(5); L.interacao.limitar(5, 100); });
     await page.waitForFunction(() => window.__livro.interacao.fase === 'concluido');
-    assert.ok(await page.evaluate(() => window.__livro.interacao.sozinho && window.__livro.interacao.concluidas.has(2)), 'o Lobo devia seguir sozinho');
+    assert.ok(await page.evaluate(() => window.__livro.interacao.sozinho && window.__livro.interacao.concluidas.has(5)), 'o Lobo devia seguir sozinho');
     assert.equal(await page.locator('#sopro-grito').isVisible(), false);
-    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = () => new Promise((resolve) => { window.__resolverMic = resolve; }); const L = window.__livro; L.abrirNaHora(3); L.interacao.limitar(3, 100); });
+    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = () => new Promise((resolve) => { window.__resolverMic = resolve; }); const L = window.__livro; L.abrirNaHora(7); L.interacao.limitar(7, 100); });
     await page.waitForFunction(() => window.__livro.interacao.fase === 'permissao');
-    await page.evaluate(() => { window.__livro.irPara(4); window.__micParado = false; window.__resolverMic({ getTracks: () => [{ stop() { window.__micParado = true; } }] }); });
+    await page.evaluate(() => { window.__livro.irPara(9); window.__micParado = false; window.__resolverMic({ getTracks: () => [{ stop() { window.__micParado = true; } }] }); });
     await page.waitForFunction(() => window.__micParado);
   } finally { await fechar(); }
 });
@@ -119,7 +119,7 @@ test('sopro: microfone recusado não prende a criança, e permissão tardia não
 test('sopro: no celular, o balão inteiro cabe na tela mesmo no fim do grito', async () => {
   const { page, fechar } = await abrir({ largura: 390, altura: 844, interativo: true });
   try {
-    await microfoneSimulado(page); await entrar(page, 4);
+    await microfoneSimulado(page); await entrar(page, 9);
     await page.evaluate(() => { window.__micTeste.voz.gain.value = 0.35; });
     await page.waitForFunction(() => { const s = window.__livro.interacao; return s.medidor.energia > s.casa.energia * 0.8; }, null, { timeout: 6000 });
     const r = await page.locator('#sopro-grito').evaluate((b) => { const q = b.getBoundingClientRect(); return { dentro: q.left >= 0 && q.right <= innerWidth && q.top >= 0, texto: b.textContent }; });
@@ -131,7 +131,7 @@ test('sopro: no celular, o balão inteiro cabe na tela mesmo no fim do grito', a
 test('sopro: fica claro que é para gritar, "Fuuuu!" com voz conta e apito não', async () => {
   const { page, erros, fechar } = await abrir({ interativo: true });
   try {
-    await microfoneSimulado(page); await entrar(page, 2);
+    await microfoneSimulado(page); await entrar(page, 5);
     assert.deepEqual(await page.evaluate(() => window.__livro.audio.falasDitas), ['convite-palha'], 'a voz pede o grito');
     const balao = page.locator('#sopro-grito');
     assert.equal(await balao.isVisible(), true);
@@ -144,7 +144,7 @@ test('sopro: fica claro que é para gritar, "Fuuuu!" com voz conta e apito não'
     await page.evaluate(() => { window.__micTeste.apito.gain.value = 0; window.__micTeste.voz.gain.value = 0.35; });
     await page.waitForFunction(() => { const m = window.__livro.interacao.medidor; return m.energia > 0.1; }, null, { timeout: 4000 });
     assert.ok((await balao.textContent()).length > 'Fuuuu!'.length || await page.evaluate(() => window.__livro.interacao.fase === 'concluido'), 'o balão cresce com o grito');
-    const lado = await page.evaluate(() => { const L = window.__livro; const c = L.cenas[2]; return { lobo: c.atores.lobo.root.position.x, casa: c.vento.casa.position.x, rz: c.vento.casa.rotation.z }; });
+    const lado = await page.evaluate(() => { const L = window.__livro; const c = L.cenas[5]; return { lobo: c.atores.lobo.root.position.x, casa: c.vento.casa.position.x, rz: c.vento.casa.rotation.z }; });
     assert.ok(lado.lobo < lado.casa && lado.rz <= 0, 'o vento vem do lado do Lobo e a casa inclina para longe dele');
     await page.waitForFunction(() => window.__livro.interacao.fase === 'concluido', null, { timeout: 4000 });
     assert.equal(await page.evaluate(() => window.__livro.interacao.sozinho), false);
@@ -157,10 +157,10 @@ test('sopro: fica claro que é para gritar, "Fuuuu!" com voz conta e apito não'
 test('sopro: sem nenhum grito, a voz pede de novo e o Lobo termina sozinho', async () => {
   const { page, erros, fechar } = await abrir({ interativo: true });
   try {
-    await microfoneSimulado(page); await entrar(page, 3);
+    await microfoneSimulado(page); await entrar(page, 7);
     await page.waitForFunction(() => window.__livro.audio.falasDitas?.includes('convite-de-novo'), null, { timeout: 9000 });
     await page.waitForFunction(() => window.__livro.interacao.fase === 'concluido', null, { timeout: 15000 });
-    const r = await page.evaluate(() => { const s = window.__livro.interacao; return { sozinho: s.sozinho, energia: s.medidor.energia, feita: s.concluidas.has(3), rz: window.__livro.cenas[3].vento.casa.rotation.z }; });
+    const r = await page.evaluate(() => { const s = window.__livro.interacao; return { sozinho: s.sozinho, energia: s.medidor.energia, feita: s.concluidas.has(7), rz: window.__livro.cenas[7].vento.casa.rotation.z }; });
     assert.deepEqual(r, { sozinho: true, energia: 0, feita: true, rz: 0 });
     await page.evaluate(() => window.__micTeste.ctx.close());
     assert.deepEqual(erros, []);
@@ -170,7 +170,7 @@ test('sopro: sem nenhum grito, a voz pede de novo e o Lobo termina sozinho', asy
 test('sopro: botão discreto alterna o modo e encerra a captura sem parar o áudio do livro', async () => {
   const { page, erros, fechar } = await abrir({ interativo: true });
   try {
-    await microfoneSimulado(page); await entrar(page, 4);
+    await microfoneSimulado(page); await entrar(page, 9);
     assert.equal(await page.locator('#barra #interagir').count(), 1);
     await page.click('#interagir');
     assert.equal(await page.locator('#interagir').getAttribute('aria-pressed'), 'false');
@@ -189,11 +189,11 @@ test('sopro: botão discreto alterna o modo e encerra a captura sem parar o áud
 test('sopro: vento para no silêncio e captura termina ao ocultar a página, retomando sozinha', async () => {
   const { page, erros, fechar } = await abrir({ interativo: true });
   try {
-    await microfoneSimulado(page); await entrar(page, 4);
+    await microfoneSimulado(page); await entrar(page, 9);
     await page.evaluate(() => { window.__micTeste.gain.gain.value = 0.12; });
     await page.waitForFunction(() => window.__livro.interacao.medidor.energia > 0.05);
     await page.evaluate(() => { window.__micTeste.gain.gain.value = 0; });
-    await page.waitForFunction(() => !window.__livro.cenas[4].vento.raiz.visible);
+    await page.waitForFunction(() => !window.__livro.cenas[9].vento.raiz.visible);
     const energia = await page.evaluate(() => window.__livro.interacao.medidor.energia);
     await page.waitForTimeout(300);
     assert.equal(await page.evaluate(() => window.__livro.interacao.medidor.energia), energia);
@@ -210,9 +210,9 @@ test('sopro: narração pausa e retoma automaticamente depois do sopro', async (
   const { page, erros, fechar } = await abrir({ narrado: true, interativo: true });
   try {
     await microfoneSimulado(page);
-    await page.evaluate(() => window.__livro.abrirNaHora(2));
-    await page.waitForFunction(() => window.__livro.audio.voz?.i === 2);
-    await page.evaluate(() => { const L = window.__livro; L.audio.voz.el.currentTime = L.audio.faixasVoz[2].marcos.sopro.em + 0.05; });
+    await page.evaluate(() => window.__livro.abrirNaHora(5));
+    await page.waitForFunction(() => window.__livro.audio.voz?.i === 5);
+    await page.evaluate(() => { const L = window.__livro; L.audio.voz.el.currentTime = L.audio.faixasVoz[5].marcos.sopro.em + 0.05; });
     await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo');
     assert.equal(await page.evaluate(() => window.__livro.audio.voz.el.paused), true);
     const t = await page.evaluate(() => window.__livro.audio.voz.el.currentTime);
@@ -230,7 +230,7 @@ test('sopro: pedido de permissão acompanha o Lobo no livro e não forma HUD', a
     await page.evaluate(() => { navigator.mediaDevices.getUserMedia = () => new Promise(() => {}); });
     for (const [width, height] of [[390, 844], [844, 390], [360, 640]]) {
       await page.setViewportSize({ width, height });
-      await page.evaluate(() => { const L = window.__livro; L.abrirNaHora(2); L.interacao.repetir(2); L.cenas[2].linha.seek(L.interacao.limitar(2, 100)); });
+      await page.evaluate(() => { const L = window.__livro; L.abrirNaHora(5); L.interacao.repetir(5); L.cenas[5].linha.seek(L.interacao.limitar(5, 100)); });
       await page.waitForTimeout(600);
       const r = await page.evaluate(() => {
         const L = window.__livro; const pane = document.getElementById('sopro-painel'); const b = pane.getBoundingClientRect(); const css = getComputedStyle(pane);

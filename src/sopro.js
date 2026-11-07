@@ -1,9 +1,9 @@
 // O público é criança pequena: ela grita "Fuuuu!" com voz, em sopradinhas curtas, e longe do microfone.
 // `nivel` é o mínimo para contar, igual e baixo; a diferença entre as casas é quanto grito cada uma pede.
 export const CASAS_SOPRO = {
-  2: { nome: 'Casa de palha do João', grupo: 'sopro', nivel: 0.1, energia: 0.5, inclina: 0.04, convite: 'convite-palha', resultado: 'A palha voou!' },
-  3: { nome: 'Casa de madeira da Lulu', grupo: 'sopro1', nivel: 0.1, energia: 1, inclina: 0.025, convite: 'convite-madeira', resultado: 'A madeira cedeu!' },
-  4: { nome: 'Casa de tijolos do Kael', grupo: 'sopro0', nivel: 0.12, energia: 1.5, inclina: 0.004, convite: 'convite-tijolos', resultado: 'Os tijolos resistem ao vento!' },
+  5: { nome: 'Casa de palha do João', grupo: 'sopro', nivel: 0.1, energia: 0.5, inclina: 0.04, convite: 'convite-palha', resultado: 'A palha voou!' },
+  7: { nome: 'Casa de madeira da Lulu', grupo: 'sopro1', nivel: 0.1, energia: 1, inclina: 0.025, convite: 'convite-madeira', resultado: 'A madeira cedeu!' },
+  9: { nome: 'Casa de tijolos do Kael', grupo: 'sopro0', nivel: 0.12, energia: 1.5, inclina: 0.004, convite: 'convite-tijolos', resultado: 'Os tijolos resistem ao vento!' },
 };
 export const FALAS_SOPRO = [...Object.values(CASAS_SOPRO).map((c) => c.convite), 'convite-de-novo'];
 // Sem voz nenhuma, um apito ou um bipe puro: o único som contínuo que continua de fora.

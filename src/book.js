@@ -16,12 +16,18 @@ const CEU_FRACAO = 0.43;
 export const CEUS = [
   { faixas: [['#7fd3ee', '#97ddf2'], ['#a9e4ee', '#bdebf2'], ['#ffe2c4', '#ffeeda'], ['#ffc4c9', '#ffd5d6'], ['#ffa9bb', '#ffbcc9']], estrelas: 0, aves: 3, borda: '#ef6f8e', chao: pat('grass', '#a8dc62', '#92cb50', 0.5), disco: '#8fd05a' },
   { faixas: [['#3fb8ee', '#5cc6f2'], ['#6dcdf2', '#87d8f5'], ['#a3e4f4', '#baecf7'], ['#d3f4ef', '#e3f8f2'], ['#fff3c9', '#fff8de']], estrelas: 0, aves: 4, borda: '#2fa3c9', chao: pat('grass', '#f2d57b', '#e6c566', 0.5), disco: '#e7c364' },
+  { faixas: [['#47bce7', '#64c9ec'], ['#80d4e8', '#98deee'], ['#c1e7de', '#d1efe8'], ['#e2e9cf', '#ecf0da'], ['#ffddae', '#ffe7c5']], estrelas: 0, aves: 4, borda: '#6e9b9b', chao: pat('grass', '#e1d976', '#d2c960', 0.5), disco: '#d2c75e' },
+  { faixas: [['#50c0e0', '#6bcde6'], ['#93dcdf', '#aae5e6'], ['#e0ebc7', '#e8f1d9'], ['#f0deb0', '#f5e8c2'], ['#ffc793', '#ffd5ac']], estrelas: 0, aves: 3, borda: '#ad926d', chao: pat('grass', '#d0dc70', '#becd5a', 0.5), disco: '#bdcb58' },
+  { faixas: [['#54c2dc', '#70cee3'], ['#9de0d9', '#b4e8e2'], ['#f1ecba', '#f5f3d0'], ['#f8d79d', '#fbe3b5'], ['#ffba83', '#ffcb9d']], estrelas: 0, aves: 3, borda: '#d18e53', chao: pat('grass', '#c7de6d', '#b2cf57', 0.5), disco: '#b1cd55' },
   { faixas: [['#58c4d9', '#73d0e0'], ['#a6e3d5', '#bcebdf'], ['#ffeeb0', '#fff4c9'], ['#ffd28f', '#ffdfaa'], ['#ffb077', '#ffc392']], estrelas: 0, aves: 3, borda: '#ee8a3e', chao: pat('grass', '#bfe06b', '#a9d154', 0.5), disco: '#a8cf52' },
+  { faixas: [['#a8b393', '#b6c1a2'], ['#d0d098', '#dcdbaa'], ['#ffe295', '#ffeab0'], ['#ffc37d', '#ffd298'], ['#fa9d70', '#fbb08a']], estrelas: 0, aves: 2, borda: '#e47936', chao: pat('grass', '#ccd866', '#b8c850', 0.5), disco: '#b5c44e' },
   { faixas: [['#f7a24d', '#f9b265'], ['#fbbd5b', '#fccb76'], ['#ffd67a', '#ffe096'], ['#ffb46b', '#ffc586'], ['#f58a6a', '#f79d82']], estrelas: 0, aves: 2, borda: '#d9682f', chao: pat('grass', '#d8cf60', '#c8bf4d', 0.5), disco: '#c2b84a' },
+  { faixas: [['#ba7886', '#c28a98'], ['#de8c88', '#e49e9b'], ['#f8a28b', '#fab2a1'], ['#fda76d', '#feb886'], ['#faae72', '#fbbd8c']], estrelas: 3, aves: 2, borda: '#ce545b', chao: pat('grass', '#b2c86e', '#a2b95c', 0.5), disco: '#9bb258' },
   { faixas: [['#7c4fc0', '#8c62cb'], ['#c15cb4', '#cd71c0'], ['#f26f9c', '#f485ac'], ['#fb9a6f', '#fcac87'], ['#ffd27a', '#ffdd96']], estrelas: 6, aves: 2, borda: '#c23f87', chao: pat('grass', '#8cc27b', '#7cb36b', 0.5), disco: '#74ab66' },
   { faixas: [['#3f3392', '#4c3ea2'], ['#6e3fae', '#7d4cba'], ['#a74fb6', '#b561c0'], ['#e0689f', '#e87fae'], ['#fba77f', '#fcb897']], estrelas: 10, aves: 0, borda: '#9a45a8', chao: pat('grass', '#6f9f84', '#60907a', 0.5), disco: '#5f8f78' },
   { faixas: [['#2a2570', '#352f80'], ['#4a2f96', '#5839a6'], ['#7a3fb4', '#8a4dc2'], ['#b153b5', '#bf66c2'], ['#ec7fa9', '#f093b7']], estrelas: 16, aves: 0, borda: '#7a3fb4', chao: pat('grass', '#5e8f86', '#50807a', 0.5), disco: '#4e7f78' },
   { faixas: [['#100e42', '#191650'], ['#1c1a5e', '#26246d'], ['#2c2a7c', '#37358b'], ['#3f3a97', '#4c47a3'], ['#5a54ad', '#6761b8']], estrelas: 34, aves: 0, borda: '#3f3a97', chao: pat('grass', '#3f6f76', '#35626a', 0.5), disco: '#355f69' },
+  { faixas: [['#101447', '#181c55'], ['#1b2366', '#242d74'], ['#2a3584', '#344092'], ['#3c4aa0', '#4856aa'], ['#5a6ab6', '#6876c0']], estrelas: 37, aves: 0, borda: '#3c4aa0', chao: pat('grass', '#3f7477', '#35676b', 0.5), disco: '#35646a' },
   { faixas: [['#0f1a4c', '#16225a'], ['#1a2c6e', '#22367c'], ['#27408c', '#304b9a'], ['#3a5aa8', '#4566b2'], ['#5b7fc0', '#6a8cc8']], estrelas: 40, aves: 0, borda: '#3a5aa8', chao: pat('grass', '#3f7a78', '#356c6c', 0.5), disco: '#356a6a' },
   { faixas: [['#171650', '#211f60'], ['#30237a', '#3b2c88'], ['#5c2e93', '#6a39a1'], ['#a23e94', '#b04ea2'], ['#f2767f', '#f58b92']], estrelas: 28, aves: 0, borda: '#e0446a', chao: pat('grass', '#7fb56a', '#6fa65c', 0.5), disco: '#6da35a' },
   { faixas: [['#6fcbf0', '#88d6f3'], ['#a6e4f2', '#bcebf5'], ['#fff0c4', '#fff6dc'], ['#ffd9b5', '#ffe5c9'], ['#ffc2c6', '#ffd3d5']], estrelas: 0, aves: 5, borda: '#ef6f8e', chao: pat('grass', '#b0e06a', '#9ad257', 0.5), disco: '#94cf56' },
@@ -89,7 +95,7 @@ function novaFolha() { const c = document.createElement('canvas'); c.width = PX_
 function texturaDe(canvas, aniso) {
   const t = new THREE.CanvasTexture(canvas); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = aniso; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; return t;
 }
-function algarismo(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'][n]; }
+function algarismo(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII'][n]; }
 export const romano = algarismo;
 
 /** Parede esquerda de uma cena, como quem olha: papel com o texto à esquerda, céu junto à lombada à direita. */

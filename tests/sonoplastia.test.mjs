@@ -1,4 +1,4 @@
-// Auditoria de sonoplastia (Alan, 06/11/2026: "se tem algo que nao estamos descuidando"). Cada item é um defeito achado.
+// Auditoria de sonoplastia (Alan, 06/17/2026: "se tem algo que nao estamos descuidando"). Cada item é um defeito achado.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
@@ -30,7 +30,7 @@ test('todo efeito baixado é usado, e nada é chamado sem existir', () => {
   assert.deepEqual(chamados.filter((n) => !sons.efeitos.includes(n)), []);
 });
 
-test('nas onze cenas: passos soam, com variação e posição; o primeiro clique abre com som; mix não estoura', async () => {
+test('nas dezessete cenas: passos soam, com variação e posição; o primeiro clique abre com som; mix não estoura', async () => {
   // rede lenta de propósito: o som de abrir o livro precisa tocar mesmo chegando depois do clique
   const { page, erros, fechar } = await abrir({ antes: (p) => p.route('**/sfx/*.mp3', async (r) => { await new Promise((ok) => setTimeout(ok, 300)); await r.continue(); }) });
   try {
@@ -41,7 +41,7 @@ test('nas onze cenas: passos soam, com variação e posição; o primeiro clique
     await page.evaluate(() => window.__livro.abrirNaHora(0));
     const por = {};
     let pico = -Infinity;
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 17; i++) {
       await page.evaluate((i) => { window.__livro.audio.registro.length = 0; window.__livro.irPara(i); }, i);
       const dur = await page.evaluate((i) => { const c = window.__livro.cenas[i]; c.linha.play(); return c.linha.duration; }, i);
       const fim = Date.now() + Math.min(dur * 1000 + 400, 14000);
@@ -54,7 +54,7 @@ test('nas onze cenas: passos soam, com variação e posição; o primeiro clique
     }
     const nomes = (i) => por[i].map((r) => r.nome);
     const comPassos = Object.keys(por).filter((i) => nomes(i).some((n) => n.startsWith('passo')));
-    assert.ok(comPassos.length >= 8, `passos em ${comPassos.length} de 11 cenas`);
+    assert.ok(comPassos.length >= 8, `passos em ${comPassos.length} de 17 cenas`);
     const todos = Object.values(por).flat().filter((r) => r.nome.startsWith('passo'));
     assert.ok(new Set(todos.map((r) => r.taxa)).size > 5, 'passos sem variação de altura');
     assert.ok(new Set(todos.map((r) => r.pan)).size > 3, 'passos sem posição no estéreo');

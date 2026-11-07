@@ -1,10 +1,10 @@
-// Defeito achado na revisão de 06/11/2026: com as histórias mais longas, poste e flor passavam na frente do fim do texto.
+// Defeito achado na revisão de 06/17/2026: com as histórias mais longas, poste e flor passavam na frente do fim do texto.
 // Para cada cena, no início e no fim da ação, um raio por ponto do bloco de texto: nada da cena pode tapar a parede ali.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { abrir } from './_apoio.mjs';
 
-test('nada da cena fica na frente do texto da página, em 11 de 11 cenas', async () => {
+test('nada da cena fica na frente do texto da página, em 17 de 17 cenas', async () => {
   const { page, fechar, erros } = await abrir({ largura: 1440, altura: 870 });
   try {
     const r = await page.evaluate(async () => {

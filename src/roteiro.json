@@ -54,55 +54,7 @@
       }
     }
   },
-  "1": {
-    "acao": "palha",
-    "falas": [
-      {
-        "quem": [
-          "pipo",
-          "tico"
-        ],
-        "texto": "Para que tanto trabalho?",
-        "de": "para que tanto",
-        "ate": "tanto trabalho"
-      },
-      {
-        "quem": [
-          "bento"
-        ],
-        "texto": "Vocês vão ver!",
-        "de": "voces vao ver",
-        "ate": "voces vao ver"
-      }
-    ],
-    "marcos": {
-      "brincar": {
-        "em": "joao so queria"
-      },
-      "palha": {
-        "em": "juntou um monte",
-        "ate": "estava pronta"
-      },
-      "madeira": {
-        "em": "lulu pregou",
-        "ate": "as pressas"
-      },
-      "flauta": {
-        "em": "foi tocar flauta"
-      },
-      "tijolo": {
-        "em": "kael carregou",
-        "ate": "dia inteiro"
-      },
-      "riem": {
-        "em": "riram os irmaos"
-      },
-      "massa": {
-        "em": "passou mais massa"
-      }
-    }
-  },
-  "2": {
+  "5": {
     "acao": "sopro",
     "falas": [
       {
@@ -165,7 +117,7 @@
       }
     }
   },
-  "3": {
+  "7": {
     "acao": "sopro1",
     "falas": [
       {
@@ -234,7 +186,7 @@
       }
     }
   },
-  "4": {
+  "9": {
     "acao": "sopro0",
     "falas": [
       {
@@ -323,7 +275,7 @@
       }
     }
   },
-  "5": {
+  "10": {
     "acao": "sobe",
     "falas": [
       {
@@ -354,7 +306,7 @@
       }
     }
   },
-  "6": {
+  "11": {
     "acao": "brasas",
     "falas": [
       {
@@ -384,7 +336,7 @@
       }
     }
   },
-  "7": {
+  "12": {
     "acao": "tchibum",
     "falas": [
       {
@@ -420,7 +372,7 @@
       }
     }
   },
-  "8": {
+  "14": {
     "acao": "foge1",
     "falas": [
       {
@@ -458,7 +410,7 @@
       }
     }
   },
-  "9": {
+  "15": {
     "acao": "danca",
     "falas": [],
     "marcos": {
@@ -476,7 +428,7 @@
       }
     }
   },
-  "10": {
+  "16": {
     "acao": "quartos",
     "falas": [],
     "marcos": {

@@ -2,14 +2,17 @@
 // e "poderia ter uma cena para cada casa sendo construida". Cada um vira uma checagem sobre as posições reais da cena.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { abrir } from './_apoio.mjs';
 import { CENAS } from '../src/story.js';
 
 const ORDEM = ['partida', 'obra-palha', 'obra-madeira', 'obra-tijolo', 'espia', 'palha', 'corrida-lulu', 'madeira', 'corrida-kael', 'tijolo', 'telhado', 'chamine', 'rabo', 'tombo', 'fuga', 'festa', 'juntos'];
 const i = (id) => ORDEM.indexOf(id);
 const VISIVEL = 0.02;
-// Valem assim que o livro tem as 17 cenas. Enquanto a estrutura não existe, aparecem como puladas, nunca como aprovadas.
-const pendente = CENAS.length === 17 ? false : 'o livro ainda não tem as 17 cenas';
+// Cada checagem vale assim que a sua cena existe. Enquanto o montador não foi escrito, aparece como pulada, nunca como aprovada.
+// (`--test-name-pattern` depois do arquivo não filtra nada no Node 22: todo gate deste livro roda o arquivo inteiro.)
+const FONTE = readFileSync(new URL('../src/cenas.js', import.meta.url), 'utf8');
+const falta = (...ids) => { const f = ids.filter((id) => !new RegExp(`montadores(\\['${id}'\\]|\\.${id}) = `).test(FONTE)); return f.length ? `ainda sem a cena: ${f.join(', ')}` : false; };
 
 /** Percorre a linha da cena do começo ao fim e devolve a trajetória de um ator: [{t, x, y, z, s}]. */
 async function rota(page, cena, ator, passos = 80) {
@@ -21,13 +24,13 @@ async function rota(page, cena, ator, passos = 80) {
 }
 const vistos = (r) => r.filter((p) => p.s > VISIVEL);
 
-test('estrutura: 17 cenas na ordem pedida, e as 17 montadas no livro', { skip: process.env.GAUNTLET_ESTRUTURA ? false : pendente }, async () => {
+test('estrutura: 17 cenas na ordem pedida, e as 17 montadas no livro', { skip: CENAS.length === 17 ? false : 'o livro ainda não tem as 17 cenas' }, async () => {
   assert.deepEqual(CENAS.map((c) => c.id), ORDEM);
   const { page, fechar } = await abrir();
   try { assert.equal(await page.evaluate(() => window.__livro.cenas.length), 17); } finally { await fechar(); }
 });
 
-test('construção: cada casa nasce no mesmo lugar em que depois será soprada', { skip: pendente }, async () => {
+test('construção: cada casa nasce no mesmo lugar em que depois será soprada', { skip: falta('obra-palha', 'obra-madeira', 'obra-tijolo') }, async () => {
   const { page, fechar } = await abrir();
   try {
     for (const [obra, sopro] of [['obra-palha', 'palha'], ['obra-madeira', 'madeira'], ['obra-tijolo', 'tijolo']]) {
@@ -43,7 +46,7 @@ test('construção: cada casa nasce no mesmo lugar em que depois será soprada',
   } finally { await fechar(); }
 });
 
-test('espia: o Lobo começa escondido atrás da moita e sai pela direita', { skip: pendente }, async () => {
+test('espia: o Lobo começa escondido atrás da moita e sai pela direita', { skip: falta('espia') }, async () => {
   const { page, fechar } = await abrir();
   try {
     const r = await rota(page, i('espia'), 'lobo'); const v = vistos(r);
@@ -53,7 +56,7 @@ test('espia: o Lobo começa escondido atrás da moita e sai pela direita', { ski
   } finally { await fechar(); }
 });
 
-test('corridas: quem sai pela direita entra pela esquerda, porquinho na frente e Lobo atrás', { skip: pendente }, async () => {
+test('corridas: quem sai pela direita entra pela esquerda, porquinho na frente e Lobo atrás', { skip: falta('corrida-lulu', 'corrida-kael') }, async () => {
   const { page, fechar } = await abrir();
   try {
     for (const [cena, porcos, antes, depois] of [['corrida-lulu', ['pipo'], 'palha', 'madeira'], ['corrida-kael', ['pipo', 'tico'], 'madeira', 'tijolo']]) {
@@ -73,7 +76,7 @@ test('corridas: quem sai pela direita entra pela esquerda, porquinho na frente e
   } finally { await fechar(); }
 });
 
-test('voo: em Rabo em brasa ele sobe reto, sem encolher ao longe, e sai por cima', { skip: pendente }, async () => {
+test('voo: em Rabo em brasa ele sobe reto, sem encolher ao longe, e sai por cima', { skip: falta('tombo') }, async () => {
   const { page, fechar } = await abrir();
   try {
     const r = await rota(page, i('rabo'), 'lobo', 160); const voo = vistos(r).slice(-12);
@@ -83,7 +86,7 @@ test('voo: em Rabo em brasa ele sobe reto, sem encolher ao longe, e sai por cima
   } finally { await fechar(); }
 });
 
-test('tombo: sai da chaminé, sobe, despenca e cai do lado da casa, no lugar em que a página seguinte o mostra', { skip: pendente }, async () => {
+test('tombo: sai da chaminé, sobe, despenca e cai do lado da casa, no lugar em que a página seguinte o mostra', { skip: falta('tombo') }, async () => {
   const { page, fechar } = await abrir();
   try {
     const r = vistos(await rota(page, i('tombo'), 'lobo', 160));

@@ -43,7 +43,7 @@ test('nenhum gesto ficou fora de um grupo com palavra', async () => {
   const { page, fechar } = await abrir();
   try {
     const soltos = await page.evaluate(() => window.__livro.cenas.map((c) => [...c.linha.tracks, ...c.linha.calls].filter((x) => !x.g || x.g === 'base').length));
-    assert.deepEqual(soltos, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(soltos, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   } finally { await fechar(); }
 });
 
@@ -66,7 +66,7 @@ test('sem voz, os gestos só de narração não existem', async () => {
   const { page, fechar } = await abrir();
   try {
     const r = await page.evaluate(() => window.__livro.cenas.map((c) => { const l = c.linha; return [...l._trilhas(), ...l._chamadas()].filter((x) => x.soVoz).length; }));
-    assert.deepEqual(r, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(r, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   } finally { await fechar(); }
 });
 
@@ -115,22 +115,22 @@ for (const [largura, altura] of TELAS) {
 test('o balão só existe durante a fala, e a boca só abre com ela', async () => {
   const { page, fechar, erros } = await abrir();
   try {
-    await page.evaluate(() => window.__livro.abrirNaHora(2));
+    await page.evaluate(() => window.__livro.abrirNaHora(5));
     await page.waitForTimeout(60);
-    const fala = faixas[2].falas[1]; // "Não, não e não!", de João
-    const antes = faixas[2].falas[0].de - 0.11;
+    const fala = faixas[5].falas[1]; // "Não, não e não!", de João
+    const antes = faixas[5].falas[0].de - 0.11;
     assert.ok(antes < fala.de - 0.1);
-    assert.equal((await naFala(page, 2, antes)).length, 0, 'antes da fala');
-    const boca = () => page.evaluate(() => window.__livro.cenas[2].atores.pipo.boca.scale.y);
+    assert.equal((await naFala(page, 5, antes)).length, 0, 'antes da fala');
+    const boca = () => page.evaluate(() => window.__livro.cenas[5].atores.pipo.boca.scale.y);
     assert.ok(await boca() < 0.01, 'boca fechada antes');
-    const preparando = await naFala(page, 2, fala.de - 0.11);
+    const preparando = await naFala(page, 5, fala.de - 0.11);
     assert.equal(preparando.filter((b) => b.quem === 'pipo').length, 0, 'João ainda não fala durante a saída do balão do Lobo');
     assert.ok(await boca() < 0.01, 'boca fechada imediatamente antes da própria fala');
-    for (let k = 0; k < 8; k++) await naFala(page, 2, fala.de + 0.2);
-    assert.equal((await naFala(page, 2, fala.de + 0.2)).length, 1, 'durante a fala');
+    for (let k = 0; k < 8; k++) await naFala(page, 5, fala.de + 0.2);
+    assert.equal((await naFala(page, 5, fala.de + 0.2)).length, 1, 'durante a fala');
     assert.ok(await boca() > 0.4, 'boca aberta na fala');
-    await naFala(page, 2, fala.ate + 0.5);
-    assert.equal((await naFala(page, 2, fala.ate + 0.5)).length, 0, 'depois da fala');
+    await naFala(page, 5, fala.ate + 0.5);
+    assert.equal((await naFala(page, 5, fala.ate + 0.5)).length, 0, 'depois da fala');
     assert.ok(await boca() < 0.01, 'boca fechada depois');
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
@@ -139,7 +139,7 @@ test('o balão só existe durante a fala, e a boca só abre com ela', async () =
 test('sem narração, nenhum balão aparece', async () => {
   const { page, fechar } = await abrir();
   try {
-    await page.evaluate(() => window.__livro.abrirNaHora(2));
+    await page.evaluate(() => window.__livro.abrirNaHora(5));
     await page.click('#acao');
     await page.waitForTimeout(1200);
     assert.equal(await page.evaluate(() => document.querySelectorAll('.balao').length), 0);

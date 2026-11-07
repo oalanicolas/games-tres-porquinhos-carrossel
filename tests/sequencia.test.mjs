@@ -8,11 +8,11 @@ const visiveis = (page) => page.evaluate(() => {
   return { cenas: livro.cunhas.filter((c) => c.g.visible).map((c) => c.j), paredes: livro.paredes.filter((p) => p.pivo.visible && p.m.visible).map((p) => p.k) };
 });
 
-test('nada antes da primeira cena nem depois da última, em 11 de 11 cenas', async () => {
+test('nada antes da primeira cena nem depois da última, em 17 de 17 cenas', async () => {
   const { page, erros, fechar } = await abrir();
   try {
     let conferidas = 0;
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 17; i++) {
       await page.evaluate((i) => window.__livro.cenaEm(i, 0), i);
       const v = await visiveis(page);
       assert.ok(v.cenas.includes(i), `cena ${i} não está visível`);
@@ -20,11 +20,11 @@ test('nada antes da primeira cena nem depois da última, em 11 de 11 cenas', asy
       for (const k of v.paredes) assert.ok(k >= i - 2 && k <= i + 3, `na cena ${i} aparece a parede ${k}`);
       conferidas++;
     }
-    assert.equal(conferidas, 11);
+    assert.equal(conferidas, 17);
     await page.evaluate(() => window.__livro.cenaEm(0, 0));
     const inicio = await visiveis(page);
-    assert.ok(!inicio.cenas.includes(10) && !inicio.paredes.includes(10) && !inicio.paredes.includes(11), 'a última cena aparece ao lado da primeira cena');
-    await page.evaluate(() => window.__livro.cenaEm(10, 0));
+    assert.ok(!inicio.cenas.includes(16) && !inicio.paredes.includes(16) && !inicio.paredes.includes(17), 'a última cena aparece ao lado da primeira cena');
+    await page.evaluate(() => window.__livro.cenaEm(16, 0));
     const fim = await visiveis(page);
     assert.ok(!fim.cenas.includes(0) && !fim.paredes.includes(0) && !fim.paredes.includes(1), 'a primeira cena aparece ao lado da última');
     assert.deepEqual(erros, []);

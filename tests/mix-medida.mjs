@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { abrir } from './_apoio.mjs';
 
-const lista = (process.argv[2] ?? '2,4,7').split(',').map(Number);
+const lista = (process.argv[2] ?? '5,9,12').split(',').map(Number);
 mkdirSync('output/mix', { recursive: true });
 const { page, fechar } = await abrir({ narrado: true });
 

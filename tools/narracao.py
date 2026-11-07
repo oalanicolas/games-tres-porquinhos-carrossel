@@ -28,7 +28,7 @@ AJUSTES = {
     'elevenlabs': {'stability': 0.6, 'similarity_boost': 0.75, 'style': 0.15, 'speed': 0.92, 'use_speaker_boost': True},
 }
 ALVO_LUFS = -18.0
-TOTAL = 11
+TOTAL = 17
 ROTEIRO = MOD / 'src' / 'roteiro.json'
 WHISPER = Path.home() / '.cache' / 'whisper-cpp' / 'ggml-large-v3-turbo.bin'
 
@@ -182,7 +182,7 @@ def main():
     ap.add_argument('--voz', default=VOZ['id'])
     ap.add_argument('--nome-voz', default=None)
     ap.add_argument('--servico', choices=sorted(MODELOS), default='magnific')
-    ap.add_argument('--cena', type=int, help='grava só esta cena (1 a 11)')
+    ap.add_argument('--cena', type=int, help='grava só esta cena (1 a 17)')
     a = ap.parse_args()
     nome_voz = a.nome_voz or (VOZ['nome'] if a.voz == VOZ['id'] else a.voz)
     tx = textos()

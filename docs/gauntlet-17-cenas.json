@@ -153,8 +153,19 @@
       "depende": [
         "R1"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "src/story.js com 17 cenas na ordem pedida, montadores por id em src/cenas.js, céus, trilha, ambiente e sopro nas novas posições; narrações renomeadas; testes nos novos índices sem mudar asserção; tests/coerencia-17.test.mjs estrutura",
+        "gates verdes em 2026-11-07T02:58:04Z (2): estrutura, antigas"
+      ],
+      "inicio": "2026-11-07T02:36:46Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T02:36:46Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "9a6141c6950d828d21439d7227462da947c4e0c6"
+        }
+      },
+      "fim": "2026-11-07T02:58:04Z"
     },
     {
       "id": "R3",
@@ -641,6 +652,111 @@
       "head": "44cc4c5920a45d996c652ce02fb53eda12827d4c",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "R2",
+      "quando": "2026-11-07T02:58:04Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 11.999,
+          "log_sha256": "19101e101b8f7eade31fb970043902acfedf5a655352fc828081681c7e96a981",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R2-20261107T025140Z/01-estrutura/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R2-20261107T025140Z/01-estrutura/01.log",
+          "ok": true,
+          "nome": "estrutura",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=estrutura"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 372.115,
+          "log_sha256": "ac17f92630bd6637896aa76bcc7b943fdeecf80a655ad4664b100f6a63037324",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R2-20261107T025140Z/02-antigas/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R2-20261107T025140Z/02-antigas/01.log",
+          "ok": true,
+          "nome": "antigas",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/furos.test.mjs",
+            "tests/continuidade.test.mjs",
+            "tests/sopro.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "src/story.js com 17 cenas na ordem pedida, montadores por id em src/cenas.js, céus, trilha, ambiente e sopro nas novas posições; narrações renomeadas; testes nos novos índices sem mudar asserção; tests/coerencia-17.test.mjs estrutura"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "9a6141c6950d828d21439d7227462da947c4e0c6",
+          "ate": "9a6141c6950d828d21439d7227462da947c4e0c6",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 40,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "M docs/narracao-recibo.json",
+            "M index.html",
+            "D public/narracao/cena-1.mp3",
+            "M public/narracao/cena-10.mp3",
+            "D public/narracao/cena-2.mp3",
+            "D public/narracao/cena-3.mp3",
+            "D public/narracao/cena-4.mp3",
+            "M public/narracao/cena-5.mp3",
+            "D public/narracao/cena-6.mp3",
+            "M public/narracao/cena-7.mp3",
+            "D public/narracao/cena-8.mp3",
+            "M public/narracao/cena-9.mp3",
+            "M src/audio.js",
+            "M src/book.js",
+            "M src/cenas.js",
+            "M src/narracao.json",
+            "M src/roteiro.json",
+            "M src/sopro.js",
+            "M src/story.js",
+            "M tests/coerencia-17.test.mjs",
+            "M tests/continuidade.test.mjs",
+            "M tests/folha.mjs",
+            "M tests/furos.test.mjs",
+            "M tests/jornada.mjs",
+            "M tests/livro.test.mjs",
+            "M tests/mix-medida.mjs",
+            "M tests/musica.test.mjs",
+            "M tests/narracao.test.mjs",
+            "M tests/sequencia.test.mjs",
+            "M tests/sincronia.test.mjs",
+            "M tests/sonoplastia.test.mjs",
+            "M tests/sopro.test.mjs",
+            "M tests/texto-livre.test.mjs",
+            "M tools/narracao.py",
+            "?? public/narracao/cena-11.mp3",
+            "?? public/narracao/cena-12.mp3",
+            "?? public/narracao/cena-14.mp3",
+            "?? public/narracao/cena-15.mp3",
+            "?? public/narracao/cena-16.mp3"
+          ]
+        }
+      ],
+      "arvore_sha256": "37e6b4b312ca1b0fbae4ccea8e44aba04a6763976fa4be293e8d889948b37949",
+      "head": "9a6141c6950d828d21439d7227462da947c4e0c6",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -673,6 +789,14 @@
     {
       "quando": "2026-11-07T02:36:40Z",
       "evento": "R1 → concluida"
+    },
+    {
+      "quando": "2026-11-07T02:36:46Z",
+      "evento": "R2 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T02:58:04Z",
+      "evento": "R2 → concluida"
     }
   ]
 }

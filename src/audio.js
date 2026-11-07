@@ -16,14 +16,15 @@ const IMEDIATOS = ['abrir', 'flap1', 'flap2']; // tocam no primeiro clique: já 
 const ATRASO_DA_CAPA = 2.6; const ATRASO_VIRADA = 0.6;
 
 // -1 é a capa; depois, uma entrada por cena
-export const TRILHA = ['partida', 'obra', 'lobo-chega', 'lobo-insiste', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'festa', 'era-uma-vez'];
+export const TRILHA = ['partida', 'obra', 'obra', 'obra', 'lobo-chega', 'lobo-chega', 'lobo-insiste', 'lobo-insiste', 'lobo-teima', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'fuga', 'festa', 'era-uma-vez'];
 const AMBIENTE = [
-  { passaros: 0.8 }, { passaros: 0.7 }, { passaros: 0.5, brisa: 0.35 }, { passaros: 0.25, brisa: 0.6 },
-  { brisa: 0.75 }, { grilos: 0.6, fogo: 0.3, fervura: 0.15 }, { grilos: 0.5, fogo: 0.55, fervura: 0.45 }, { grilos: 0.4, fogo: 0.55, fervura: 0.5 },
+  { passaros: 0.8 }, { passaros: 0.7 }, { passaros: 0.7 }, { passaros: 0.6, brisa: 0.15 }, { passaros: 0.5, brisa: 0.3 },
+  { passaros: 0.5, brisa: 0.35 }, { passaros: 0.4, brisa: 0.5 }, { passaros: 0.25, brisa: 0.6 }, { passaros: 0.15, brisa: 0.7 }, { brisa: 0.75 },
+  { grilos: 0.6, fogo: 0.3, fervura: 0.15 }, { grilos: 0.5, fogo: 0.55, fervura: 0.45 }, { grilos: 0.4, fogo: 0.55, fervura: 0.5 }, { grilos: 0.6, brisa: 0.3 },
   { grilos: 0.6, brisa: 0.35 }, { grilos: 0.5, fogo: 0.45 }, { passaros: 0.6, brisa: 0.2 },
 ];
 // quanto de espaço cada cena dá aos efeitos: a noite é mais aberta
-const ESPACO = [0.1, 0.1, 0.1, 0.1, 0.12, 0.2, 0.2, 0.2, 0.22, 0.2, 0.1];
+const ESPACO = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.11, 0.12, 0.2, 0.2, 0.2, 0.22, 0.22, 0.2, 0.1];
 
 /** Resposta curta de espaço aberto: faz gravações de lugares diferentes soarem no mesmo livro. */
 function respostaDeEspaco(ctx, seg = 1.1) {

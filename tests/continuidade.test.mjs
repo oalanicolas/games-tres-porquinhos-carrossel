@@ -88,10 +88,10 @@ test('três falas simultâneas não se sobrepõem nem trocam de altura ao gestic
   try {
     const r = await page.evaluate(async () => {
       const L = window.__livro;
-      L.cenaEm(4, 0);
+      L.cenaEm(9, 0);
       const texto = 'Não, não e não!';
       const pedidos = ['pipo', 'tico', 'bento'].map((quem, k) => {
-        const cabeca = L.cenas[4].atores[quem].cabeca.clone(false);
+        const cabeca = L.cenas[9].atores[quem].cabeca.clone(false);
         const pos = L.camera.position.clone().set((k - 1) * 0.005, 0.5, 0).unproject(L.camera);
         cabeca.position.copy(pos); cabeca.position.y -= 0.56;
         return { chave: quem, quem, texto, ator: { cabeca, boca: {} } };
