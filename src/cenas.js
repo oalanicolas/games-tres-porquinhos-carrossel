@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, cloud, hill, wave, flame, heart, shade, sector, scallop, spiral, bake } from './paper.js';
 import { Timeline } from './tween.js';
 import { H } from './book.js';
-import { palco, sopro, revoada, ease, SOLO, meiaLargura } from './palco.js';
+import { palco, sopro, revoada, ease, SOLO, meiaLargura, ventoInterativo } from './palco.js';
 import { porco as porcoBase, porcoNaJanela, lobo as loboBase } from './personagens.js';
 import * as O from './objetos.js';
 
@@ -362,7 +362,7 @@ montadores[2] = (p, audio) => {
   tl.call(() => audio.tocar('uivo1', { vol: 0.35 }), S + 1.6);
   tl.grupo('atras'); loboVaiAtras(tl, w, vL, S + 1.95); // "foi atrás", na página seguinte: ele sai pela mesma borda que Pipo
   tl.grupo('base');
-  return { linha: tl, atores: { lobo: w, pipo }, provas: { porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
+  return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
 };
 
 // ---- 4. A casa de madeira ---------------------------------------------------------------------------
@@ -432,7 +432,7 @@ montadores[3] = (p, audio) => {
   tl.call(() => audio.tocar('uivo2', { vol: 0.35 }), S2 + 1.45);
   loboVaiAtras(tl, w, vL, S2 + 1.75);
   tl.grupo('base');
-  return { linha: tl, atores: { lobo: w, pipo, tico }, provas: { corredor: corre, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); tico.idle(t); corre.idle(t); so.raios.rotation.z = t * 0.08; } };
+  return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo, tico }, provas: { corredor: corre, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); tico.idle(t); corre.idle(t); so.raios.rotation.z = t * 0.08; } };
 };
 
 // ---- 5. A casa de tijolos ---------------------------------------------------------------------------
@@ -511,7 +511,7 @@ montadores[4] = (p, audio) => {
   sopas.forEach(({ g, colher }, i) => { tl.to(g, { s: k }, t + 0.25 + i * 0.08, 0.2, ease.back); for (let n = 0; n < 3; n++) tl.pulse(colher, { y: 0.025, rz: 0.3 }, t + 0.45 + n * 0.34 + i * 0.05, 0.34); });
   [j1, j2, j3].forEach((q, i) => { for (let n = 0; n < 3; n++) tl.pulse(q.corpo, { y: 0.05 }, t + 0.45 + n * 0.34 + i * 0.05, 0.34); });
   tl.grupo('base');
-  return { linha: tl, atores: { lobo: w, pipo: j1, tico: j2, 'bento-janela': j3, bento }, provas: { deFora: { pipo, tico, bento }, janelas: [j1, j2, j3] }, idle(tt) { w.idle(tt); w.rabo.rotation.z = 1.35 + Math.sin(tt * 2.2) * 0.06; j1.idle(tt); j2.idle(tt); j3.idle(tt); bento.idle(tt); pipo.idle(tt); tico.idle(tt); fum.idle(tt); so.raios.rotation.z = tt * 0.08; } };
+  return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo: j1, tico: j2, 'bento-janela': j3, bento }, provas: { deFora: { pipo, tico, bento }, janelas: [j1, j2, j3] }, idle(tt) { w.idle(tt); w.rabo.rotation.z = 1.35 + Math.sin(tt * 2.2) * 0.06; j1.idle(tt); j2.idle(tt); j3.idle(tt); bento.idle(tt); pipo.idle(tt); tico.idle(tt); fum.idle(tt); so.raios.rotation.z = tt * 0.08; } };
 };
 
 // ---- 6. A chaminé! ----------------------------------------------------------------------------------

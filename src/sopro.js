@@ -30,13 +30,14 @@ export class MedidorSopro {
 
 export class MicrofoneSopro {
   constructor() { this.geracao = 0; this.stream = null; this.ctx = null; }
-  async abrir(aoInterromper) {
+  async abrir(aoInterromper, contexto) {
     this.parar();
     const geracao = this.geracao;
     if (!navigator.mediaDevices?.getUserMedia) throw new Error('indisponivel');
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) throw new Error('indisponivel');
-    this.ctx = new AC();
+    this.proprio = !contexto;
+    this.ctx = contexto || new AC();
     const ctx = this.ctx;
     const resume = ctx.resume();
     resume.catch(() => {}); // Sair enquanto a permissão está aberta pode encerrar o contexto antes da resposta.
@@ -50,8 +51,9 @@ export class MicrofoneSopro {
       this.fonte = ctx.createMediaStreamSource(stream); this.fonte.connect(this.analyser);
       this.onda = new Float32Array(this.analyser.fftSize);
       this.espectro = new Float32Array(this.analyser.frequencyBinCount);
-      stream.getTracks().forEach((t) => t.addEventListener('ended', aoInterromper, { once: true }));
-      ctx.addEventListener('statechange', () => { if (this.ctx === ctx && ctx.state === 'suspended') aoInterromper(); });
+      stream.getTracks().forEach((t) => t.addEventListener('ended', () => { if (this.geracao === geracao) aoInterromper(); }, { once: true }));
+      this.aoEstado = () => { if (this.ctx === ctx && ctx.state === 'suspended') aoInterromper(); };
+      ctx.addEventListener('statechange', this.aoEstado);
       return true;
     } catch (e) { if (geracao === this.geracao) this.parar(); throw e; }
   }
@@ -66,6 +68,8 @@ export class MicrofoneSopro {
     this.stream?.getTracks().forEach((t) => t.stop()); this.stream = null;
     this.fonte?.disconnect(); this.fonte = null;
     const ctx = this.ctx; this.ctx = null;
-    if (ctx && ctx.state !== 'closed') ctx.close().catch(() => {});
+    if (ctx && this.aoEstado) ctx.removeEventListener('statechange', this.aoEstado);
+    this.aoEstado = null;
+    if (ctx && this.proprio && ctx.state !== 'closed') ctx.close().catch(() => {});
   }
 }

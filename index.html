@@ -43,6 +43,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="pontos" id="pontos" role="tablist" aria-label="Cenas"></div>
   <div class="legenda" aria-live="polite"><strong id="cena-titulo"></strong><span id="cena-sub"></span></div>
   <button class="icone" id="olhar" aria-label="Só olhar: esconder os controles" aria-pressed="false"><svg viewBox="0 0 20 20"><path d="M1.5 10S5 4 10 4s8.500 6 8.500 6-3.500 6-8.500 6-8.500-6-8.500-6Z"/><circle cx="10" cy="10" r="2.700"/></svg></button>
+  <button class="icone" id="interagir" aria-label="Ligar o modo sopro" aria-pressed="false"><svg aria-hidden="true"><use href="#icone-vento"/></svg></button>
   <button class="icone" id="narrar" aria-label="Desligar o modo narrado" aria-pressed="true" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4.500h9v8H7.500L4.500 15.500v-3H3Z"/><path id="voz-onda" d="M15 6.500a4 4 0 0 1 0 4.500M17 4.500a7 7 0 0 1 0 8.500"/></svg></button>
   <button class="icone" id="som" aria-label="Desligar o som" aria-pressed="true"><svg viewBox="0 0 20 20"><path class="cheio" d="M3 7.500v5h3l4.500 3.500v-12L6 7.500H3Z"/><path id="onda" d="M13.500 7a4 4 0 0 1 0 6M15.500 5a7 7 0 0 1 0 10"/></svg></button>
   <button class="acao" id="acao"></button>
@@ -53,20 +54,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <svg class="sopro-defs" aria-hidden="true"><defs>
   <symbol id="icone-vento" viewBox="0 0 32 32"><path d="M3 11h18c7 0 7-9 1-9-3 0-4 2-4 4M3 17h23c6 0 6 8 1 8-2 0-3-1-3-3M5 23h9c5 0 5 7 1 7"/></symbol>
   <symbol id="icone-mic" viewBox="0 0 32 32"><rect x="11" y="3" width="10" height="17" rx="5"/><path d="M6 15v2a10 10 0 0 0 20 0v-2M16 27v4M11 31h10"/></symbol>
-  <symbol id="icone-casa" viewBox="0 0 64 64"><path class="casa-parede" d="M11 29h42v28H11z"/><path class="casa-telhado" d="m5 30 27-23 27 23-6 6-21-18-21 18z"/><path class="casa-porta" d="M27 39h11v18H27z"/><path class="casa-janela" d="M17 35h8v9h-8zM41 35h8v9h-8z"/><path class="casa-trama" d="M12 48h13M39 48h13M12 53h13M39 53h13M16 31v25M47 31v25"/></symbol>
-  <symbol id="icone-mao" viewBox="0 0 32 32"><path d="M11 19V8a3 3 0 0 1 6 0v8-3a2.5 2.5 0 0 1 5 0v3-1a2.5 2.5 0 0 1 5 0v7c0 6-4 8-9 8-4 0-6-2-8-5l-5-6a3 3 0 0 1 4-4z"/><path d="M7 6 5 4M22 5l2-2M14 2V0"/></symbol>
+
 </defs></svg>
-<button class="pilula interagir" id="interagir" aria-label="Brincar de soprar" aria-pressed="false"><svg><use href="#icone-vento"/></svg></button>
-<section class="pilula sopro-painel" id="sopro-painel" aria-labelledby="sopro-titulo" hidden>
+<section class="sopro-no-livro" id="sopro-painel" aria-labelledby="sopro-titulo" hidden>
   <div class="sopro-acessivel"><strong id="sopro-titulo"></strong><span id="sopro-meta"></span><p id="sopro-status" role="status"></p><label>Força do sopro<meter id="sopro-nivel" min="0" max="100" value="0"></meter><span id="sopro-nivel-texto"></span></label><label>Vento acumulado<progress id="sopro-progresso" max="100" value="0"></progress></label><span>O som fica neste aparelho. Nada é gravado ou enviado.</span></div>
-  <div class="sopro-casas" aria-hidden="true"><svg data-casa="2"><use href="#icone-casa"/></svg><svg data-casa="3"><use href="#icone-casa"/></svg><svg data-casa="4"><use href="#icone-casa"/></svg></div>
-  <div class="sopro-jogo">
-    <button id="sopro-microfone" aria-label="Ativar microfone"><svg class="sopro-anel" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="35"/><circle id="sopro-anel" cx="40" cy="40" r="35" pathLength="100"/></svg><svg class="sopro-mic" aria-hidden="true"><use href="#icone-mic"/></svg><svg class="sopro-check" viewBox="0 0 32 32" aria-hidden="true"><path d="m6 16 7 7L27 8"/></svg></button>
-    <svg class="sopro-vento" aria-hidden="true"><use href="#icone-vento"/></svg>
-    <div class="sopro-alvo" aria-hidden="true"><svg class="sopro-casa-grande"><use href="#icone-casa"/></svg><svg class="sopro-escudo" viewBox="0 0 32 36"><path d="m16 2 13 5v11c0 8-13 16-13 16S3 26 3 18V7z"/><path d="m9 17 5 5 10-11"/></svg><span class="sopro-estrelas">✦</span></div>
-  </div>
-  <div class="sopro-carga" aria-hidden="true"><i></i><svg><use href="#icone-vento"/></svg></div>
-  <div class="sopro-acoes"><button id="sopro-botao" aria-label="Segure para soprar sem microfone"><svg aria-hidden="true"><use href="#icone-mao"/></svg></button><button id="sopro-pular" aria-label="Continuar sem soprar"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m9 7 9 9-9 9M22 7v18"/></svg></button></div>
+  <button id="sopro-microfone" aria-label="Ativar microfone"><svg class="sopro-anel" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/><circle id="sopro-anel" cx="24" cy="24" r="21" pathLength="100"/></svg><svg class="sopro-mic" aria-hidden="true"><use href="#icone-mic"/></svg><svg class="sopro-check" viewBox="0 0 32 32" aria-hidden="true"><path d="m6 16 7 7L27 8"/></svg></button>
+
 </section>
 
 <div class="baloes" id="baloes" aria-live="polite"></div>

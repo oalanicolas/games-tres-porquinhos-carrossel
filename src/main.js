@@ -126,10 +126,13 @@ for (let i = -1; i < N; i++) {
   b.addEventListener('click', () => irPara(i)); $('pontos').append(b); pontos.push(b);
 }
 function atualizarUI() {
-  interacao.entrar(estado.indice);
+  const mudouDeCena = interacao.entrar(estado.indice);
   audio.cena(estado.indice);
   if (estado.indice < 0) soltarLeitura(); else if (audio.narrando && estado.modo !== 'capa') prepararLeitura(estado.indice);
   const i = estado.indice; const capa = i < 0;
+  const casaInterativa = interacao.ativa && !!CASAS_SOPRO[i];
+  document.body.classList.toggle('sopro-na-pagina', casaInterativa);
+  if (mudouDeCena && casaInterativa && !audio.narrando) cenas[i].linha.play();
   pontos.forEach((b, k) => b.setAttribute('aria-selected', k === i + 1 ? 'true' : 'false'));
   document.body.classList.toggle('aberto', !capa);
   document.body.classList.toggle('fechando', estado.modo === 'fechando'); // o título da capa só volta com o livro já fechado
@@ -181,8 +184,9 @@ function agir() {
 $('acao').addEventListener('click', agir);
 $('interagir').addEventListener('click', () => {
   audio.destravar();
-  const ativa = interacao.alternar();
-  if (ativa && CASAS_SOPRO[estado.indice] && estado.modo === 'aberto') repetirInteracao();
+  const ligada = interacao.alternar();
+  if (ligada && CASAS_SOPRO[estado.indice] && ['abrindo', 'aberto'].includes(estado.modo)) repetirInteracao();
+  atualizarUI();
 });
 function repetirInteracao() {
   const i = estado.indice;
@@ -351,7 +355,7 @@ function passo(dt) {
     c.idle?.(relogio);
   });
   atuacao.quadro(estado.modo === 'aberto' ? estado.indice : -1, relogio);
-  interacao.animar();
+  interacao.animar(camera);
 }
 function laco(agora) {
   requestAnimationFrame(laco);

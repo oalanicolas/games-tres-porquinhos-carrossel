@@ -50,7 +50,8 @@ Decididos na construção, ainda sem aprovação de Alan:
 
 ## Interação por sopro
 
-- Pedido de Alan (06/11/2026): modo opcional que capta microfone e usa níveis de sopro nas casas. Palha cede antes da madeira; tijolos nunca caem. Reusar as animações e a cronologia existentes.
-- Decisões sem Alan: calibração local de 1,2 s, energia acumulada preservada entre sopros, botão de segurar como alternativa, saída do jogo silenciosa durante captura, nenhuma gravação/envio. A captura exige gesto explícito e termina ao sair, ocultar aba ou completar tentativa.
-- `tests/sopro.test.mjs`: silêncio/tom/estalo, energia das três casas, pausa/retomada, recusa, autorização tardia e captura PCM. Teste de microfone físico com criança continua pendente; não declarar distinção perfeita entre sopro e fala.
-- Correção visual de Alan (06/11/2026): “não tem que ter nada escrito”, “UI BEM GAMIFICADA E bonita”. A interface do sopro usa só ícones, casas e medidores; textos apenas em nomes acessíveis e status fora da tela. Preservar o texto do conto no livro.
+- Alan pediu níveis de sopro nas casas: palha cede antes da madeira; tijolos nunca caem. Reusar animações e cronologia existentes.
+- Recusado: painel pop-up, mesmo sem textos. A interação deve ser clean e integrada ao livro: vento real na cena e autorização discreta presa ao Lobo, sem miniaturas ou barra.
+- Última orientação de Alan (06/11/2026): o botão de ligar/desligar o modo sopro é importante e permanece discreto na barra do livro. Isso substitui a orientação anterior de removê-lo. Com o modo ligado, somente o microfone faz a ação; não restaurar botão de segurar ou simular sopro.
+- Captura local, calibração de 1,2 s, energia preservada entre sopros, sem gravação ou envio. Compartilhar o AudioContext existente do livro; parar tracks ao concluir/sair/ocultar sem encerrar o áudio da história.
+- `tests/sopro.test.mjs`: silêncio/tom/estalo, três casas por PCM, ausência de controle manual, contexto compartilhado, retomada, permissão tardia, projeção sem HUD e segunda leitura. Microfone físico ainda precisa de teste; não declarar distinção perfeita entre sopro e fala.

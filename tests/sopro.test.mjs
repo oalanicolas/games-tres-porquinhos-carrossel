@@ -29,151 +29,160 @@ test('sopro: silêncio, tom de voz e estalo não acumulam; sopros curtos somam s
   assert.ok(telefone.energia > 0, 'corte das frequências altas não elimina todo o sopro');
 });
 
-test('sopro: três casas aguardam a criança, medem vento, liberam a história e permitem repetir', async () => {
-  const { page, erros, fechar } = await abrir({ largura: 390, altura: 844 });
+async function microfoneSimulado(page) {
+  await page.click('#acao');
+  await page.evaluate(async () => {
+    const ctx = new AudioContext(); const gain = ctx.createGain(); gain.gain.value = 0;
+    const b = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate); const d = b.getChannelData(0);
+    let seed = 13; for (let i = 0; i < d.length; i++) { seed = (seed * 16807) % 2147483647; d[i] = seed / 1073741824 - 1; }
+    const noise = ctx.createBufferSource(); noise.buffer = b; noise.loop = true; noise.connect(gain); noise.start();
+    const ctxDoLivro = window.__livro.audio.ctx;
+    window.__micTeste = { ctx, gain, streams: [], chamadas: 0, ctxDoLivro };
+    navigator.mediaDevices.getUserMedia = async () => {
+      const destino = ctx.createMediaStreamDestination(); gain.connect(destino);
+      window.__micTeste.chamadas++; window.__micTeste.streams.push(destino.stream);
+      return destino.stream;
+    };
+    await ctx.resume();
+  });
+}
+
+async function entrar(page, i) {
+  await page.evaluate((i) => { const L = window.__livro; L.abrirNaHora(i); L.interacao.limitar(i, 100); }, i);
+  await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo');
+}
+
+async function assoprar(page) {
+  await page.evaluate(() => { window.__micTeste.gain.gain.value = 0.5; });
   try {
-    await page.click('#interagir');
+    await page.waitForFunction(() => window.__livro.interacao.fase === 'concluido', null, { timeout: 6000 });
+  } catch (e) {
+    console.log('diagnostico-sopro', await page.evaluate(() => {
+      const L = window.__livro, s = L.interacao;
+      return { fase: s.fase, indice: L.estado.indice, energia: s.medidor.energia, ruido: s.medidor.ruido, nivel: s.medidor.nivel, audio: L.audio.ctx.state, fonte: window.__micTeste.ctx.state, medicao: s.microfone.ler(s.medidor, 0), leitura: L.leitura, streams: window.__micTeste.streams.map(s => s.getTracks()[0].readyState) };
+    }));
+    throw e;
+  }
+  await page.evaluate(() => { window.__micTeste.gain.gain.value = 0; });
+}
+
+test('sopro: três casas funcionam somente pelo microfone, com modo alternável e sem alternativa manual', async () => {
+  const { page, erros, fechar } = await abrir({ largura: 390, altura: 844, interativo: true });
+  try {
+    assert.equal(await page.locator('#sopro-botao, #sopro-pular').count(), 0);
+    await microfoneSimulado(page);
     for (const i of [2, 3, 4]) {
-      await page.evaluate((i) => { const L = window.__livro; L.abrirNaHora(i); L.agir(); }, i);
-      await page.waitForFunction(() => window.__livro.interacao.pendente, null, { timeout: 15000 });
-      const antes = await page.evaluate(() => ({ t: window.__livro.cenas[window.__livro.estado.indice].linha.t, indice: window.__livro.estado.indice }));
-      await page.waitForTimeout(350);
-      assert.deepEqual(await page.evaluate(() => ({ t: window.__livro.cenas[window.__livro.estado.indice].linha.t, indice: window.__livro.estado.indice })), antes);
-      assert.equal(await page.evaluate(() => window.__livro.audio.master.gain.value), 0);
-      await page.locator('#sopro-botao').focus(); await page.keyboard.down('Space');
-      await page.waitForFunction(() => Number(document.getElementById('sopro-nivel').value) > 40);
-      await page.waitForFunction(() => !window.__livro.interacao.pendente, null, { timeout: 10000 }); await page.keyboard.up('Space');
-      assert.equal(await page.evaluate(() => window.__livro.audio.interacao), false);
+      await page.evaluate((i) => { window.__livro.irPara(i); }, i);
+      await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo', null, { timeout: 15000 });
+      assert.equal(await page.locator('#acao').isVisible(), false, 'não exige botão de ação mesmo sem narração');
+      assert.equal(await page.locator('#sopro-painel').isVisible(), false, 'nenhum painel durante o sopro');
+      await page.waitForTimeout(300);
+      assert.equal(await page.evaluate(() => window.__livro.interacao.medidor.energia), 0, 'silêncio não resolve a casa');
+      await page.evaluate(() => { window.__micTeste.gain.gain.value = 0.5; });
+      await page.waitForFunction(() => window.__livro.cenas[window.__livro.estado.indice].vento.raiz.visible);
+      await page.waitForFunction(() => window.__livro.interacao.fase === 'concluido', null, { timeout: 6000 });
+      await page.evaluate(() => { window.__micTeste.gain.gain.value = 0; });
       assert.ok(await page.evaluate((i) => window.__livro.interacao.concluidas.has(i), i));
-      if (i === 4) assert.match(await page.locator('#sopro-status').textContent(), /resistem/);
+      assert.equal(await page.evaluate(() => window.__micTeste.streams.at(-1).getTracks()[0].readyState), 'ended');
+      assert.equal(await page.evaluate(() => window.__micTeste.ctxDoLivro.state), 'running', 'concluir não encerra o áudio do livro');
     }
-    await page.evaluate(() => window.__livro.agir());
-    assert.equal(await page.evaluate(() => window.__livro.interacao.concluidas.has(4)), false);
+    assert.match(await page.locator('#sopro-status').textContent(), /resistem/);
+    assert.equal(await page.evaluate(() => window.__micTeste.chamadas), 3, 'captura retoma automaticamente a cada casa');
     await page.evaluate(() => { const L = window.__livro; L.abrirNaHora(0); L.irPara(-1); });
-    await page.waitForFunction(() => window.__livro.estado.modo === 'capa');
-    await page.click('#acao');
-    assert.equal(await page.evaluate(() => window.__livro.interacao.concluidas.size), 0, 'nova leitura aceita novos sopros');
+    await page.waitForFunction(() => window.__livro.estado.modo === 'capa'); await page.click('#acao');
+    assert.equal(await page.evaluate(() => window.__livro.interacao.concluidas.size), 0);
+    await page.evaluate(() => window.__micTeste.ctx.close());
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
 
-test('sopro: recusa ou permissão pendente não prendem a navegação e microfone tardio é fechado', async () => {
-  const { page, fechar } = await abrir();
+test('sopro: permissão recusada ou tardia não vaza captura após sair da página', async () => {
+  const { page, fechar } = await abrir({ interativo: true });
   try {
-    await page.click('#interagir');
-    await page.evaluate(() => { const L = window.__livro; L.abrirNaHora(2); L.interacao.limitar(2, 100); navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('negado', 'NotAllowedError'); }; });
-    await page.click('#sopro-microfone');
-    await page.waitForFunction(() => document.getElementById('sopro-status').textContent.includes('não autorizado'));
-    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = () => new Promise((resolve, reject) => { window.__negarAntigo = reject; }); });
-    await page.click('#sopro-microfone');
-    await page.locator('#sopro-botao').focus(); await page.keyboard.press('Space');
+    await page.click('#acao');
+    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('negado', 'NotAllowedError'); }; const L = window.__livro; L.abrirNaHora(2); L.interacao.limitar(2, 100); });
+    await page.waitForFunction(() => window.__livro.interacao.fase === 'pronto');
+    assert.equal(await page.locator('#sopro-microfone').isVisible(), true);
     await page.evaluate(() => { navigator.mediaDevices.getUserMedia = () => new Promise((resolve) => { window.__resolverMic = resolve; }); });
     await page.click('#sopro-microfone');
-    await page.evaluate(() => window.__negarAntigo(new DOMException('antigo', 'NotAllowedError')));
-    assert.equal(await page.evaluate(() => window.__livro.interacao.fase), 'permissao');
-    await page.click('#sopro-pular');
-    await page.evaluate(() => { window.__micParado = false; window.__resolverMic({ getTracks: () => [{ stop() { window.__micParado = true; } }] }); });
+    await page.evaluate(() => { window.__livro.irPara(3); window.__micParado = false; window.__resolverMic({ getTracks: () => [{ stop() { window.__micParado = true; } }] }); });
     await page.waitForFunction(() => window.__micParado);
     assert.equal(await page.evaluate(() => window.__livro.interacao.pendente), false);
-    await page.evaluate(() => window.__livro.irPara(3));
-    assert.equal(await page.evaluate(() => window.__livro.audio.interacao), false);
   } finally { await fechar(); }
 });
 
-test('sopro: captura PCM real, calibra silêncio, recusa tom e aceita vento; fecha trilha ao sair', async () => {
-  const { page, erros, fechar } = await abrir({ narrado: true });
+test('sopro: botão discreto alterna o modo e encerra a captura sem parar o áudio do livro', async () => {
+  const { page, erros, fechar } = await abrir({ interativo: true });
   try {
+    await microfoneSimulado(page); await entrar(page, 4);
+    assert.equal(await page.locator('#barra #interagir').count(), 1);
     await page.click('#interagir');
-    await page.evaluate(() => {
-      const L = window.__livro; L.abrirNaHora(2);
-      L.interacao.limitar(2, 100);
-      navigator.mediaDevices.getUserMedia = async () => {
-        const ctx = new AudioContext(); const gain = ctx.createGain(); gain.gain.value = 0;
-        const destino = ctx.createMediaStreamDestination(); gain.connect(destino);
-        const b = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate); const d = b.getChannelData(0);
-        let seed = 13; for (let i = 0; i < d.length; i++) { seed = (seed * 16807) % 2147483647; d[i] = seed / 1073741824 - 1; }
-        const noise = ctx.createBufferSource(); noise.buffer = b; noise.loop = true;
-        const ruido = ctx.createGain(); ruido.gain.value = 0; noise.connect(ruido); ruido.connect(gain); noise.start();
-        const osc = ctx.createOscillator(); const voz = ctx.createGain(); voz.gain.value = 0; osc.connect(voz); voz.connect(gain); osc.start();
-        await ctx.resume(); window.__micTeste = { ctx, gain, ruido, voz, stream: destino.stream };
-        return destino.stream;
-      };
-    });
-    await page.click('#sopro-microfone');
-    await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo');
-    await page.evaluate(() => { window.__micTeste.gain.gain.value = 0.5; window.__micTeste.voz.gain.value = 1; });
-    await page.waitForTimeout(800);
-    assert.equal(await page.evaluate(() => window.__livro.interacao.medidor.energia), 0);
-    await page.evaluate(() => { window.__micTeste.voz.gain.value = 0; window.__micTeste.ruido.gain.value = 1; });
-    await page.waitForFunction(() => window.__livro.interacao.fase === 'concluido', null, { timeout: 6000 });
-    assert.equal(await page.evaluate(() => window.__micTeste.stream.getTracks()[0].readyState), 'ended');
+    assert.equal(await page.locator('#interagir').getAttribute('aria-pressed'), 'false');
+    assert.equal(await page.evaluate(() => window.__livro.interacao.ativa), false);
+    assert.equal(await page.evaluate(() => window.__micTeste.streams.at(-1).getTracks()[0].readyState), 'ended');
+    assert.equal(await page.evaluate(() => window.__livro.audio.ctx.state), 'running');
+    await page.evaluate(() => { const L = window.__livro; L.estado.modo = 'abrindo'; L.estado.tAbrir = 0.8; });
+    await page.click('#interagir');
+    assert.equal(await page.locator('#interagir').getAttribute('aria-pressed'), 'true');
+    await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo', null, { timeout: 15000 });
     await page.evaluate(() => window.__micTeste.ctx.close());
-    assert.equal(await page.evaluate(() => window.__livro.audio.interacao), false);
-    await page.evaluate(() => { const L = window.__livro; L.interacao.repetir(2); L.interacao.limitar(2, 100); });
-    await page.click('#sopro-microfone');
-    await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo');
+    assert.deepEqual(erros, []);
+  } finally { await fechar(); }
+});
+
+test('sopro: vento para no silêncio e captura termina ao ocultar a página, retomando sozinha', async () => {
+  const { page, erros, fechar } = await abrir({ interativo: true });
+  try {
+    await microfoneSimulado(page); await entrar(page, 4);
+    await page.evaluate(() => { window.__micTeste.gain.gain.value = 0.12; });
+    await page.waitForFunction(() => window.__livro.interacao.medidor.energia > 0.05);
+    await page.evaluate(() => { window.__micTeste.gain.gain.value = 0; });
+    await page.waitForFunction(() => !window.__livro.cenas[4].vento.raiz.visible);
+    const energia = await page.evaluate(() => window.__livro.interacao.medidor.energia);
+    await page.waitForTimeout(300);
+    assert.equal(await page.evaluate(() => window.__livro.interacao.medidor.energia), energia);
     await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
-    assert.equal(await page.evaluate(() => window.__micTeste.stream.getTracks()[0].readyState), 'ended');
-    assert.equal(await page.evaluate(() => window.__livro.interacao.fase), 'pronto');
-    await page.evaluate(async () => { Object.defineProperty(document, 'hidden', { configurable: true, value: false }); document.dispatchEvent(new Event('visibilitychange')); await window.__micTeste.ctx.close(); });
-    await page.click('#sopro-pular');
+    assert.equal(await page.evaluate(() => window.__micTeste.streams.at(-1).getTracks()[0].readyState), 'ended');
+    await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: false }); document.dispatchEvent(new Event('visibilitychange')); });
+    await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo');
+    await assoprar(page); await page.evaluate(() => window.__micTeste.ctx.close());
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
 
-test('sopro: narração pausa antes da queda nas três casas e retoma do mesmo ponto', async () => {
-  const { page, erros, fechar } = await abrir({ narrado: true });
+test('sopro: narração pausa e retoma automaticamente depois do sopro', async () => {
+  const { page, erros, fechar } = await abrir({ narrado: true, interativo: true });
   try {
-    await page.click('#interagir');
-    for (const i of [2, 3, 4]) {
-      await page.evaluate((i) => window.__livro.abrirNaHora(i), i);
-      await page.waitForFunction((i) => window.__livro.audio.voz?.i === i, i);
-      await page.evaluate((i) => {
-        const L = window.__livro; const grupo = { 2: 'sopro', 3: 'sopro1', 4: 'sopro0' }[i];
-        L.audio.voz.el.currentTime = L.audio.faixasVoz[i].marcos[grupo].em + 0.05;
-      }, i);
-      await page.waitForFunction(() => window.__livro.interacao.pendente);
-      const t = await page.evaluate(() => window.__livro.audio.voz.el.currentTime);
-      assert.equal(await page.evaluate(() => window.__livro.audio.voz.el.paused), true);
-      await page.waitForTimeout(250);
-      assert.ok(Math.abs(await page.evaluate(() => window.__livro.audio.voz.el.currentTime) - t) < 0.02);
-      await page.click('#sopro-pular');
-      await page.waitForFunction((t) => window.__livro.audio.voz?.el.currentTime > t + 0.1, t);
-      assert.equal(await page.evaluate(() => window.__livro.estado.indice), i);
-    }
+    await microfoneSimulado(page);
+    await page.evaluate(() => window.__livro.abrirNaHora(2));
+    await page.waitForFunction(() => window.__livro.audio.voz?.i === 2);
+    await page.evaluate(() => { const L = window.__livro; L.audio.voz.el.currentTime = L.audio.faixasVoz[2].marcos.sopro.em + 0.05; });
+    await page.waitForFunction(() => window.__livro.interacao.fase === 'ouvindo');
+    assert.equal(await page.evaluate(() => window.__livro.audio.voz.el.paused), true);
+    const t = await page.evaluate(() => window.__livro.audio.voz.el.currentTime);
+    await assoprar(page);
+    await page.waitForFunction((t) => window.__livro.audio.voz?.el.currentTime > t + 0.1, t);
+    await page.evaluate(() => window.__micTeste.ctx.close());
     assert.deepEqual(erros, []);
   } finally { await fechar(); }
 });
 
-test('sopro: painel cabe em três telas sem esconder o Lobo nem a navegação', async () => {
-  const { page, fechar } = await abrir();
+test('sopro: pedido de permissão acompanha o Lobo no livro e não forma HUD', async () => {
+  const { page, fechar } = await abrir({ interativo: true });
   try {
+    await page.click('#acao');
+    await page.evaluate(() => { navigator.mediaDevices.getUserMedia = () => new Promise(() => {}); });
     for (const [width, height] of [[390, 844], [844, 390], [360, 640]]) {
       await page.setViewportSize({ width, height });
-      await page.evaluate(() => {
-        const L = window.__livro; L.abrirNaHora(2);
-        if (!L.interacao.ativa) L.interacao.alternar();
-        L.interacao.repetir(2); L.cenas[2].linha.seek(L.interacao.limitar(2, 100));
-      });
+      await page.evaluate(() => { const L = window.__livro; L.abrirNaHora(2); L.interacao.repetir(2); L.cenas[2].linha.seek(L.interacao.limitar(2, 100)); });
       await page.waitForTimeout(600);
-      const texto = await page.evaluate(() => {
-        const painel = document.getElementById('sopro-painel').cloneNode(true);
-        painel.querySelector('.sopro-acessivel').remove();
-        painel.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove());
-        const acessivel = getComputedStyle(document.querySelector('.sopro-acessivel'));
-        return { visual: painel.textContent.trim(), botao: document.getElementById('interagir').textContent.trim(), oculto: acessivel.clipPath === 'inset(50%)' && acessivel.width === '1px' };
-      });
-      assert.deepEqual(texto, { visual: '', botao: '', oculto: true });
       const r = await page.evaluate(() => {
-        const L = window.__livro; const head = L.cenas[2].atores.lobo.cabeca;
-        head.updateWorldMatrix(true, false);
-        const p = head.position.clone().setFromMatrixPosition(head.matrixWorld).project(L.camera);
-        const painel = document.getElementById('sopro-painel').getBoundingClientRect();
-        const nav = document.getElementById('barra').getBoundingClientRect();
-        const x = (p.x + 1) * innerWidth / 2, y = (1 - p.y) * innerHeight / 2;
-        return { cabe: painel.left >= 0 && painel.right <= innerWidth && painel.top >= 0 && painel.bottom <= nav.top, loboVisivel: x < painel.left || x > painel.right || y < painel.top || y > painel.bottom };
+        const L = window.__livro; const pane = document.getElementById('sopro-painel'); const b = pane.getBoundingClientRect(); const css = getComputedStyle(pane);
+        const p = L.interacao.ponto;
+        const clone = pane.cloneNode(true); clone.querySelector('.sopro-acessivel').remove(); clone.querySelectorAll('[aria-hidden=true]').forEach(n => n.remove());
+        return { vazio: !clone.textContent.trim(), compacto: b.width <= 48 && b.height <= 48, transparente: css.backgroundColor === 'rgba(0, 0, 0, 0)' && css.boxShadow === 'none', noLivro: Math.abs(b.x + b.width / 2 - (p.x + 1) * innerWidth / 2) < 1, semManual: !document.querySelector('#sopro-botao, #sopro-pular') };
       });
-      assert.deepEqual(r, { cabe: true, loboVisivel: true }, `${width}×${height}`);
+      assert.deepEqual(r, { vazio: true, compacto: true, transparente: true, noLivro: true, semManual: true });
     }
   } finally { await fechar(); }
 });

@@ -50,6 +50,32 @@ export function sopro(conteudo, tl, t0, dur, { x, y, z, alvoX, alvoY, alvoZ, cor
     tl.to(g, { s: 0.001 }, ini + d - 0.1, 0.1, ease.linear);
   }
 }
+export function ventoInterativo(conteudo, boca, casa) {
+  const raiz = rig(conteudo, 'vento-interativo'); raiz.visible = false;
+  const linhas = Array.from({ length: 7 }, (_, i) => {
+    const g = rig(raiz, 'fio-de-vento', { y: 0.4, z: 2.1, s: 0.001 });
+    const forma = i % 3 === 0 ? spiral(0.075, 1.2, 0.018) : stroke([[-0.13, 0], [0, 0.018], [0.13, 0]], 0.02, { taper: 0.9 });
+    piece(g, forma, '#fff8ee', { t: 0.004, edge: '#ffffff', jitter: 0, noShadow: true });
+    return g;
+  });
+  const inicio = boca.position.clone(), fim = casa.position.clone();
+  return {
+    raiz,
+    quadro(nivel, t) {
+      raiz.visible = nivel > 0.035;
+      if (!raiz.visible) return;
+      boca.localToWorld(inicio.set(0.06, 0, 0.04)); conteudo.worldToLocal(inicio);
+      casa.localToWorld(fim.set(0.75, 0.8, 0.65)); conteudo.worldToLocal(fim);
+      linhas.forEach((g, i) => {
+        const f = (t * (0.8 + nivel * 1.5) + i / linhas.length) % 1;
+        g.position.lerpVectors(inicio, fim, f);
+        g.position.y += Math.sin(f * Math.PI) * ((i % 3) - 1) * 0.07;
+        g.rotation.z = Math.atan2(fim.y - inicio.y, fim.x - inicio.x);
+        g.scale.setScalar(Math.sin(f * Math.PI) * (0.25 + nivel * 0.7));
+      });
+    },
+  };
+}
 /** Revoada: pedaços que saem de um ponto e caem longe. */
 export function revoada(conteudo, tl, t0, n, formas, { x, y, z, dx = 1, alto = 1, espalha = 0.5, seed = 5, queda = 0.05, dur = 1.3 }) {
   const r = rng(seed);

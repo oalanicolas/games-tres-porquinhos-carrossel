@@ -29,11 +29,13 @@ npm run build
 
 ## Brincar de soprar
 
-O botão com **ícone de vento** ativa uma pausa interativa na palha, madeira e tijolos. O Lobo enche as bochechas junto com a criança. O medidor mostra a força captada e o vento acumulado: palha pede intensidade mínima de 16% e 0,55 unidade de energia, madeira 30% e 1,05, tijolos 40% e 1,6. Esses percentuais são uma escala do jogo calibrada pelo ambiente, não uma medida física. Ao completar a tentativa, a animação continua; os tijolos permanecem inteiros, como no conto. É possível respirar entre sopros, repetir ou continuar sem soprar.
+Com o modo sopro ligado pelo ícone de vento na barra, a história espera a criança assoprar nas três casas. O Lobo enche as bochechas e o vento de papel sai da sua boca rumo à casa. Não há HUD pop-up, miniaturas, barra de energia nem botão para substituir o sopro. O ícone de vento na barra do livro liga ou desliga esse modo. O único controle junto do Lobo serve para autorizar ou tentar novamente o microfone quando o navegador exigir; depois da autorização, ele desaparece e as próximas casas escutam automaticamente. Mesmo com a narração desligada, entrar numa casa inicia a preparação sem botão de ação.
 
-A interface da brincadeira é inteiramente visual: casas, vento, aro de intensidade e barra de energia, sem palavras ou percentuais visíveis. Os nomes e avisos existem apenas para leitores de tela. O microfone só é solicitado ao tocar no seu ícone. A captura é local, sem gravação nem envio, e para ao concluir, mudar de página, sair do modo ou ocultar a aba. Antes de escutar, o jogo silencia sua saída e mede 1,2 s de ruído ambiente. Mede RMS e distribuição espectral para reduzir acionamento por tons e estalos; não reconhece fala nem garante distinguir todo ruído de um sopro. A sensibilidade em telefones físicos ainda precisa de validação. O botão de segurar oferece a mesma brincadeira sem microfone, inclusive por teclado.
+Palha pede intensidade mínima de 16% e 0,55 unidade de energia, madeira 30% e 1,05, tijolos 40% e 1,6. São valores internos calibrados pelo ambiente, não medidas físicas. A criança pode respirar entre tentativas sem perder o progresso. Os tijolos resistem, como no conto; ao cumprir a tentativa, a narração continua. Uma nova leitura desde a capa aceita novos sopros.
 
-Testes específicos: `node --test tests/sopro.test.mjs`. Incluem PCM gerado no navegador passando pelo mesmo AnalyserNode da captura, três casas, recusa, autorização tardia, pausa e repetição.
+A captura é local, sem gravação nem envio, e para ao concluir, mudar de página ou ocultar a aba. Antes de escutar, o jogo silencia sua saída e mede 1,2 s de ruído. RMS e distribuição espectral reduzem disparos por tons e estalos; não reconhecem toda fala nem todo ruído. A sensibilidade em telefones físicos continua pendente.
+
+`node --test tests/sopro.test.mjs` verifica captura PCM, três casas, ausência de controles manuais, projeção no livro, interrupção e retomada. As verificações de texto/narração usam a leitura comum; os testes de sopro ativam o modo pelo mesmo botão disponível no livro.
 
 ## Modo narrado e trilha
 
