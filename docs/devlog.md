@@ -41,6 +41,13 @@ O histórico anterior a esta entrada está em `AGENTS.md`, `README.md` e nos com
   até "correu" e o fundo escuro da casa ficava cerca de 3,5 s sozinho. Corrigido; checagem nomeada em
   `tests/coerencia-17.test.mjs` ("palha: com a voz, o fundo escuro…"), que falha com o defeito de volta.
   A reprodução inteira foi repetida com o conserto (`output/revisao/movimento-final.txt`).
+- **Mixagem medida nas 17 cenas** depois do recibo da RF (`node tests/mix-medida.mjs`, resultado em
+  `output/revisao/mix-17.json`): de -14,9 a -13,5 LUFS, mediana -14, e o limitador reduz no máximo 0,86 dB. O pico mais
+  alto é 0,2 dBFS na cena 7 (índice 7, madeira), medido sobre a gravação em Opus, que pode passar do sinal original; não
+  dá para dizer se há corte sem ouvir ou medir antes do codificador.
+- **Balão em branco da cena VI:** medido quadro a quadro na reprodução com voz. A bolha entra inteira e o texto sobe de
+  0 a 1 em cerca de 85 ms, com opacidade 0 só nos dois primeiros quadros; o balão fica cerca de 0,75 s na tela. É a
+  animação de entrada de `.balao span` (`src/style.css:136`), comum a todos os balões, e não um balão vazio. Nada mudou.
 - **Não verificado:** ninguém ouviu a mixagem, os convites nem as narrações novas nesta rodada; o grito só foi testado
   com sinal simulado; celular só emulado, portanto **não testado em aparelho**.
 - **Próxima ação:** a de `Continuidade`.
