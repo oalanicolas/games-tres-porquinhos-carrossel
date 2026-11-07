@@ -40,6 +40,7 @@ O histórico anterior a esta entrada está em `AGENTS.md`, `README.md` e nos com
   folhas (`output/revisao/movimento.txt`). Achou um defeito que nenhum gate pegava: na cena da palha, a voz segura a fuga
   até "correu" e o fundo escuro da casa ficava cerca de 3,5 s sozinho. Corrigido; checagem nomeada em
   `tests/coerencia-17.test.mjs` ("palha: com a voz, o fundo escuro…"), que falha com o defeito de volta.
+  A reprodução inteira foi repetida com o conserto (`output/revisao/movimento-final.txt`).
 - **Não verificado:** ninguém ouviu a mixagem, os convites nem as narrações novas nesta rodada; o grito só foi testado
   com sinal simulado; celular só emulado, portanto **não testado em aparelho**.
 - **Próxima ação:** a de `Continuidade`.
@@ -74,7 +75,8 @@ registro de quem pediu essa publicação.
    na cena IX, onde a transcrição automática ouviu outra coisa.
 3. Testar o grito com criança, microfone real, iPhone e Android.
 4. Confirmar a licença de uso público da voz gerada na Magnific.
-5. Confirmar se a publicação de 03:42 foi pedida por ele; pedir o push do commit da RF e o gitlink no hub.
+5. Confirmar se a publicação de 03:42 foi pedida por ele. O site no ar ainda tem a placa escura da cena VI: o conserto
+   só vai ao ar com push e novo deploy; o gitlink no hub também falta.
 6. Balão da Mamãe em "partida" (dúvida 11 da auditoria) e quartos em "juntos" (dúvida 14).
 7. Lacunas do acervo de sons: palha, torcida infantil e barriga roncando.
 
