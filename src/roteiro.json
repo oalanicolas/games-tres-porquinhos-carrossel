@@ -54,6 +54,150 @@
       }
     }
   },
+  "1": {
+    "acao": "junta",
+    "falas": [
+      {
+        "quem": [
+          "pipo"
+        ],
+        "texto": "Pronto! Agora é só brincar!",
+        "de": "pronto agora",
+        "ate": "so brincar"
+      }
+    ],
+    "marcos": {
+      "brincar": {
+        "em": "joao so queria"
+      },
+      "junta": {
+        "em": "juntou um monte",
+        "ate": "de qualquer jeito"
+      },
+      "pronta": {
+        "em": "em cinco minutos"
+      },
+      "diz": {
+        "em": "pronto agora"
+      },
+      "cambalhota": {
+        "em": "e saiu dando"
+      }
+    }
+  },
+  "2": {
+    "acao": "prega",
+    "falas": [
+      {
+        "quem": [
+          "tico"
+        ],
+        "texto": "Está ótimo assim!",
+        "de": "esta otimo assim",
+        "ate": "esta otimo assim"
+      }
+    ],
+    "marcos": {
+      "cata": {
+        "em": "lulu catou"
+      },
+      "prega": {
+        "em": "e pregou tudo",
+        "ate": "as pressas"
+      },
+      "tortas": {
+        "em": "uma tabua ficou"
+      },
+      "diz": {
+        "em": "esta otimo assim"
+      },
+      "flauta": {
+        "em": "e foi tocar"
+      }
+    }
+  },
+  "3": {
+    "acao": "passam",
+    "falas": [
+      {
+        "quem": [
+          "pipo",
+          "tico"
+        ],
+        "texto": "Para que tanto trabalho?",
+        "de": "para que tanto",
+        "ate": "tanto trabalho"
+      },
+      {
+        "quem": [
+          "bento"
+        ],
+        "texto": "Vocês vão ver",
+        "de": "voces vao ver",
+        "ate": "voces vao ver"
+      }
+    ],
+    "marcos": {
+      "tijolo": {
+        "em": "kael carregou",
+        "ate": "dia inteiro"
+      },
+      "passam": {
+        "em": "joao e lulu"
+      },
+      "riem": {
+        "em": "e riram"
+      },
+      "massa": {
+        "em": "e passou mais"
+      }
+    }
+  },
+  "4": {
+    "acao": "moita",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Palha, madeira e tijolo…",
+        "de": "palha madeira",
+        "ate": "e tijolo"
+      },
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Vou começar pela mais fácil.",
+        "de": "vou comecar",
+        "ate": "mais facil"
+      }
+    ],
+    "marcos": {
+      "moita": {
+        "em": "dois olhos"
+      },
+      "fareja": {
+        "em": "era o lobo"
+      },
+      "palha": {
+        "em": "palha"
+      },
+      "madeira": {
+        "em": "madeira"
+      },
+      "tijolo": {
+        "em": "tijolo"
+      },
+      "lambe": {
+        "em": "lambendo os beicos"
+      },
+      "vai": {
+        "em": "vou comecar",
+        "ate": "mais facil"
+      }
+    }
+  },
   "5": {
     "acao": "sopro",
     "falas": [
@@ -114,6 +258,41 @@
       },
       "atras": {
         "em": "casa do irmao"
+      }
+    }
+  },
+  "6": {
+    "acao": "pedra",
+    "falas": [
+      {
+        "quem": [
+          "pipo"
+        ],
+        "texto": "Lulu! Lulu! Abra a porta!",
+        "de": "lulu lulu",
+        "ate": "a porta"
+      }
+    ],
+    "marcos": {
+      "corre": {
+        "em": "joao correu"
+      },
+      "pedra": {
+        "em": "pulou uma pedra"
+      },
+      "ponte": {
+        "em": "atravessou a ponte"
+      },
+      "lobo": {
+        "em": "atras dele",
+        "ate": "rastro de palha"
+      },
+      "grita": {
+        "em": "lulu lulu",
+        "ate": "gritava joao"
+      },
+      "lobo2": {
+        "em": "gritava joao"
       }
     }
   },
@@ -183,6 +362,49 @@
       },
       "calma2": {
         "em": "casa de kael"
+      }
+    }
+  },
+  "8": {
+    "acao": "plaft",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Ai!",
+        "de": "ai",
+        "ate": "ai"
+      }
+    ],
+    "marcos": {
+      "correm": {
+        "em": "joao e lulu",
+        "ate": "proprios pes"
+      },
+      "vem": {
+        "em": "o lobo vinha",
+        "ate": "logo atras"
+      },
+      "pula": {
+        "em": "pulando um tronco",
+        "ate": "tronco caido"
+      },
+      "plaft": {
+        "em": "plaft"
+      },
+      "ai": {
+        "em": "ai"
+      },
+      "levanta": {
+        "em": "e levantou",
+        "ate": "levantou bufando"
+      },
+      "fumaca": {
+        "em": "la no alto"
+      },
+      "sai": {
+        "em": "estavam quase"
       }
     }
   },
@@ -369,6 +591,48 @@
       },
       "viva": {
         "em": "soltando fumaca"
+      }
+    }
+  },
+  "13": {
+    "acao": "despenca",
+    "falas": [
+      {
+        "quem": [
+          "lobo"
+        ],
+        "texto": "Ih…",
+        "de": "ih",
+        "ate": "ih"
+      }
+    ],
+    "marcos": {
+      "sobe": {
+        "em": "o lobo subiu",
+        "ate": "ate parar"
+      },
+      "para": {
+        "em": "la no alto"
+      },
+      "engole": {
+        "em": "olhou para baixo"
+      },
+      "ih": {
+        "em": "ih"
+      },
+      "despenca": {
+        "em": "e despencou",
+        "ate": "rodopiando"
+      },
+      "cataplof": {
+        "em": "cataplof"
+      },
+      "poeira": {
+        "em": "uma nuvem"
+      },
+      "saem": {
+        "em": "os tres porquinhos",
+        "ate": "vieram ver"
       }
     }
   },

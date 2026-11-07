@@ -69,6 +69,55 @@
       "caracteres": 178,
       "duracao": 15.19,
       "lufs": -19.0
+    },
+    "1": {
+      "hash": "a057b71138e04aba",
+      "tarefa": "0c09a479-6192-413e-92a5-0753b9e1a66d",
+      "caracteres": 200,
+      "duracao": 18.16,
+      "lufs": -19.1
+    },
+    "2": {
+      "hash": "82e6f2da2caf1d78",
+      "tarefa": "ed9e874e-3bd3-4e7f-aa7e-f201a9f025da",
+      "caracteres": 188,
+      "duracao": 16.07,
+      "lufs": -19.4
+    },
+    "3": {
+      "hash": "f649acb1d74309b5",
+      "tarefa": "c0752aa3-bf45-4fe4-a846-594bc12d5b43",
+      "caracteres": 162,
+      "duracao": 15.23,
+      "lufs": -19.3
+    },
+    "4": {
+      "hash": "d7738647864c9be0",
+      "tarefa": "4dd553d5-d789-4d7a-84a4-36331acbe92b",
+      "caracteres": 228,
+      "duracao": 20.15,
+      "lufs": -19.0
+    },
+    "6": {
+      "hash": "fbad3861d4ce43a9",
+      "tarefa": "0c750c41-af95-499e-afff-80ef629b5236",
+      "caracteres": 222,
+      "duracao": 19.88,
+      "lufs": -18.9
+    },
+    "8": {
+      "hash": "395a85299a0b3459",
+      "tarefa": "882c152a-8fc9-47c7-ac40-c147628b95a1",
+      "caracteres": 252,
+      "duracao": 25.73,
+      "lufs": -18.9
+    },
+    "13": {
+      "hash": "5cc2efa2f19c5ab7",
+      "tarefa": "19902802-5392-4367-a3ec-e428fe8849c7",
+      "caracteres": 278,
+      "duracao": 26.42,
+      "lufs": -18.7
     }
   },
   "voz": {

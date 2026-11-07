@@ -9,7 +9,8 @@ import { abrir } from './_apoio.mjs';
 const { faixas } = JSON.parse(readFileSync(new URL('../src/narracao.json', import.meta.url)));
 const TELAS = [[1440, 870], [390, 844], [360, 640], [844, 390]];
 // Recontado ao ganhar páginas e entradas de personagens, a pedido de Alan (06/11/2026): a chegada do Lobo e as entradas passaram a valer sem voz.
-const DURACOES_MANUAIS = [4.2944, 6.3, 6.7, 10.34, 11.97, 4.5, 5.39, 6.0319, 5.51, 7.4, 6.52];
+// Recontado de novo com as 17 cenas (R6 do gauntlet): as 6 novas e o voo e a fuga refeitos mudaram as durações.
+const DURACOES_MANUAIS = [4.2944, 4.2, 5.9, 7.22, 6.5, 6.7, 4.8, 10.34, 6.86, 11.97, 4.5, 5.39, 6.0319, 7.37, 5.51, 7.4, 6.52];
 
 /** A cena `i` num segundo da fala, sem depender do áudio tocar. */
 const naFala = (page, i, t, nivel = 0.8) => page.evaluate(([i, t, nivel]) => {

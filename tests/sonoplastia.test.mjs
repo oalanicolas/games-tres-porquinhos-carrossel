@@ -58,9 +58,9 @@ test('nas dezessete cenas: passos soam, com variação e posição; o primeiro c
     const todos = Object.values(por).flat().filter((r) => r.nome.startsWith('passo'));
     assert.ok(new Set(todos.map((r) => r.taxa)).size > 5, 'passos sem variação de altura');
     assert.ok(new Set(todos.map((r) => r.pan)).size > 3, 'passos sem posição no estéreo');
-    assert.ok(nomes(2).some((n) => n.startsWith('bate')), 'cena 2 sem batida');
-    assert.ok(nomes(2).includes('sopro') && nomes(2).includes('puxa'), 'cena 2 sem sopro de verdade');
-    assert.ok(nomes(7).includes('uivo1') || nomes(8).includes('uivo1'), 'o uivo do rabo em brasa não tocou');
+    assert.ok(nomes(5).some((n) => n.startsWith('bate')), 'a casa de palha sem batida');
+    assert.ok(nomes(5).includes('sopro') && nomes(5).includes('puxa'), 'a casa de palha sem sopro de verdade');
+    assert.ok(nomes(12).includes('uivo1') || nomes(14).includes('uivo1'), 'o uivo do rabo em brasa não tocou');
     assert.ok(Object.values(por).flat().some((r) => r.nome === 'foguete'), 'sem o foguete');
     assert.ok(Object.values(por).flat().some((r) => r.nome.startsWith('choro')), 'o Lobo foge sem choramingar');
     assert.ok(pico < -1, `saída chegou a ${pico} dBFS de RMS`);

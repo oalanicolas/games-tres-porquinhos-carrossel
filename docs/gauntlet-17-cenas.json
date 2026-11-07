@@ -341,8 +341,19 @@
         "R4",
         "R5"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "src/narracao.json com as 17 faixas, marcos e balões; roteiro das 7 cenas novas em src/roteiro.json; 7 gravações conferidas por whisper-cli; tests/narracao, sincronia e sonoplastia verdes. Mudanças de teste relatadas: DURACOES_MANUAIS recontado com as 17 cenas; em sonoplastia os índices antigos 2, 7, 8 foram migrados para 5, 12, 14, a mesma asserção",
+        "gates verdes em 2026-11-07T03:41:06Z (1): voz"
+      ],
+      "inicio": "2026-11-07T03:21:24Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T03:21:24Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "6fbde40c778d19258fbc7cb3daa7301833757ab1"
+        }
+      },
+      "fim": "2026-11-07T03:41:06Z"
     },
     {
       "id": "R7",
@@ -1065,6 +1076,66 @@
       "head": "94d694937d08a41c6ecbc0a4b70de1c3a0b79bfe",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "R6",
+      "quando": "2026-11-07T03:41:06Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 495.634,
+          "log_sha256": "2397f206c6b0aaa6c5453d537b8bf9f830f200e49af3330660bb27de687d5f14",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R6-20261107T033250Z/01-voz/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R6-20261107T033250Z/01-voz/01.log",
+          "ok": true,
+          "nome": "voz",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/narracao.test.mjs",
+            "tests/sincronia.test.mjs",
+            "tests/sonoplastia.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "src/narracao.json com as 17 faixas, marcos e balões; roteiro das 7 cenas novas em src/roteiro.json; 7 gravações conferidas por whisper-cli; tests/narracao, sincronia e sonoplastia verdes. Mudanças de teste relatadas: DURACOES_MANUAIS recontado com as 17 cenas; em sonoplastia os índices antigos 2, 7, 8 foram migrados para 5, 12, 14, a mesma asserção"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "6fbde40c778d19258fbc7cb3daa7301833757ab1",
+          "ate": "6fbde40c778d19258fbc7cb3daa7301833757ab1",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 13,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "M docs/narracao-recibo.json",
+            "M src/narracao.json",
+            "M src/roteiro.json",
+            "M tests/sincronia.test.mjs",
+            "M tests/sonoplastia.test.mjs",
+            "?? public/narracao/cena-1.mp3",
+            "?? public/narracao/cena-13.mp3",
+            "?? public/narracao/cena-2.mp3",
+            "?? public/narracao/cena-3.mp3",
+            "?? public/narracao/cena-4.mp3",
+            "?? public/narracao/cena-6.mp3",
+            "?? public/narracao/cena-8.mp3"
+          ]
+        }
+      ],
+      "arvore_sha256": "90cff1dc98cecf1ef36766476b97224c315f2b9bb07748b50c9af31223b15839",
+      "head": "6fbde40c778d19258fbc7cb3daa7301833757ab1",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -1134,6 +1205,14 @@
     {
       "quando": "2026-11-07T03:21:18Z",
       "evento": "R5 → concluida"
+    },
+    {
+      "quando": "2026-11-07T03:21:24Z",
+      "evento": "R6 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T03:41:06Z",
+      "evento": "R6 → concluida"
     }
   ]
 }
