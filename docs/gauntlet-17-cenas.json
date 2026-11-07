@@ -192,8 +192,19 @@
       "depende": [
         "R2"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "obra-palha, obra-madeira e obra-tijolo em src/cenas.js, cada uma no cenário e no lugar da cena de sopro; cena antiga removida; folhas output/revisao/obra-*.jpg lidas; tests/coerencia-17.test.mjs construção",
+        "gates verdes em 2026-11-07T03:02:26Z (1): construcao"
+      ],
+      "inicio": "2026-11-07T02:58:28Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T02:58:28Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "87c54521c9a713b6270f57cd050a48fa49bdc70d"
+        }
+      },
+      "fim": "2026-11-07T03:02:26Z"
     },
     {
       "id": "R4",
@@ -757,6 +768,54 @@
       "head": "9a6141c6950d828d21439d7227462da947c4e0c6",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "R3",
+      "quando": "2026-11-07T03:02:26Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 23.548,
+          "log_sha256": "f6f28a25cc10508fe5376aab0004998c5a13545e98d53db1b0d3c23fb5bdd533",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R3-20261107T030202Z/01-construcao/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R3-20261107T030202Z/01-construcao/01.log",
+          "ok": true,
+          "nome": "construcao",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=construção"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "obra-palha, obra-madeira e obra-tijolo em src/cenas.js, cada uma no cenário e no lugar da cena de sopro; cena antiga removida; folhas output/revisao/obra-*.jpg lidas; tests/coerencia-17.test.mjs construção"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "87c54521c9a713b6270f57cd050a48fa49bdc70d",
+          "ate": "87c54521c9a713b6270f57cd050a48fa49bdc70d",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 2,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "M src/cenas.js"
+          ]
+        }
+      ],
+      "arvore_sha256": "d206367b85e0de04730ed78599ddb9b045072dd01a0ddcc7befab5b743e19e16",
+      "head": "87c54521c9a713b6270f57cd050a48fa49bdc70d",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -797,6 +856,14 @@
     {
       "quando": "2026-11-07T02:58:04Z",
       "evento": "R2 → concluida"
+    },
+    {
+      "quando": "2026-11-07T02:58:28Z",
+      "evento": "R3 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T03:02:26Z",
+      "evento": "R3 → concluida"
     }
   ]
 }
