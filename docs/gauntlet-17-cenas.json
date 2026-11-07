@@ -505,16 +505,18 @@
       ],
       "prova": [
         "Canônico em prototypes/tres-porquinhos-carrossel/docs/devlog.md (resultado, lacunas, próxima ação, decisões pendentes e prompt da próxima sessão); percurso final em output/revisao/percursos-finais.txt; esta sessão não deu push nem deploy: o reflog do módulo mostra pushes de outra sessão (até 218c1f7), registrados no Devlog; site público sem o texto das 17 cenas",
-        "gates verdes em 2026-11-07T06:49:31Z (2): build, test"
+        "gates verdes em 2026-11-07T06:49:31Z (2): build, test",
+        "Canônico em prototypes/tres-porquinhos-carrossel/docs/devlog.md com resultado, lacunas, próxima ação, decisões pendentes e prompt da próxima sessão; reprodução real no commit be0f70b em output/revisao/movimento-final.txt; teste nomeado do fundo da palha em tests/coerencia-17.test.mjs; esta sessão não deu push nem deploy (os do Codex estão registrados no Devlog)",
+        "gates verdes em 2026-11-07T08:01:55Z (2): build, test"
       ],
       "inicio": "2026-11-07T06:25:58Z",
+      "fim": "2026-11-07T08:01:55Z",
       "execucao_inicio": {
-        "quando": "2026-11-07T06:25:58Z",
+        "quando": "2026-11-07T07:38:06Z",
         "revisoes": {
-          "prototypes/tres-porquinhos-carrossel": "ff49a06630363085ef9d15d6fe63ab75e99d93ae"
+          "prototypes/tres-porquinhos-carrossel": "b47688365b7bf2f87fd94fc60c366bf0a3192918"
         }
-      },
-      "fim": "2026-11-07T06:49:31Z"
+      }
     }
   ],
   "decisoes_pendentes_de_alan": [
@@ -1630,6 +1632,67 @@
       "head": "ff49a06630363085ef9d15d6fe63ab75e99d93ae",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "RF",
+      "quando": "2026-11-07T08:01:55Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 1.15,
+          "log_sha256": "e086e99f0bfabf441f91c3093b528db68ab5c578d9b8f7106f235e9dcf216c99",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T073806Z/01-build/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T073806Z/01-build/01.log",
+          "ok": true,
+          "nome": "build",
+          "argv": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 1427.38,
+          "log_sha256": "1ab763c26da368d3b23f38ee6bcc8b4580080f013b1ef9ebb5daafcd33018699",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T073806Z/02-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T073806Z/02-test/01.log",
+          "ok": true,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Canônico em prototypes/tres-porquinhos-carrossel/docs/devlog.md com resultado, lacunas, próxima ação, decisões pendentes e prompt da próxima sessão; reprodução real no commit be0f70b em output/revisao/movimento-final.txt; teste nomeado do fundo da palha em tests/coerencia-17.test.mjs; esta sessão não deu push nem deploy (os do Codex estão registrados no Devlog)"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "b47688365b7bf2f87fd94fc60c366bf0a3192918",
+          "ate": "b47688365b7bf2f87fd94fc60c366bf0a3192918",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 1,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json"
+          ]
+        }
+      ],
+      "arvore_sha256": "d5ce87a03aa3504216512109c8b58e5c9dd4da82c02e000846d48ab4d33b636b",
+      "head": "b47688365b7bf2f87fd94fc60c366bf0a3192918",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -1744,6 +1807,19 @@
     },
     {
       "quando": "2026-11-07T06:49:31Z",
+      "evento": "RF → concluida"
+    },
+    {
+      "quando": "2026-11-07T07:38:06Z",
+      "evento": "RF → aberta",
+      "motivo": "Conserto do fundo da palha (be0f70b), achado na reprodução real, veio depois do fechar: refazer o recibo no estado final"
+    },
+    {
+      "quando": "2026-11-07T07:38:06Z",
+      "evento": "RF → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T08:01:55Z",
       "evento": "RF → concluida"
     }
   ]
