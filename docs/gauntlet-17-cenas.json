@@ -460,13 +460,18 @@
       "depende": [
         "R8"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "aguarda-alan",
+      "prova": [],
+      "bloqueio": {
+        "decisao": "Aprovar em movimento as 17 cenas, o Lobo e a sonoplastia, abrindo o livro em http://127.0.0.1:4291/ (capa, abrir, cada cena e fim)",
+        "motivo": null,
+        "quando": "2026-11-07T06:15:56Z"
+      }
     },
     {
       "id": "RF",
       "titulo": "Consolidação",
-      "status": "aberta",
+      "status": "concluida",
       "final": true,
       "fazer": [
         "Atualizar Devlog/plano canônico do framework e a continuidade.",
@@ -498,13 +503,25 @@
         "R8",
         "R9"
       ],
-      "prova": []
+      "prova": [
+        "Canônico em prototypes/tres-porquinhos-carrossel/docs/devlog.md (resultado, lacunas, próxima ação, decisões pendentes e prompt da próxima sessão); percurso final em output/revisao/percursos-finais.txt; esta sessão não deu push nem deploy: o reflog do módulo mostra pushes de outra sessão (até 218c1f7), registrados no Devlog; site público sem o texto das 17 cenas",
+        "gates verdes em 2026-11-07T06:49:31Z (2): build, test"
+      ],
+      "inicio": "2026-11-07T06:25:58Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T06:25:58Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "ff49a06630363085ef9d15d6fe63ab75e99d93ae"
+        }
+      },
+      "fim": "2026-11-07T06:49:31Z"
     }
   ],
   "decisoes_pendentes_de_alan": [
     "Aprovar as 17 cenas em movimento (só Alan aprova visual).",
     "Publicar: deploy não foi pedido nesta rodada.",
-    "Ouvir a mixagem, os convites e as narrações novas; testar o grito com criança e microfone real."
+    "Ouvir a mixagem, os convites e as narrações novas; testar o grito com criança e microfone real.",
+    "R9: Aprovar em movimento as 17 cenas, o Lobo e a sonoplastia, abrindo o livro em http://127.0.0.1:4291/ (capa, abrir, cada cena e fim)"
   ],
   "selo": {
     "sha256": "6beecb53267c37cc16146dc78a3add7b8c56888facb5a3d31adbc8c648a2c361",
@@ -1551,6 +1568,68 @@
         "removidos": [],
         "afrouxado": []
       }
+    },
+    {
+      "rodada": "RF",
+      "quando": "2026-11-07T06:49:31Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 1.276,
+          "log_sha256": "56db1d99e75f11d46b4a09e10f608fd114086018e0b2c8bf69f9dedfb15f50ea",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T062558Z/01-build/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T062558Z/01-build/01.log",
+          "ok": true,
+          "nome": "build",
+          "argv": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 1411.631,
+          "log_sha256": "b946b0c43ce76e2871cef08b394c946ae41de82dd3933c61cd5524c6392b6432",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T062558Z/02-test/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/RF-20261107T062558Z/02-test/01.log",
+          "ok": true,
+          "nome": "test",
+          "argv": [
+            "npm",
+            "run",
+            "test"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Canônico em prototypes/tres-porquinhos-carrossel/docs/devlog.md (resultado, lacunas, próxima ação, decisões pendentes e prompt da próxima sessão); percurso final em output/revisao/percursos-finais.txt; esta sessão não deu push nem deploy: o reflog do módulo mostra pushes de outra sessão (até 218c1f7), registrados no Devlog; site público sem o texto das 17 cenas"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "ff49a06630363085ef9d15d6fe63ab75e99d93ae",
+          "ate": "ff49a06630363085ef9d15d6fe63ab75e99d93ae",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 2,
+          "sem_commit": [
+            "M docs/gauntlet-17-cenas.json",
+            "?? docs/devlog.md"
+          ]
+        }
+      ],
+      "arvore_sha256": "3dc21b3cb4077f24182fd8819cf935f6cf5e572c60ae002869f88f62ceacaeab",
+      "head": "ff49a06630363085ef9d15d6fe63ab75e99d93ae",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -1654,6 +1733,18 @@
     {
       "quando": "2026-11-07T06:13:49Z",
       "evento": "R8 → concluida"
+    },
+    {
+      "quando": "2026-11-07T06:15:56Z",
+      "evento": "R9 → aguarda-alan"
+    },
+    {
+      "quando": "2026-11-07T06:25:58Z",
+      "evento": "RF → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T06:49:31Z",
+      "evento": "RF → concluida"
     }
   ]
 }
