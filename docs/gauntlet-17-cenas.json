@@ -243,8 +243,22 @@
       "depende": [
         "R2"
       ],
-      "status": "aberta",
-      "prova": []
+      "status": "concluida",
+      "prova": [
+        "Testes espia e corridas em tests/coerencia-17.test.mjs; folhas output/revisao/espia.jpg, corrida-lulu.jpg, corrida-kael.jpg lidas; defeitos corrigidos: barra cobria o tombo e o tronco (raia para trás), Lobo à frente da moita, monte de tijolos, casa e sol furando a parede, Lobo sumindo no meio da página",
+        "gates verdes em 2026-11-07T03:15:59Z (2): espia, corridas"
+      ],
+      "inicio": "2026-11-07T03:02:26Z",
+      "execucao_inicio": {
+        "quando": "2026-11-07T03:02:26Z",
+        "revisoes": {
+          "prototypes/tres-porquinhos-carrossel": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481"
+        }
+      },
+      "tentativas": 1,
+      "sem_progresso": 0,
+      "ultima_arvore_vermelha": "ee24fe2cb8fd229b545bdf357708cfd32d9ff6bde3eb387d3cd8f9e2427d839b",
+      "fim": "2026-11-07T03:15:59Z"
     },
     {
       "id": "R5",
@@ -816,6 +830,164 @@
       "head": "87c54521c9a713b6270f57cd050a48fa49bdc70d",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "R4",
+      "quando": "2026-11-07T03:13:49Z",
+      "ok": false,
+      "gates": [
+        {
+          "exit": 1,
+          "segundos": 47.015,
+          "log_sha256": "cde5613d90171a04e5c6af3c479b9621d5f75496bd342f17b9b787d5d568380a",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031214Z/01-espia/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031214Z/01-espia/01.log",
+          "ok": false,
+          "nome": "espia",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=espia"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 1,
+          "segundos": 46.899,
+          "log_sha256": "20236617d98447e6324073d7489ad8b08e01a9297e0dca38ad9b678368e69f7e",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031214Z/02-corridas/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031214Z/02-corridas/01.log",
+          "ok": false,
+          "nome": "corridas",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=corridas"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Testes espia e corridas em tests/coerencia-17.test.mjs; folhas output/revisao/espia.jpg, corrida-lulu.jpg, corrida-kael.jpg lidas; defeitos corrigidos: barra cobria o tombo e o tronco (raia para trás), Lobo à frente da moita, monte de tijolos, casa e sol furando a parede, Lobo sumindo no meio da página"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481",
+          "ate": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 9,
+          "sem_commit": [
+            "M docs/creditos-sons.md",
+            "M docs/gauntlet-17-cenas.json",
+            "M src/cenas.js",
+            "M src/sons.json",
+            "M tests/mix-medida.mjs",
+            "M tests/musica.test.mjs",
+            "M tests/sonoplastia.test.mjs",
+            "M tools/sons.py",
+            "?? public/sfx/tombo.mp3"
+          ]
+        }
+      ],
+      "arvore_sha256": "ee24fe2cb8fd229b545bdf357708cfd32d9ff6bde3eb387d3cd8f9e2427d839b",
+      "head": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false,
+      "testes_snapshot": {
+        "total": 23,
+        "mapa": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031214Z/testes.json",
+        "copia": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031214Z/testes"
+      }
+    },
+    {
+      "rodada": "R4",
+      "quando": "2026-11-07T03:15:59Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 46.867,
+          "log_sha256": "735842e007c5d6b75be4c588decbb9bfa02579ce896f29046b230e4a506d1908",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031425Z/01-espia/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031425Z/01-espia/01.log",
+          "ok": true,
+          "nome": "espia",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=espia"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        },
+        {
+          "exit": 0,
+          "segundos": 46.846,
+          "log_sha256": "3231b3399452dcf6118fc843c709b70f054c90cb44eaa77570115bff5a5c9238",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031425Z/02-corridas/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R4-20261107T031425Z/02-corridas/01.log",
+          "ok": true,
+          "nome": "corridas",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/coerencia-17.test.mjs",
+            "--test-name-pattern=corridas"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Testes espia e corridas em tests/coerencia-17.test.mjs; folhas output/revisao/espia.jpg, corrida-lulu.jpg, corrida-kael.jpg lidas; defeitos corrigidos: barra cobria o tombo e o tronco (raia para trás), Lobo à frente da moita, monte de tijolos, casa e sol furando a parede, Lobo sumindo no meio da página"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481",
+          "ate": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481",
+          "commits": 0,
+          "arquivos_total": 0,
+          "arquivos": [],
+          "sem_commit_total": 9,
+          "sem_commit": [
+            "M docs/creditos-sons.md",
+            "M docs/gauntlet-17-cenas.json",
+            "M src/cenas.js",
+            "M src/sons.json",
+            "M tests/mix-medida.mjs",
+            "M tests/musica.test.mjs",
+            "M tests/sonoplastia.test.mjs",
+            "M tools/sons.py",
+            "?? public/sfx/tombo.mp3"
+          ]
+        }
+      ],
+      "arvore_sha256": "feabe5784920cc7633c6b2120ae8bce3f928b7826f08eb646904cf185042a171",
+      "head": "3aecaa4d68ba10d9615a03c0d366f0354ca3a481",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false,
+      "testes": {
+        "base": "2026-11-07T03:13:49Z",
+        "alterados": [],
+        "adicionados": [],
+        "removidos": [],
+        "afrouxado": []
+      }
     }
   ],
   "historico": [
@@ -864,6 +1036,19 @@
     {
       "quando": "2026-11-07T03:02:26Z",
       "evento": "R3 → concluida"
+    },
+    {
+      "quando": "2026-11-07T03:02:26Z",
+      "evento": "R4 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T03:13:49Z",
+      "evento": "R4 gate vermelho",
+      "tentativas": 1
+    },
+    {
+      "quando": "2026-11-07T03:15:59Z",
+      "evento": "R4 → concluida"
     }
   ]
 }

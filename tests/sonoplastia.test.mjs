@@ -37,7 +37,7 @@ test('nas dezessete cenas: passos soam, com variação e posição; o primeiro c
     await page.evaluate(() => new Promise((ok) => setTimeout(ok, 800)));
     await page.mouse.click(640, 400);
     await page.waitForFunction(() => window.__livro.audio.registro.some((r) => r.nome === 'abrir'), null, { timeout: 8000 });
-    await page.waitForFunction(() => { const a = window.__livro.audio; return a.buffers.size === 57 && a.camas.size === 5; }, null, { timeout: 60000 });
+    await page.waitForFunction(() => { const a = window.__livro.audio; return a.buffers.size === 58 && a.camas.size === 5; }, null, { timeout: 60000 });
     await page.evaluate(() => window.__livro.abrirNaHora(0));
     const por = {};
     let pico = -Infinity;

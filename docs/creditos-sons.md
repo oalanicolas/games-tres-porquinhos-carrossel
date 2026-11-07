@@ -32,6 +32,7 @@ Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, ta
 - `uivo2`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho 0.2 dB.
 - `uivo3`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho -0.8 dB.
 - `uivo4`: Lobo · quatro uivos longos com reverberação (`usc-wolf-howls-reverb`), autor no catálogo, CC0-1.0, ganho 0.8 dB.
+- `tombo`: Impacto · batida abafada 02 (`impact-thud-2`), autor no catálogo, CC0-1.0, ganho -2.2 dB.
 - `choro1`: Cachorro choramingando 01 (`foley-cry-1`), autor no catálogo, CC0-1.0, ganho -0.4 dB.
 - `choro2`: Cachorro choramingando 02 (`foley-cry-2`), autor no catálogo, CC0-1.0, ganho -3.7 dB.
 - `engolir`: Engolir (`foley-engolir`), autor no catálogo, CC0-1.0, ganho -0.7 dB.

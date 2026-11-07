@@ -26,6 +26,7 @@ EFEITOS = {
   # a tomada integral de 23 s: foley-howl-1 e -2 são cortes de 1,6 s dela, em MP3 de 96 kbps
   'uivo1': ('usc-wolf-howls-reverb', 1.2, 5.1, -17, ''), 'uivo2': ('usc-wolf-howls-reverb', 7.2, 4.7, -17, ''),
   'uivo3': ('usc-wolf-howls-reverb', 12.6, 3.9, -17, ''), 'uivo4': ('usc-wolf-howls-reverb', 17.2, 4.0, -17, ''),
+  'tombo': ('impact-thud-2', 0, None, -16, ''),
   'choro1': ('foley-cry-1', 0, None, -18, ''), 'choro2': ('foley-cry-2', 0, None, -18, ''),
   'engolir': ('foley-engolir', 0, None, -20, ''), 'corvo': ('zeroisnotnull-crow-crow-caw', 0, None, -20, ''),
   # passos: 19 caminhadas eram mudas

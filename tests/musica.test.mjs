@@ -11,7 +11,7 @@ test('faixa certa em 17 de 17 cenas, avançando e com sinal na saída', async ()
   const { page, erros, fechar } = await abrir();
   try {
     await page.keyboard.press('Shift');
-    await page.waitForFunction(() => { const e = window.__livro.audio.estado(); return e.camas === 5 && e.efeitos === 57; }, null, { timeout: 30000 });
+    await page.waitForFunction(() => { const e = window.__livro.audio.estado(); return e.camas === 5 && e.efeitos === 58; }, null, { timeout: 30000 });
     await espera(page, 1800);
     const capa = await som(page);
     assert.equal(capa.trilha, 'era-uma-vez'); assert.equal(capa.contexto, 'running'); assert.ok(capa.tempo > 0, 'a música da capa não andou');

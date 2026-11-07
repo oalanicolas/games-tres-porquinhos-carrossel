@@ -16,7 +16,7 @@ function lufs(arq) {
 
 try {
   await page.mouse.click(640, 400);
-  await page.waitForFunction(() => { const a = window.__livro.audio; return a.ctx && a.buffers.size === 57 && a.camas.size === 5; }, null, { timeout: 90000 });
+  await page.waitForFunction(() => { const a = window.__livro.audio; return a.ctx && a.buffers.size === 58 && a.camas.size === 5; }, null, { timeout: 90000 });
   // o que o limitador faz com um sinal abaixo do limiar: é só o ganho de compensação da especificação
   const limitador = await page.evaluate(async () => {
     const c = new OfflineAudioContext(1, 44100, 44100); const o = c.createOscillator(); const g = c.createGain(); g.gain.value = 0.1;
