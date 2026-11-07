@@ -4,6 +4,7 @@ Herda as regras de `../../AGENTS.md`. Este arquivo lista só o que é próprio d
 
 ## Antes de entregar
 
+- Queda no Chrome do iPhone, devolvida por Alan em 07/11/2026. Manter texturas de páginas próximas, descartar CPU e GPU das distantes antes de alocar novas e preservar sua resolução ao recriar. Perda do contexto gráfico pausa a voz e o sopro sem apagar progresso. Checagens em `tests/memoria.test.mjs`.
 - `npm test` e `npm run build`. Os arquivos de teste rodam um por vez (cerca de 10 min): em paralelo, cinco Chromes com GPU na máquina ocupada derrubam navegador e carga, sem ser defeito do livro.
 - Servidor local: `npm start`, porta 4291.
 - Narração: `python3 tools/narracao.py --estimar` conta o texto e `python3 tools/narracao.py` grava pela Magnific. Sem as 17 cenas gravadas, o manifesto fica vazio e o botão não aparece. Mudou o texto de `src/story.js`? Rode de novo: só a cena alterada é regravada. Depois de gravar, confira a fala com `whisper-cli` em português.

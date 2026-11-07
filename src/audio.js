@@ -36,7 +36,7 @@ function respostaDeEspaco(ctx, seg = 1.1) {
 export class Audio {
   constructor() {
     this.ligado = true; this.ctx = null; this.buffers = new Map(); this.camas = new Map(); this.faixas = new Map();
-    this.atual = null; this.pedida = 'era-uma-vez'; this.ambPedido = {}; this.oculto = false; this.cenaAtual = null;
+    this.atual = null; this.pedida = 'era-uma-vez'; this.ambPedido = {}; this.oculto = false; this.graficoPausado = false; this.cenaAtual = null;
     this.bytes = new Map(IMEDIATOS.map((n) => [n, fetch(`${base}sfx/${n}.mp3`).then((r) => r.arrayBuffer()).catch(() => null)]));
     this.fila = []; this.registro = []; this.ultimoPasso = -1; this.nivelEfeitos = 1;
     this.faixasVoz = NARRACAO.faixas; this.nomeVoz = NARRACAO.voz; this.narrando = true; this.voz = null; this.playerVoz = null; this.preloadVoz = null; this.geracaoVoz = 0; this.vozAgenda = null; this.acaoAte = 0; this.aoComecarVoz = null; this.aoFimDaVoz = null;
@@ -198,12 +198,12 @@ export class Audio {
   }
   _retomarVoz(forcar = false) {
     const v = this.voz;
-    if (!v || !this.narrando || this.oculto || this.interacao || v.tentativa || (!forcar && performance.now() < v.tentarEm)) return;
+    if (!v || !this.narrando || this.oculto || this.graficoPausado || this.interacao || v.tentativa || (!forcar && performance.now() < v.tentarEm)) return;
     const geracao = this.geracaoVoz;
     v.tentativa = true; v.tentarEm = performance.now() + 1000;
     if (v.recarregar) { v.recarregar = false; v.el.load(); }
     if (this.ctx.state !== 'running') v.el.pause();
-    const tocar = () => { if (geracao === this.geracaoVoz && this.voz === v && !this.oculto && !this.interacao) return v.el.play(); };
+    const tocar = () => { if (geracao === this.geracaoVoz && this.voz === v && !this.oculto && !this.graficoPausado && !this.interacao) return v.el.play(); };
     const tentativa = this.ctx.state === 'running' ? tocar() : this.ctx.resume().then(tocar);
     Promise.resolve(tentativa).catch(() => {
       if (geracao === this.geracaoVoz && this.voz === v && v.el.error) { v.recarregar = true; v.retomarEm = v.el.currentTime; }
@@ -212,7 +212,7 @@ export class Audio {
   _vigiarVoz() {
     const v = this.voz; if (!v || !this.narrando) return;
     const agora = performance.now();
-    if (this.oculto || this.interacao) { v.semProgressoDesde = agora; return; }
+    if (this.oculto || this.graficoPausado || this.interacao) { v.semProgressoDesde = agora; return; }
     if (v.el.ended) { this._finalizarVoz(v); return; }
     if (v.ultimoTempo !== v.el.currentTime) { v.ultimoTempo = v.el.currentTime; v.semProgressoDesde = agora; }
     if (agora - v.semProgressoDesde > 8000) {
@@ -279,15 +279,23 @@ export class Audio {
     this.interacao = pausada;
     if (!this.ctx) return;
     this.master.gain.cancelScheduledValues(this.ctx.currentTime);
-    this.master.gain.setValueAtTime(pausada || !this.ligado ? 0 : 1, this.ctx.currentTime);
+    this.master.gain.setValueAtTime(pausada || this.graficoPausado || !this.ligado ? 0 : 1, this.ctx.currentTime);
     if (pausada) this.voz?.el.pause();
+    else this._retomarVoz(true);
+  }
+  pausarGrafico(pausado) {
+    this.graficoPausado = pausado;
+    if (!this.ctx) return;
+    this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+    this.master.gain.setValueAtTime(pausado || this.interacao || !this.ligado ? 0 : 1, this.ctx.currentTime);
+    if (pausado) this.voz?.el.pause();
     else this._retomarVoz(true);
   }
   _visibilidade() {
     this.oculto = document.hidden; if (!this.ctx) return;
     if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume().catch(() => {}); if (this.ligado) this.atual?.el.play().catch(() => {}); this._retomarVoz(true); }
   }
-  alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado && !this.interacao ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
+  alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado && !this.interacao && !this.graficoPausado ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
   /**
    * Um efeito. `pan` é a posição na página (-1 a 1), ou [de, até] quando o som atravessa a cena.
    * Toda repetição varia um pouco a altura e o volume: gravação igual repetida é o que mais denuncia o efeito.

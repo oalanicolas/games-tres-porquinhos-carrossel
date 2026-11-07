@@ -63,6 +63,18 @@ const DUR_ABRIR = reduzido ? 0.01 : 2.55;
 let livro; let cenas = [];
 const audio = new Audio();
 const interacao = new InteracaoSopro(audio, () => cenas);
+let contextoPerdido = false;
+canvas.addEventListener('webglcontextlost', (evento) => {
+  evento.preventDefault();
+  contextoPerdido = true;
+  audio.pausarGrafico(true);
+  interacao.interromper({ suspender: true });
+});
+canvas.addEventListener('webglcontextrestored', () => {
+  contextoPerdido = false;
+  audio.pausarGrafico(false);
+  if (interacao.pendente && interacao.autorizado && interacao.fase === 'pronto') interacao.captar();
+});
 const medidasInterface = new ResizeObserver((entradas) => {
   for (const entrada of entradas) {
     const propriedade = entrada.target.id === 'barra' ? '--barra-altura' : '--cabecalho-altura';
@@ -476,7 +488,7 @@ function passo(dt) {
 function laco(agora) {
   requestAnimationFrame(laco);
   const dt = Math.min((agora - ultimo) / 1000, 0.05); ultimo = agora;
-  if (qsPausado) return;
+  if (qsPausado || contextoPerdido) return;
   passo(dt);
   if (estado.lendo) return;
   renderer.render(scene, camera);

@@ -101,8 +101,8 @@ function algarismo(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'
 export const romano = algarismo;
 
 /** Parede esquerda de uma cena, como quem olha: papel com o texto à esquerda, céu junto à lombada à direita. */
-function pintaTexto(i) {
-  const c = novaFolha(); const ctx = c.getContext('2d'); const cena = CENAS[i]; const ceu = CEUS[i];
+function pintaTexto(i, c = novaFolha()) {
+  const ctx = c.getContext('2d'); const cena = CENAS[i]; const ceu = CEUS[i];
   papelBase(ctx, PX_L, PX_A, 100 + i);
   const limite = PX_L * (1 - CEU_FRACAO);
   pintaCeu(ctx, ceu, limite, PX_L, true, 300 + i);
@@ -214,7 +214,7 @@ export class Livro {
   constructor(aniso) {
     this.raiz = new THREE.Group(); this.raiz.rotation.order = 'YXZ';
     this.anel = new THREE.Group(); this.raiz.add(this.anel);
-    this.paredes = []; this.cunhas = []; this.aniso = aniso;
+    this.paredes = []; this.cunhas = []; this.paginas = []; this.aniso = aniso;
     this.abertura = 0; this.giro = 0; this.stats = { pieces: 0, draws: 0, triangles: 0 };
     this.larguraFoco = CUNHA; this.alvos = [];
     this.focar(0);
@@ -227,6 +227,7 @@ export class Livro {
     const borda = new THREE.MeshLambertMaterial({ color: '#fff4dc' });
     const capa = new THREE.MeshLambertMaterial({ color: COR_CAPA });
     this.fimTexto = [];
+    const medicao = novaFolha();
     for (let k = 0; k <= N; k++) {
       const pivo = new THREE.Group(); this.anel.add(pivo);
       const ehCapa = k === 0 || k === N;
@@ -234,9 +235,11 @@ export class Livro {
       const lado = ehCapa ? capa : borda;
       let frente, tras;
       // +z: parede direita da cena k-1; -z: parede esquerda da cena k
-      if (k === 0) { frente = null; } else frente = new THREE.MeshLambertMaterial({ map: texturaDe(pintaLegenda(k - 1), this.aniso) });
-      if (k === N) { tras = new THREE.MeshLambertMaterial({ map: texturaDe(pintaContracapa(), this.aniso) }); } else {
-        const pint = pintaTexto(k); this.fimTexto[k] = pint.fimTexto; tras = new THREE.MeshLambertMaterial({ map: texturaDe(pint.canvas, this.aniso) });
+      if (k === 0) { frente = null; } else frente = this._pagina(k - 1, () => pintaLegenda(k - 1));
+      if (k === N) { tras = this._pagina(null, pintaContracapa); } else {
+        medicao.width = PX_L; medicao.height = PX_A;
+        this.fimTexto[k] = pintaTexto(k, medicao).fimTexto;
+        tras = this._pagina(k, () => pintaTexto(k).canvas);
       }
       if (k === 0) { frente = new THREE.MeshLambertMaterial({ color: COR_CAPA }); this.materialCapa = frente; }
       const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [lado, lado, lado, lado, frente, tras]);
@@ -244,6 +247,7 @@ export class Livro {
       m.userData.parede = k; pivo.add(m);
       this.paredes.push({ pivo, m, k });
     }
+    medicao.width = medicao.height = 1;
     // fitas nas capas: em pé ficam na emenda; deitado o livro as deixa saindo pela borda
     const fita = pat('stripes', '#f4cd5e', '#eebb45', 0.12);
     this.fitas = [rig(this.paredes[0].pivo, 'fitas'), rig(this.paredes[N].pivo, 'fitas')];
@@ -258,6 +262,32 @@ export class Livro {
     // lombada central
     this.eixo = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.06, 0.05), new THREE.MeshLambertMaterial({ color: COR_CAPA }));
     this.eixo.position.y = H + 0.07; this.raiz.add(this.eixo);
+  }
+  _pagina(cena, pintar) {
+    const material = new THREE.MeshLambertMaterial();
+    this.paginas.push({ cena, pintar, material });
+    return material;
+  }
+  _atualizarTexturas(giro, aberto) {
+    const indice = giro / CUNHA;
+    for (const pagina of this.paginas) {
+      // Uma página extra de cada lado prepara o giro antes de entrar no enquadramento.
+      pagina.necessaria = pagina.cena === null || (this.abertura > 0 && (aberto ? Math.abs(pagina.cena - indice) <= 3.7 : pagina.cena <= 3));
+      const material = pagina.material;
+      if (!pagina.necessaria && material.map) {
+        const textura = material.map;
+        material.map = null; material.needsUpdate = true;
+        textura.dispose();
+        textura.image.width = textura.image.height = 1;
+      }
+    }
+    // Libera primeiro, inclusive ao voltar páginas, para não duplicar o pico de memória.
+    for (const pagina of this.paginas) {
+      if (pagina.necessaria && !pagina.material.map) {
+        pagina.material.map = texturaDe(pagina.pintar(), this.aniso);
+        pagina.material.needsUpdate = true;
+      }
+    }
   }
   _construirCunhas() {
     for (let j = 0; j < N; j++) {
@@ -355,5 +385,6 @@ export class Livro {
       const capaLonge = (k === 0 && idx >= 0.85) || (k === N && idx <= N - 2 + 0.15);
       if (aberto) { const antes = this.cunhas[k - 1]; const depois = this.cunhas[k]; p.pivo.visible = !capaLonge && !!(antes?.g.visible || depois?.g.visible); } else p.pivo.visible = k <= 3 || p.angulo > -1.75;
     });
+    this._atualizarTexturas(giro, aberto);
   }
 }

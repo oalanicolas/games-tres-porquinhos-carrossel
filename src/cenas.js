@@ -1209,6 +1209,10 @@ export function arteDaCapa(renderer) {
   const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = A; const ctx = canvas.getContext('2d'); const img = ctx.createImageData(W, A);
   for (let y = 0; y < A; y++) { const a = y * W * 4, b = (A - 1 - y) * W * 4; img.data.set(px.subarray(a, a + W * 4), b); }
   ctx.putImageData(img, 0, 0);
+  const geometrias = new Set();
+  g.traverse((o) => { if (o.geometry) geometrias.add(o.geometry); });
+  geometrias.forEach((geometria) => geometria.dispose());
+  renderer.renderLists.dispose();
   rt.dispose(); d.shadow.map?.dispose();
   return canvas;
 }

@@ -109,3 +109,13 @@ A voz agora reutiliza um elemento autorizado no gesto inicial. Falhas transitór
 A regressão está em `tests/narracao-continua.test.mjs`. O teste de acessibilidade foi atualizado para o pedido novo, de narração mantida durante a leitura. A validação completa e o percurso narrado real são registrados em `output/narracao-continua/`.
 
 Verificado em Chrome headless com GPU Metal. O percurso real leu 17 de 17 cenas em 393.547 s, sem interação depois de abrir, e fechou o livro mantendo a preferência ligada. A suíte completa passou em 77 de 77 testes, com 0 falhas. Celular físico e Safari real continuam pendentes.
+
+## Queda no Chrome do iPhone — 7 de novembro de 2026
+
+Alan descreveu a página quebrando como se faltasse processamento. O levantamento encontrou 36 imagens de faces de papel sempre retidas. A cena completa referenciava 367931904 bytes estimados em imagens de textura, além da cópia de GPU e das geometrias. A estimativa não mede a RAM física do iPhone.
+
+As páginas agora são carregadas por proximidade e liberadas antes de carregar outras. A abertura caiu para 124981504 bytes estimados nas imagens. As 36 faces recriadas coincidiram com os hashes anteriores. As cenas abertas comparadas tiveram zero pixels diferentes; há diferenças pequenas nas bordas internas durante o começo da abertura. A geometria temporária da ilustração da capa também é descartada após a captura.
+
+A perda de contexto gráfico é tratada como pausa temporária. A cena e a preferência da narração são preservadas, assim como a energia de um sopro em andamento. As regressões estão em `tests/memoria.test.mjs`. Medições e comparações ficam em `output/memoria-iphone/`.
+
+A validação completa passou em 80 de 80 testes. O percurso no WebKit emulado narrou 17 de 17 cenas, incluindo perda e restauração forçada do contexto gráfico, e terminou em 402.891 s. O iPhone físico ainda depende de validação de Alan.

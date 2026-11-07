@@ -89,9 +89,9 @@ export class InteracaoSopro {
       this.concluir({ sozinho: true }); // sem microfone, a história segue com o sopro do próprio Lobo
     }
   }
-  interromper() {
+  interromper({ suspender = false } = {}) {
     if (!this.pendente) return;
-    if (!document.hidden) { this.concluir({ sozinho: true }); return; } // o microfone sumiu com a página na frente
+    if (!document.hidden && !suspender) { this.concluir({ sozinho: true }); return; } // o microfone sumiu com a página na frente
     this.captura++; this.microfone.parar(); this.fase = 'pronto';
     this.$('sopro-microfone').disabled = false;
     this.$('sopro-painel').hidden = false;
