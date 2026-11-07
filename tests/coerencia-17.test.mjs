@@ -110,3 +110,17 @@ test('tombo: sai da chaminé, sobe, despenca e cai do lado da casa, no lugar em 
     }
   } finally { await fechar(); }
 });
+
+// Achado na reprodução real em 07/11/2026: a voz segura a fuga até "correu", e o fundo escuro da casa ficava cerca de 3,5 s sozinho depois que a palha voava.
+test('palha: com a voz, o fundo escuro da casa vai embora junto com a palha, antes de João fugir', { skip: falta('palha') }, async () => {
+  const { page, fechar } = await abrir();
+  try {
+    const faixa = JSON.parse(readFileSync(new URL('../src/narracao.json', import.meta.url), 'utf8')).faixas[i('palha')];
+    const altura = await page.evaluate(({ c, faixa, t }) => {
+      const L = window.__livro; L.abrirNaHora(c); const l = L.cenas[c].linha; l.desancorar(); l.reset(); l.ancorar(faixa.marcos, faixa.acao_em); l.seek(t);
+      return L.cenas[c].provas.vao.scale.y;
+    }, { c: i('palha'), faixa, t: faixa.marcos.sopro.em + 2 });
+    assert.ok(faixa.marcos.foge.em > faixa.marcos.sopro.em + 2, 'a fuga ainda não começou nesse instante');
+    assert.ok(altura < 0.01, `fundo escuro ainda de pé (escala ${altura})`);
+  } finally { await fechar(); }
+});

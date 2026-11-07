@@ -36,6 +36,10 @@ O histórico anterior a esta entrada está em `AGENTS.md`, `README.md` e nos com
   - `tests/captura.mjs` passou a tratar `t` como segundo da narração nas cenas com voz.
 - **Verificação:** percurso real pela interface 3 vezes na árvore final, todos exit 0, 17 cenas e sem erro de página
   (`output/revisao/percursos-finais.txt`); suíte completa no `fechar` da RF. Os recibos das rodadas estão no livro.
+- **Reprodução real:** o modo narrado foi capturado inteiro em tempo real, sem posicionar a linha do tempo, e lido em 17
+  folhas (`output/revisao/movimento.txt`). Achou um defeito que nenhum gate pegava: na cena da palha, a voz segura a fuga
+  até "correu" e o fundo escuro da casa ficava cerca de 3,5 s sozinho. Corrigido; checagem nomeada em
+  `tests/coerencia-17.test.mjs` ("palha: com a voz, o fundo escuro…"), que falha com o defeito de volta.
 - **Não verificado:** ninguém ouviu a mixagem, os convites nem as narrações novas nesta rodada; o grito só foi testado
   com sinal simulado; celular só emulado, portanto **não testado em aparelho**.
 - **Próxima ação:** a de `Continuidade`.

@@ -287,14 +287,15 @@ montadores.palha = (p, audio) => {
   casa.partes.forEach((g, i) => voar(tl, g, i, S + 0.32 + i * 0.05));
   tl.call(() => { audio.tocar('palha', { vol: 1 }); audio.tocar('pano', { vol: 0.8 }); }, S + 0.15); tl.call(() => audio.tocar('palha2', { vol: 1 }), S + 0.55);
   revoada(c, tl, S + 0.15, 26, PALHA, { x: xc, y: 0.9, z: 2.14, dx: 0.8, alto: 0.9, espalha: 0.7, seed: 8 });
+  tl.to(casa.vao, { sy: 0.001 }, S + 0.42, 0.28, ease.in); // o fundo vai com a palha: a voz segura a fuga até "correu", e ele não pode ficar sozinho até lá
   tl.grupo('foge'); tl.call(() => audio.tocar('guincho', { vol: 0.85 }), S + 0.35);
-  voar(tl, mj, 2, S + 0.3); tl.to(casa.vao, { sy: 0.001 }, S + 0.42, 0.28, ease.in);
+  voar(tl, mj, 2, S + 0.3);
   fugir(tl, pipo, S + 0.38);
   tl.grupo('calma'); acalmar(tl, w, S + 1.55, x0);
   tl.call(() => audio.tocar('uivo1', { vol: 0.35, dur: 3.6, pan: -0.5 }), S + 1.6);
   tl.grupo('atras'); loboVaiAtras(tl, w, vL, S + 1.95); // "foi atrás", na página seguinte: ele sai pela mesma borda que Pipo
   tl.grupo('base');
-  return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { casa: casa.raiz, porta: xc }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
+  return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { casa: casa.raiz, porta: xc, vao: casa.vao }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
 };
 
 // ---- 8. A casa de madeira ---------------------------------------------------------------------------
