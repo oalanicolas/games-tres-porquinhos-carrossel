@@ -100,15 +100,19 @@
       "depende": [
         "R0"
       ],
-      "status": "em-andamento",
-      "prova": [],
+      "status": "concluida",
+      "prova": [
+        "Commits f88ebdf (Lobo), 86a3ebd (som), 6413452 (sopro) no main; comparação em output/comparacao-lobo.jpg; nota em docs/pesquisas/Sonoplastia de livro infantil no navegador (commit 92ce96fd do módulo docs)",
+        "gates verdes em 2026-11-07T02:36:40Z (1): sopro-sincronia-narracao"
+      ],
       "inicio": "2026-11-07T02:27:24Z",
       "execucao_inicio": {
         "quando": "2026-11-07T02:27:24Z",
         "revisoes": {
           "prototypes/tres-porquinhos-carrossel": "2a1f22fc775507c0823d00cf6c2eec2974f868b9"
         }
-      }
+      },
+      "fim": "2026-11-07T02:36:40Z"
     },
     {
       "id": "R2",
@@ -527,6 +531,116 @@
       "head": "2a1f22fc775507c0823d00cf6c2eec2974f868b9",
       "artefatos_gate": {},
       "testes_alterados_apos_falha": false
+    },
+    {
+      "rodada": "R1",
+      "quando": "2026-11-07T02:36:40Z",
+      "ok": true,
+      "gates": [
+        {
+          "exit": 0,
+          "segundos": 534.282,
+          "log_sha256": "7a8a46087c4817938d624012b5d371941aa5e75bd8784534f1c58d30ca3aeb62",
+          "via": "game.py verify",
+          "recibo": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R1-20261107T022745Z/01-sopro-sincronia-narracao/verification.json",
+          "log": "output/goal-gauntlet/prototypes-tres-porquinhos-carrossel-docs-gauntlet-17-cenas/R1-20261107T022745Z/01-sopro-sincronia-narracao/01.log",
+          "ok": true,
+          "nome": "sopro-sincronia-narracao",
+          "argv": [
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "tests/sopro.test.mjs",
+            "tests/sincronia.test.mjs",
+            "tests/narracao.test.mjs"
+          ],
+          "cwd": "prototypes/tres-porquinhos-carrossel"
+        }
+      ],
+      "prova": [
+        "Commits f88ebdf (Lobo), 86a3ebd (som), 6413452 (sopro) no main; comparação em output/comparacao-lobo.jpg; nota em docs/pesquisas/Sonoplastia de livro infantil no navegador (commit 92ce96fd do módulo docs)"
+      ],
+      "revisao": "própria",
+      "execucao": [
+        {
+          "repo": "prototypes/tres-porquinhos-carrossel",
+          "de": "2a1f22fc775507c0823d00cf6c2eec2974f868b9",
+          "ate": "44cc4c5920a45d996c652ce02fb53eda12827d4c",
+          "commits": 4,
+          "arquivos_total": 63,
+          "arquivos": [
+            "M AGENTS.md",
+            "M README.md",
+            "A arte/lobo-referencia.png",
+            "A docs/convites-sopro-recibo.json",
+            "M docs/creditos-sons.md",
+            "A docs/gauntlet-17-cenas.json",
+            "A docs/gauntlet-17-cenas.md",
+            "M index.html",
+            "A public/narracao/convite-de-novo.mp3",
+            "A public/narracao/convite-madeira.mp3",
+            "A public/narracao/convite-palha.mp3",
+            "A public/narracao/convite-tijolos.mp3",
+            "A public/sfx/bate1.mp3",
+            "A public/sfx/bate2.mp3",
+            "A public/sfx/bolhas.mp3",
+            "M public/sfx/brisa.mp3",
+            "A public/sfx/choro1.mp3",
+            "A public/sfx/choro2.mp3",
+            "A public/sfx/corvo.mp3",
+            "A public/sfx/engolir.mp3",
+            "M public/sfx/fervura.mp3",
+            "M public/sfx/fogo.mp3",
+            "M public/sfx/fogos.mp3",
+            "M public/sfx/fogos2.mp3",
+            "A public/sfx/foguete.mp3",
+            "M public/sfx/grilos.mp3",
+            "M public/sfx/passaros.mp3",
+            "A public/sfx/passo1.mp3",
+            "A public/sfx/passo2.mp3",
+            "A public/sfx/passo3.mp3",
+            "A public/sfx/passo4.mp3",
+            "A public/sfx/porta.mp3",
+            "A public/sfx/puxa.mp3",
+            "A public/sfx/sopro.mp3",
+            "A public/sfx/sopro2.mp3",
+            "A public/sfx/tranca.mp3",
+            "M public/sfx/uivo1.mp3",
+            "M public/sfx/uivo2.mp3",
+            "A public/sfx/uivo3.mp3",
+            "A public/sfx/uivo4.mp3",
+            "M src/audio.js",
+            "M src/cenas.js",
+            "M src/interacao.js",
+            "A src/lobo-atlas.webp",
+            "A src/lobo-pecas.json",
+            "A src/lobo-recorte.js",
+            "M src/palco.js",
+            "M src/personagens.js",
+            "M src/sons.json",
+            "M src/sopro.js",
+            "M src/style.css",
+            "M tests/_apoio.mjs",
+            "A tests/coerencia-17.test.mjs",
+            "A tests/lobo-referencia.test.mjs",
+            "A tests/mix-medida.mjs",
+            "M tests/musica.test.mjs",
+            "M tests/narracao.test.mjs",
+            "A tests/revisao-cenas.mjs",
+            "A tests/sonoplastia.test.mjs",
+            "M tests/sopro.test.mjs",
+            "A tools/convites_sopro.py",
+            "A tools/lobo_pecas.py",
+            "M tools/sons.py"
+          ],
+          "sem_commit_total": 0,
+          "sem_commit": []
+        }
+      ],
+      "arvore_sha256": "c4c5d611bcc8739a29defaadfd1082e1d8e354524ff626cd655074eeb952a6ed",
+      "head": "44cc4c5920a45d996c652ce02fb53eda12827d4c",
+      "artefatos_gate": {},
+      "testes_alterados_apos_falha": false
     }
   ],
   "historico": [
@@ -555,6 +669,10 @@
     {
       "quando": "2026-11-07T02:27:25Z",
       "evento": "R1 → em-andamento"
+    },
+    {
+      "quando": "2026-11-07T02:36:40Z",
+      "evento": "R1 → concluida"
     }
   ]
 }
