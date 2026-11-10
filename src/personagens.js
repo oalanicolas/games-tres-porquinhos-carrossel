@@ -11,8 +11,38 @@ const ROUPAS = {
   mae: { pele: '#f39cad', pele2: '#e37f96', estampa: pat('dots', '#f39cad', '#f7b5c1', 0.22), roupa: pat('dots', '#b66ae0', '#d59af0', 0.22), alca: '#7d3fb0', botao: '#fff' },
 };
 
-/** Porquinho: y=0 nos pés, altura ~1. tipo: pipo | tico | bento | mae. */
-export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false } = {}) {
+// ---- vida em repouso (opção `vivo`) ----------------------------------------------------------------
+// Tudo aqui nasce uma vez, na montagem: dentro do idle não se aloca objeto, vetor nem closure.
+// Um `fio` guarda o valor que o idle escreveu por último numa propriedade. Se, no quadro seguinte, o valor for outro, quem escreveu foi a
+// linha do tempo (ou a cena): esse passa a ser a base, e o idle apenas soma a ela. Nunca briga com um gesto animado.
+const fio = (dono, prop) => ({ dono, prop, e: dono[prop], b: dono[prop] });
+const base = (f) => { const v = f.dono[f.prop]; if (v !== f.e) f.b = v; return f.b; };
+const poe = (f, v) => { f.dono[f.prop] = f.e = v; };
+const entre = (v, a) => (v < -a ? -a : v > a ? a : v);
+/** Mola amortecida que persegue `alvo`: dá o atraso de orelhas, rabo, lenço e braços. Se o relógio salta ou volta, recomeça no alvo. */
+const mola = (m, alvo, t) => {
+  const dt = t - m.t; m.t = t;
+  if (!(dt > 0) || dt > 0.1) { m.x = alvo; m.v = 0; return m.x; }
+  const n = dt > 0.034 ? 2 : 1; const h = dt / n;
+  for (let i = 0; i < n; i++) { m.v += ((alvo - m.x) * 256 - m.v * 12.8) * h; m.x += m.v * h; }
+  return m.x;
+};
+const novaMola = () => ({ x: 0, v: 0, t: NaN });
+/** Piscada irregular: o ritmo oscila e, de tempos em tempos, vem dupla. Devolve 0 (aberto) a 1 (fechado). */
+const piscada = (t, ritmo, fase) => {
+  const u = t * ritmo + fase + Math.sin(t * 0.21 + fase * 1.7) * 0.18;
+  const n = Math.floor(u); const p = u - n;
+  if (p < 0.04) return Math.sin(p * 25 * Math.PI);
+  if (p > 0.09 && p < 0.13 && (n & 3) === 1) return Math.sin((p - 0.09) * 25 * Math.PI);
+  return 0;
+};
+
+/**
+ * Porquinho: y=0 nos pés, altura ~1. tipo: pipo | tico | bento | mae.
+ * `vivo: true` (opcional) acrescenta sobrancelhas (`sobrE`, `sobrD`), pupilas que olham (`pupilas`, filho de `olhos`),
+ * acabamento de papel e um idle com atraso nas orelhas, molejo no rabo e contrapeso nos braços. Sem ele, nada muda.
+ */
+export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false, vivo = false } = {}) {
   const c = ROUPAS[tipo];
   const root = rig(parent, `porco-${tipo}`, { x, y, z, s, sx: virado ? -s : s });
   const corpo = rig(root, 'corpo');
@@ -48,6 +78,26 @@ export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false
     f(ellipse(0.024, 0.024, 0.11, 0.56, 10), c.botao, { jitter: 0 });
     f(rrect(0.13, 0.085, 0.015, 0, 0.47), pat('plain', shade(c.alca, 0.08)));
   }
+  if (vivo) {
+    // Acabamento de papel, só peças estáticas (fundem no corpo) e só tintas que o porquinho já usa: nenhuma textura nova.
+    const zd = f.z() + 0.003; const d = { t: 0.004, z: zd, jitter: 0 };
+    // sombra de papel sob o queixo: a elipse do rosto deslocada para baixo, atrás da cabeça
+    piece(corpo, ellipse(0.31, 0.27, 0, 0.796, 26), c.pele2, { t: 0.004, z: f.z() + 0.001, jitter: 0 });
+    if (tipo === 'pipo') {
+      piece(corpo, rrect(0.085, 0.075, 0.012, 0.115, 0.3), c.alca, d);
+      piece(corpo, stroke([[0.088, 0.328], [0.142, 0.272]], 0.008, { steps: 1 }), c.botao, { ...d, z: zd + 0.004 });
+      piece(corpo, stroke([[0.142, 0.328], [0.088, 0.272]], 0.008, { steps: 1 }), c.botao, { ...d, z: zd + 0.004 });
+    } else if (tipo === 'tico') {
+      piece(corpo, stroke([[0, 0.4], [0.004, 0.19]], 0.008, { steps: 2 }), c.botao, d);
+      piece(corpo, rrect(0.1, 0.09, 0.014, 0.135, 0.33), c.alca, d);
+    } else if (tipo === 'bento') {
+      piece(corpo, stroke([[-0.21, 0.285], [0, 0.238], [0.21, 0.285]], 0.016, { steps: 3 }), c.alca, d);
+      piece(corpo, star(5, 0.042, 0.019, -0.13, 0.33), c.botao, d);
+    } else {
+      piece(corpo, stroke([[-0.35, 0.135], [-0.18, 0.118], [0, 0.112], [0.18, 0.118], [0.35, 0.135]], 0.022, { steps: 3 }), c.alca, d);
+      piece(corpo, rrect(0.11, 0.075, 0.012, 0, 0.22), '#ef7fa0', { ...d, z: zd + 0.004 });
+    }
+  }
   f.salto(0.006);
   const bracoF = rig(corpo, 'bracoD', { x: 0.255, y: 0.56, z: f.z() + 0.001, rot: 0.2 });
   piece(bracoF, rrect(0.105, 0.3, 0.05, 0, -0.13), c.pele, { t: 0.008 });
@@ -68,10 +118,12 @@ export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false
   h(ellipse(0.075, 0.05, 0.215, 0.045, 18), '#f77f98', { jitter: 0.001 });
   // olhos piscam
   const olhos = rig(cabeca, 'olhos', { y: 0.175, z: h.z() + 0.001 });
+  // com `vivo`, pupilas e brilhos vão para um rig filho na mesma posição: piscam junto e podem olhar para os lados
+  const pupilas = vivo ? rig(olhos, 'pupilas') : olhos;
   for (const sx of [-1, 1]) {
     piece(olhos, ellipse(0.078, 0.092, sx * 0.118, 0, 24), '#fffdf4', { t: 0.006, edge: '#e8d9c4', jitter: 0.001 });
-    piece(olhos, ellipse(0.054, 0.066, sx * 0.112, -0.008, 22), '#2d1c2f', { t: 0.006, z: 0.005, jitter: 0 });
-    piece(olhos, ellipse(0.018, 0.021, sx * 0.112 + 0.02, 0.022, 10), '#ffffff', { t: 0.004, z: 0.01, jitter: 0 });
+    piece(pupilas, ellipse(0.054, 0.066, sx * 0.112, -0.008, 22), '#2d1c2f', { t: 0.006, z: 0.005, jitter: 0 });
+    piece(pupilas, ellipse(0.018, 0.021, sx * 0.112 + 0.02, 0.022, 10), '#ffffff', { t: 0.004, z: 0.01, jitter: 0 });
   }
   h.salto(0.012);
   // focinho
@@ -105,13 +157,24 @@ export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false
   } else if (tipo === 'mae') {
     const flor = rig(cabeca, 'flor', { x: 0.17, y: 0.34, z: h.z() + 0.003 });
     piece(flor, star(7, 0.09, 0.055), '#ff7fa8', { t: 0.006 }); piece(flor, ellipse(0.032, 0.032, 0, 0, 12), '#ffd24f', { t: 0.006, z: 0.004 });
-    h(stroke([[-0.09, 0.27], [-0.14, 0.255]], 0.012), '#2d1c2f', { jitter: 0 });
-    h(stroke([[0.09, 0.27], [0.14, 0.255]], 0.012), '#2d1c2f', { jitter: 0 });
+    if (!vivo) {
+      h(stroke([[-0.09, 0.27], [-0.14, 0.255]], 0.012), '#2d1c2f', { jitter: 0 });
+      h(stroke([[0.09, 0.27], [0.14, 0.255]], 0.012), '#2d1c2f', { jitter: 0 });
+    }
+  }
+  // sobrancelhas (vivo): dois rigs de uma peça. Na Mamãe reproduzem o traço fixo de antes, no mesmo lugar e inclinação.
+  if (vivo) {
+    const mae = tipo === 'mae';
+    const yb = { pipo: 0.262, tico: 0.277, bento: 0.266, mae: 0.2625 }[tipo]; const xb = mae ? 0.115 : 0.118; const rb = mae ? 0.2915 : 0.08;
+    const traco = mae ? stroke([[-0.0261, 0], [0.0261, 0]], 0.012, { steps: 1 }) : stroke([[-0.04, -0.005], [0, 0.007], [0.04, -0.005]], 0.015, { steps: 3 });
+    refs.sobrE = rig(cabeca, 'sobrE', { x: -xb, y: yb, z: h.z() + 0.02, rot: rb });
+    refs.sobrD = rig(cabeca, 'sobrD', { x: xb, y: yb, z: h.z() + 0.02, rot: -rb });
+    for (const sb of [refs.sobrE, refs.sobrD]) piece(sb, traco, '#2d1c2f', { t: 0.004, jitter: 0, glow: true });
   }
   const fase = Math.abs(x * 7 + z * 3) % 6.28;
   // A respiração soma ao que a linha do tempo escreveu neste quadro: antes, ela apagava os pulos e os gestos de cabeça.
   const soma = { y: 0, yEscrito: corpo.position.y, yBase: corpo.position.y, z: 0, zEscrito: cabeca.rotation.z, zBase: cabeca.rotation.z };
-  refs.idle = (t) => {
+  const idleBase = (t) => {
     if (corpo.position.y !== soma.yEscrito) soma.yBase = corpo.position.y;
     if (cabeca.rotation.z !== soma.zEscrito) soma.zBase = cabeca.rotation.z;
     soma.yEscrito = corpo.position.y = soma.yBase + Math.abs(Math.sin(t * 1.5 + fase)) * 0.011;
@@ -119,12 +182,49 @@ export function porco(parent, tipo, { x = 0, y = 0, z = 0, s = 1, virado = false
     const pisca = (t * 0.37 + fase) % 1; olhos.scale.y = pisca < 0.035 ? 0.12 : 1;
     orelhaE.rotation.z = 0.25 + Math.sin(t * 1.3 + fase) * 0.05; orelhaD.rotation.z = -0.25 - Math.sin(t * 1.4 + fase) * 0.05;
   };
+  if (!vivo) refs.idle = idleBase;
+  else {
+    refs.pupilas = pupilas;
+    const F = {
+      y: fio(corpo.position, 'y'), cz: fio(cabeca.rotation, 'z'), pisca: fio(olhos.scale, 'y'),
+      oE: fio(orelhaE.rotation, 'z'), oD: fio(orelhaD.rotation, 'z'), rabo: fio(rabo.rotation, 'z'),
+      aE: fio(bracoT.rotation, 'z'), aD: fio(bracoF.rotation, 'z'),
+      px: fio(pupilas.position, 'x'), py: fio(pupilas.position, 'y'),
+      bEy: fio(refs.sobrE.position, 'y'), bDy: fio(refs.sobrD.position, 'y'), bEz: fio(refs.sobrE.rotation, 'z'), bDz: fio(refs.sobrD.rotation, 'z'),
+      mCabeca: novaMola(), mCorpo: novaMola(),
+    };
+    refs.idle = (t) => {
+      // corpo e cabeça: o mesmo movimento de antes, somado ao que a linha do tempo escreveu
+      const bob = Math.abs(Math.sin(t * 1.5 + fase));
+      const yc = base(F.y) + bob * 0.011; poe(F.y, yc);
+      const rc = base(F.cz) + Math.sin(t * 0.9 + fase) * 0.035; poe(F.cz, rc);
+      // atraso (follow-through): a mola persegue o corpo e a cabeça; a diferença vira balanço de orelha, rabo e braço
+      const lagC = mola(F.mCabeca, rc, t) - rc;
+      const lagY = mola(F.mCorpo, yc, t) - yc;
+      const queda = entre(-lagY * 3.5, 0.35); // sobe depressa: orelhas pesam para fora; cai: sacodem para dentro
+      poe(F.oE, base(F.oE) + Math.sin(t * 1.3 + fase) * 0.05 + lagC * 0.9 + queda);
+      poe(F.oD, base(F.oD) - Math.sin(t * 1.4 + fase) * 0.05 + lagC * 0.9 - queda);
+      poe(F.rabo, base(F.rabo) + Math.sin(t * 3.1 + fase) * 0.12 + Math.sin(t * 1.3 + fase * 2) * 0.04 + entre(lagY * 3, 0.3));
+      const solta = entre(lagY * 4, 0.4);
+      poe(F.aE, base(F.aE) - bob * 0.04 - solta);
+      poe(F.aD, base(F.aD) + bob * 0.04 + solta);
+      // olhos: piscada irregular (às vezes dupla), olhar que passeia, sobrancelhas que acompanham
+      const fecha = piscada(t, 0.37, fase);
+      poe(F.pisca, base(F.pisca) * (1 - 0.88 * fecha));
+      poe(F.px, base(F.px) + Math.sin(t * 0.37 + fase) * Math.sin(t * 0.23 + fase * 3) * 0.009);
+      poe(F.py, base(F.py) + Math.sin(t * 0.29 + fase * 2) * 0.004);
+      poe(F.bEy, base(F.bEy) - fecha * 0.009 + bob * 0.003);
+      poe(F.bDy, base(F.bDy) - fecha * 0.009 + bob * 0.003);
+      poe(F.bEz, base(F.bEz) + Math.sin(t * 0.8 + fase) * 0.03);
+      poe(F.bDz, base(F.bDz) - Math.sin(t * 0.8 + fase + 1.1) * 0.03);
+    };
+  }
   return refs;
 }
 
 /** Só a cabeça, para espiar da janela. */
-export function porcoNaJanela(parent, tipo, { x = 0, y = 0, z = 0, s = 1 } = {}) {
-  const p = porco(parent, tipo, { x, y: y - 0.7 * s, z, s });
+export function porcoNaJanela(parent, tipo, { x = 0, y = 0, z = 0, s = 1, vivo = false } = {}) {
+  const p = porco(parent, tipo, { x, y: y - 0.7 * s, z, s, vivo });
   p.bracoE.visible = false; p.bracoD.visible = false; p.pernaE.visible = false; p.pernaD.visible = false; p.rabo.visible = false;
   return p;
 }
@@ -132,8 +232,9 @@ export function porcoNaJanela(parent, tipo, { x = 0, y = 0, z = 0, s = 1 } = {})
 /**
  * Lobo olhando para +x: a pelúcia da referência de Alan, recortada em peças (`tools/lobo_pecas.py`). y=0 nos pés.
  * Os ângulos de descanso são os que `src/cenas.js` espera; o `grupo` interno devolve cada peça à pose da imagem.
+ * `vivo: true` (opcional) troca só o idle: as mesmas peças, mais vida (orelha de trás, lenço, peito, sobrancelha, atraso), sem peça nova.
  */
-export function lobo(parent, { x = 0, y = 0, z = 0, s = 1, virado = false } = {}) {
+export function lobo(parent, { x = 0, y = 0, z = 0, s = 1, virado = false, vivo = false } = {}) {
   const root = rig(parent, 'lobo', { x, y, z, s, sx: virado ? -s : s });
   const corpo = rig(root, 'corpo');
   const O = [495, BASE_LOBO];
@@ -183,7 +284,7 @@ export function lobo(parent, { x = 0, y = 0, z = 0, s = 1, virado = false } = {}
   const sobrLonge = em(cabeca, 'sobrancelhaLonge', [620, 215], { z: 0.04 }); peca(sobrLonge, 'sobrLonge', 0, { t: 0.004 });
   const fase = Math.abs(x * 5 + z * 2) % 6.28;
   const refs = { root, corpo, cabeca, queixo, fundoBoca, peito, bochecha, roxo, rabo, chama, olho, olhoLonge, pupila, sobr, lenco, bracoF, bracoT, pernaF, pernaT, orelhaF, orelhaT };
-  refs.idle = (t) => {
+  const idleBase = (t) => {
     corpo.position.y = Math.sin(t * 1.5 + fase) * 0.006;
     rabo.rotation.z = 0.5 + Math.sin(t * 2.2 + fase) * 0.06;
     const pisca = (t * 0.27 + fase) % 1; const v = pisca < 0.03 ? 0.15 : 1;
@@ -195,5 +296,38 @@ export function lobo(parent, { x = 0, y = 0, z = 0, s = 1, virado = false } = {}
     if (bracoF.rotation.z > 1.35) bracoF.rotation.z = 1.35; if (bracoT.rotation.z < -1.35) bracoT.rotation.z = -1.35;
     tintaRoxa.visible = roxo.scale.x > 0.02; tintaRoxa.material.opacity = Math.min(1, roxo.scale.x); bochecha.visible = bochecha.scale.x > 0.02;
   };
+  if (!vivo) refs.idle = idleBase;
+  else {
+    const F = {
+      y: fio(corpo.position, 'y'), rabo: fio(rabo.rotation, 'z'), pisca: fio(olho.scale, 'y'), piscaLonge: fio(olhoLonge.scale, 'y'),
+      oF: fio(orelhaF.rotation, 'z'), oT: fio(orelhaT.rotation, 'z'), lenco: fio(lenco.rotation, 'z'),
+      pX: fio(peito.scale, 'x'), pY: fio(peito.scale, 'y'), sz: fio(sobr.rotation, 'z'), sy: fio(sobr.position, 'y'),
+      px: fio(pupila.position, 'x'), py: fio(pupila.position, 'y'),
+      mCabeca: novaMola(), mCorpo: novaMola(),
+    };
+    refs.idle = (t) => {
+      // O mesmo movimento do idle de antes, mas somado ao que a linha do tempo (ou a cena) escreveu: ele não briga com nenhum gesto.
+      const yc = base(F.y) + Math.sin(t * 1.5 + fase) * 0.006; poe(F.y, yc);
+      const lagC = mola(F.mCabeca, cabeca.rotation.z, t) - cabeca.rotation.z; // atraso da cabeça: orelhas e lenço seguem depois
+      const lagY = mola(F.mCorpo, yc, t) - yc;
+      poe(F.rabo, base(F.rabo) + Math.sin(t * 2.2 + fase) * 0.06 + Math.sin(t * 5.3 + fase * 2) * 0.02 + entre(lagY * 3, 0.3));
+      const fecha = piscada(t, 0.27, fase);
+      const v = 1 - 0.85 * fecha;
+      poe(F.pisca, base(F.pisca) * v); poe(F.piscaLonge, base(F.piscaLonge) * v);
+      const queda = entre(-lagY * 3, 0.3);
+      poe(F.oF, base(F.oF) + Math.sin(t * 1.1 + fase) * 0.04 + lagC * 0.8 + queda);
+      poe(F.oT, base(F.oT) + Math.sin(t * 1.3 + fase + 1) * 0.035 + lagC * 0.8 + queda * 0.8);
+      poe(F.lenco, base(F.lenco) + Math.sin(t * 1.8 + fase) * 0.04 + entre(lagY * 4, 0.25));
+      const resp = Math.sin(t * 1.5 + fase);
+      poe(F.pX, base(F.pX) * (1 + resp * 0.006)); poe(F.pY, base(F.pY) * (1 + resp * 0.011));
+      poe(F.sz, base(F.sz) + Math.sin(t * 0.8 + fase) * 0.025 + fecha * 0.05); poe(F.sy, base(F.sy) - fecha * 0.006 + resp * 0.002);
+      poe(F.px, base(F.px) + Math.sin(t * 0.37 + fase) * Math.sin(t * 0.23 + fase * 3) * 0.01); poe(F.py, base(F.py) + Math.sin(t * 0.29 + fase * 2) * 0.006);
+      pupilaLonge.position.x = pupila.position.x; pupilaLonge.position.y = pupila.position.y;
+      sobrLonge.rotation.z = (sobr.rotation.z + 0.08) * 0.3;
+      // as mesmas travas do idle de antes
+      if (bracoF.rotation.z > 1.35) bracoF.rotation.z = 1.35; if (bracoT.rotation.z < -1.35) bracoT.rotation.z = -1.35;
+      tintaRoxa.visible = roxo.scale.x > 0.02; tintaRoxa.material.opacity = Math.min(1, roxo.scale.x); bochecha.visible = bochecha.scale.x > 0.02;
+    };
+  }
   return refs;
 }

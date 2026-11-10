@@ -6,6 +6,7 @@ import { H } from './book.js';
 import { palco, sopro, revoada, ease, SOLO, meiaLargura, ventoInterativo } from './palco.js';
 import { porco as porcoBase, porcoNaJanela, lobo as loboBase } from './personagens.js';
 import * as O from './objetos.js';
+import { olhar, expressao, antecipar, assentar, tremer } from './atuar.js';
 import { CENAS } from './story.js';
 
 // Personagens menores e um pouco recuados: a cena respira e o cenário fica à vista.
@@ -14,6 +15,8 @@ const recua = (z = 0) => (z > 2.3 ? 2.3 + (z - 2.3) * 0.5 : z);
 const porco = (pai, tipo, o = {}) => porcoBase(pai, tipo, { ...o, s: (o.s ?? 1) * ESC_P, z: recua(o.z) });
 const lobo = (pai, o = {}) => loboBase(pai, { ...o, s: (o.s ?? 1) * ESC_L, z: recua(o.z) });
 const montadores = {};
+/** A cena pode conduzir a câmera de leve: a linha do tempo anima este objeto e `main.js` soma o desvio. Só pulsos, para voltar sempre ao zero. */
+const guiaDeCamera = () => new THREE.Object3D();
 // Altura livre sob o texto da página esquerda: o cenário colado nessa parede não passa na frente da história.
 let livreEsq = Infinity;
 export function montarCenas(livro, audio) {
@@ -210,25 +213,31 @@ function voar(tl, g, i, t, alcance = 1.15) {
 montadores.partida = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[-0.05, 1.1], [0.05, 1.1], [0.28, 1.7], [0.1, 2.3], [0.42, 2.98], [-0.3, 2.98], [-0.34, 2.3], [-0.1, 1.7]]), pat('stripes', '#f7e3b4', '#f0d69b', 0.2), { edge: '#d9c18a' });
+  const v = p.vida; const cam = guiaDeCamera();
+  p.longe(0.8, { cores: ['#a8dcb6', '#98d0a8'] });
   colinas(p, { atras: ['#8ed27a', '#7bc369'], meio: ['#b2e476', '#9dd662'] });
   const so = O.solDePapel(c, { x: -0.03, y: 1.42, z: 0.742, s: 0.62 });
-  O.nuvem(c, { x: 0.13, y: 2.38, z: 0.68, s: 0.46 }); O.nuvem(c, { x: -0.14, y: 2.06, z: 0.72, s: 0.38 });
+  O.nuvem(c, { x: 0.13, y: 2.38, z: 0.68, s: 0.46, vivo: true, vida: v }); O.nuvem(c, { x: -0.14, y: 2.06, z: 0.72, s: 0.38, vivo: true, vida: v });
   // casinha da família
   const zc = 1.5;
   const casa = O.casaTijolo(c, { x: 0.16, y: SOLO, z: zc, s: 0.68, largura: 1.15, altura: 0.86 });
   O.chamine(casa.raiz, { x: 0.3, y: 1.12, z: 0.0, s: 0.8 });
   const fum = O.fumaca(c, 5, { x: 0.37, y: 1.28, z: zc + 0.02, altura: 0.6, s: 0.8 });
-  O.arvore(p.pe(-0.5, 1.46), { s: 0.80, altura: 1.5, copa: '#ff8fb1', listra: '#f4769d', frutas: '#fff4dc', estampa: 'dots' });
-  O.arvore(p.pe(0.5, 1.62), { s: 0.66, altura: 1.05, copa: '#74cc58', listra: '#5fb949', flip: -1 });
+  O.arvore(p.pe(-0.5, 1.46), { s: 0.80, altura: 1.5, copa: '#ff8fb1', listra: '#f4769d', frutas: '#fff4dc', estampa: 'dots', vivo: true, vida: v, lado: -1 });
+  O.arvore(p.pe(0.5, 1.62), { s: 0.66, altura: 1.05, copa: '#74cc58', listra: '#5fb949', flip: -1, vivo: true, vida: v, lado: 1 });
   // Mamãe Porca à porta
-  const mae = porco(c, 'mae', { x: -0.3, y: SOLO, z: 1.92, s: 1 });
+  const mae = porco(c, 'mae', { x: -0.3, y: SOLO, z: 1.92, s: 1, vivo: true });
   mae.bracoD.rotation.z = 2.2; mae.bracoE.rotation.z = -0.5;
   O.cerca(p.pe(-0.52, 2.08), { largura: 0.5 }); O.cerca(p.pe(0.6, 2.12), { largura: 0.46 });
   const pl = O.placa(c, { x: 0.76, y: SOLO, z: 2.32, s: 1.05 });
-  O.arbusto(p.pe(-0.82, 2.46), { s: 0.9 }); O.arbusto(p.pe(0.88, 2.56), { s: 0.85, cor: '#6cc05a', listra: '#57ab4b', flor: '#ffd24f' });
+  O.arbusto(p.pe(-0.82, 2.46), { s: 0.9, vivo: true, vida: v }); O.arbusto(p.pe(0.88, 2.56), { s: 0.85, cor: '#6cc05a', listra: '#57ab4b', flor: '#ffd24f' });
+  // miudezas de papel: o que é parado se funde ao cenário, e só borboletas e passarinho são peças soltas
+  O.pedras(p.pe(0.3, 2.3), { n: 4, espalha: 0.16, seed: 3 }); O.tufos(p.pe(-0.1, 2.36), { n: 6, espalha: 0.5, seed: 5 }); O.florzinhas(p.pe(0.1, 2.5), 5, { espalha: 0.6, seed: 7 });
+  O.borboleta(c, { x: -0.78, y: SOLO + 0.98, z: 2.2, s: 0.42, vida: v }); O.borboleta(c, { x: 0.7, y: SOLO + 1.12, z: 2.1, s: 0.36, cor: '#ffd24f', cor2: '#f39c2d', vida: v });
+  O.passarinho(c, { x: -0.6, y: SOLO + 0.235, z: 2.09, s: 0.7, vida: v, pulinho: false }); // pousado na cerca
   // os três na estrada, de trouxa no ombro
   const trouxa = (q, cor) => { const b = rig(q.bracoD, 'trouxa', { y: -0.26, z: 0.012 }); piece(b, stroke([[-0.16, -0.03], [0.26, 0.2]], 0.024), pat('wood', '#a0623a', '#8a5230', 0.12), { t: 0.006, jitter: 0 }); piece(b, blob([[0.14, 0.2], [0.22, 0.05], [0.34, 0.04], [0.42, 0.18], [0.3, 0.27]], 4), pat('gingham', cor, shade(cor, -0.14), 0.12), { t: 0.01, z: 0.004 }); };
-  const pipo = porco(c, 'pipo', { x: -0.62, y: SOLO, z: 2.58, s: 0.8 }); const tico = porco(c, 'tico', { x: -0.12, y: SOLO, z: 2.66, s: 0.88 }); const bento = porco(c, 'bento', { x: 0.42, y: SOLO, z: 2.6, s: 0.98 });
+  const pipo = porco(c, 'pipo', { x: -0.62, y: SOLO, z: 2.58, s: 0.8, vivo: true }); const tico = porco(c, 'tico', { x: -0.12, y: SOLO, z: 2.66, s: 0.88, vivo: true }); const bento = porco(c, 'bento', { x: 0.42, y: SOLO, z: 2.6, s: 0.98, vivo: true });
   [pipo, tico, bento].forEach((q, i) => { q.bracoD.rotation.z = 1.15; trouxa(q, ['#e0446a', '#3fb8c9', '#ffd24f'][i]); });
   primeiroPlano(p);
   poste(p, -1, 2.3); trepadeira(p, 1, 2.35, '#ffd24f', { alto: 1.3 });
@@ -237,50 +246,68 @@ montadores.partida = (p, audio) => {
   tl.call(() => audio.tocar('grunhido', { vol: 0.8 }), 0.05); tl.call(() => audio.tocar('melro', { vol: 0.55 }), 0.35);
   for (let k = 0; k < 4; k++) tl.pulse(mae.bracoD, { rz: 0.5 }, k * 0.42, 0.42);
   tl.pulse(mae.cabeca, { rz: 0.12 }, 0, 1.68, ease.wiggle);
+  expressao(tl, mae, 'alegre', 0.05, 1.5);
   [pipo, tico, bento].forEach((q, i) => {
+    // olham para a mãe ao acenar, e a alegria fica no rosto enquanto o braço balança
+    olhar(tl, q, -0.7, 0.15, 0.1 + i * 0.1); expressao(tl, q, 'alegre', 0.2 + i * 0.1, 1.2); olhar(tl, q, 0, 0, 1.5 + i * 0.05);
     tl.to(q.bracoE, { rz: -2.3 }, 0.1 + i * 0.1, 0.25, ease.back);
     for (let k = 0; k < 3; k++) { tl.pulse(q.bracoE, { rz: 0.5 }, 0.35 + i * 0.1 + k * 0.32, 0.32); tl.pulse(q.corpo, { y: 0.13 }, 0.2 + i * 0.12 + k * 0.34, 0.34); }
     tl.to(q.bracoE, { rz: -0.2 }, 1.55 + i * 0.1, 0.25);
     // pegam a estrada e saem da página, Bento na frente: "lá se foram" não deixa ninguém para trás
     tl.grupo('estrada');
     const sai = 1.7 + (2 - i) * 0.3; const anda = 0.9 + (0.9 - q.root.position.x) * 0.72;
+    // antes de andar: olha para a estrada e toma impulso
+    olhar(tl, q, 0.8, 0, sai - 0.2); antecipar(tl, q, sai - 0.14); tl.to(q.corpo, { sx: 1, sy: 1 }, sai, 0.16, ease.back);
     tl.to(q.root, { x: 0.9, z: 2.7 }, sai, anda, ease.inOut); passos(tl, q, sai, anda, { n: Math.round(anda / 0.24), salto: 0.045, perna: 0.32 });
     tl.to(q.root, tam(q, 0.001), sai + anda - 0.18, 0.18, ease.in);
     tl.grupo('tchau');
   });
   tl.call(() => audio.tocar('sino', { vol: 0.45, dur: 2.4 }), 1.4);
   tl.grupo('estrada'); tl.pulse(pl.t, { rz: 0.16 }, 1.7, 1.2, ease.wiggle);
+  tl.pulse(cam, { x: 0.16, s: 0.035 }, 1.7, 2.5); // a câmera acompanha os três pela estrada e volta
   tl.grupo('era'); tl.to(so.g, { y: 2.42 }, 0, 3.0, ease.out);
   tl.grupo('mae-diz', { soVoz: true }); tl.pulse(mae.corpo, { y: 0.1 }, 0, 0.4); tl.pulse(mae.bracoE, { rz: -0.5 }, 0, 0.7);
   [['pipo-nome', pipo, 1.2], ['tico-nome', tico, 1.38], ['bento-nome', bento, 1]].forEach(([g, q, altura]) => { tl.grupo(g, { soVoz: true }); tl.call(() => audio.tocar('porco', { vol: 0.42, taxa: altura, pan: q.root.position.x * 0.9, varia: 0 }), 0.04); tl.pulse(q.corpo, { y: 0.14 }, 0, 0.36); tl.pulse(q.cabeca, { rz: 0.16 }, 0, 0.36); });
   tl.grupo('base');
-  return { linha: tl, atores: { mae, pipo, tico, bento }, provas: { irmaos: [pipo, tico, bento] }, idle(t) { mae.idle(t); pipo.idle(t); tico.idle(t); bento.idle(t); fum.idle(t); so.raios.rotation.z = t * 0.1; } };
+  return { linha: tl, camera: cam, atores: { mae, pipo, tico, bento }, provas: { irmaos: [pipo, tico, bento] }, idle(t) { mae.idle(t); pipo.idle(t); tico.idle(t); bento.idle(t); fum.idle(t); so.raios.rotation.z = t * 0.1; v.idle(t); } };
 };
 
 // ---- 6. A casa de palha ----------------------------------------------------------------------------
 montadores.palha = (p, audio) => {
   const tl = new Timeline(); const c = p.conteudo;
   p.chao(blob([[0.02, 1.8], [0.34, 1.8], [0.5, 2.2], [0.1, 2.6], [0.1, 3.02], [-0.5, 3.02], [-0.16, 2.5], [0.1, 2.15]]), pat('stripes', '#f5dfa7', '#efd492', 0.2), { edge: '#d9c18a' });
+  const v = p.vida; const cam = guiaDeCamera();
+  p.longe(0.8, { cores: ['#9ccf8a', '#8cc27c'] });
   colinas(p);
   const so = O.solDePapel(c, { x: -0.08, y: 2.36, z: 0.74, s: 0.7 });
-  O.nuvem(c, { x: 0.14, y: 2.6, z: 0.76, s: 0.42 }); O.nuvem(c, { x: -0.2, y: 1.92, z: 0.76, s: 0.42 }); O.nuvem(c, { x: 0.16, y: 1.76, z: 0.78, s: 0.36 });
-  O.arvore(p.pe(-0.52, 1.42), { s: 0.80, altura: 1.5, copa: '#79c95a', listra: '#65b64a' });
-  O.arvore(p.pe(0.54, 1.46), { s: 0.84, altura: 1.5, copa: '#f49d3f', listra: '#e4892e', frutas: '#e84a5f', flip: -1 });
+  O.nuvem(c, { x: 0.14, y: 2.6, z: 0.76, s: 0.42, vivo: true, vida: v }); O.nuvem(c, { x: -0.2, y: 1.92, z: 0.76, s: 0.42, vivo: true, vida: v }); O.nuvem(c, { x: 0.16, y: 1.76, z: 0.78, s: 0.36 });
+  O.arvore(p.pe(-0.52, 1.42), { s: 0.80, altura: 1.5, copa: '#79c95a', listra: '#65b64a', vivo: true, vida: v, lado: -1 });
+  O.arvore(p.pe(0.54, 1.46), { s: 0.84, altura: 1.5, copa: '#f49d3f', listra: '#e4892e', frutas: '#e84a5f', flip: -1, vivo: true, vida: v, lado: 1 });
+  O.folhas(c, 4, { x: 0.56, y: SOLO + 1.3, z: 1.98, largura: 0.12, alto: 1.2, cor: '#f49d3f', listra: '#e4892e', seed: 4, vida: v });
   const zc = 1.78; const xc = 0.02;
   const casa = O.casaPalha(c, { x: xc, y: SOLO, z: zc, s: 0.9 });
   const zj = zc + 0.1; const jx = xc + 0.3, jy = 0.56;
-  const pipo = porcoNaJanela(c, 'pipo', { x: jx, y: jy - 0.03, z: zj + 0.008, s: 0.5 });
+  const pipo = porcoNaJanela(c, 'pipo', { x: jx, y: jy - 0.03, z: zj + 0.008, s: 0.5, vivo: true });
   const mj = O.molduraJanela(c, { x: jx, y: jy, z: zj + 0.07, r: 0.15, cor: '#a8702f', sombra: '#70401f' }); mj.userData.rig = true;
   O.flor(p.pe(0.78, 2.26), { cor: '#ff7fa8', altura: 0.3 }); O.flor(p.pe(0.66, 2.34), { cor: '#ffffff', altura: 0.22 }); O.cogumelo(p.pe(0.86, 2.46), {});
   O.arbusto(p.pe(0.74, 2.66), { s: 1.05 });
   O.cerca(p.pe(0.56, 2.06), { largura: 0.34 });
+  O.pedras(p.pe(-0.2, 2.5), { n: 4, espalha: 0.18, seed: 11 }); O.tufos(p.pe(0.3, 2.44), { n: 6, espalha: 0.5, seed: 13 }); O.florzinhas(p.pe(-0.3, 2.66), 4, { espalha: 0.4, seed: 17 });
+  O.borboleta(c, { x: 0.78, y: SOLO + 0.62, z: 2.3, s: 0.4, vida: v });
+  const po = O.poeira(c, 6, { nome: 'poeira-palha', cor: '#f2dfa8', listra: '#e6cf8f' });
   primeiroPlano(p);
-  const x0 = -0.58; const w = lobo(c, { x: x0, y: SOLO, z: 2.6, s: 0.76 }); w.rabo.rotation.z = 0.8; const vL = escondido(w);
+  const x0 = -0.58; const w = lobo(c, { x: x0, y: SOLO, z: 2.6, s: 0.76, vivo: true }); w.rabo.rotation.z = 0.8; const vL = escondido(w);
   const pl = p.parede(-1, 2.2, 0.05); piece(pl, rrect(0.06, 0.9, 0.01, 0, 0.45), pat('wood', '#a0623a', '#8a5230', 0.18), { t: 0.01 }); piece(pl, poly([-0.28, 0.72], [0.24, 0.72], [0.36, 0.82], [0.24, 0.92], [-0.28, 0.92]), pat('wood', '#e7a95c', '#cf9147', 0.18), { t: 0.01, z: 0.01 });
   trepadeira(p, 1, 2.42, '#ff8fb1', { alto: 1.35 });
   // ação: chega, vai até a porta, bate, volta e sopra
   loboChega(tl, w, x0, vL, audio, 0); tl.call(() => audio.tocar('corvo', { vol: 0.34, pan: 0.45 }), 0.02); loboBate(tl, w, x0, { x: xc - 0.34, z: zc + 0.26 }, audio, 1.25, 1.05);
+  // João vê o Lobo chegar, assusta com as batidas e treme enquanto ele enche o peito
+  tl.grupo('chega'); olhar(tl, pipo, -0.9, -0.2, 0.55); expressao(tl, pipo, 'susto', 0.7, 0.3); olhar(tl, w, 0.8, 0.1, 0.6);
+  tl.grupo('bate'); expressao(tl, pipo, 'medo', 1.5, 1.1); tremer(tl, pipo, 1.5, 0.75); expressao(tl, w, 'bravo', 1.1, 1.5);
   const S = encherESoprar(tl, w, 2.9, 0.95, audio, x0);
+  tl.grupo('encher'); expressao(tl, pipo, 'susto', 3.0, 0.8); olhar(tl, w, 0.9, 0.2, 2.95);
+  tl.grupo('sopro'); expressao(tl, pipo, 'medo', S + 0.02); tl.pulse(cam, { x: 0.1, s: 0.045 }, S - 0.2, 1.7); // a câmera chega perto do sopro e volta
+  O.poeiraEstoura(tl, po, S + 0.5, { x: xc, y: SOLO + 0.04, z: zc + 0.3, raio: 0.3, alto: 0.2 });
   const mx = x0 + 0.54 * 0.76 * ESC_L, my = SOLO + 0.92 * 0.76 * ESC_L;
   sopro(c, tl, S, 1.25, { x: mx, y: my, z: 2.5, alvoX: 0.8, alvoY: my + 0.22, alvoZ: 2.12, n: 13 });
   casa.telhado.forEach((g, i) => voar(tl, g, i + 3, S + 0.1 + (casa.telhado.length - i) * 0.04));
@@ -291,11 +318,11 @@ montadores.palha = (p, audio) => {
   tl.grupo('foge'); tl.call(() => audio.tocar('guincho', { vol: 0.85 }), S + 0.35);
   voar(tl, mj, 2, S + 0.3);
   fugir(tl, pipo, S + 0.38);
-  tl.grupo('calma'); acalmar(tl, w, S + 1.55, x0);
+  tl.grupo('calma'); acalmar(tl, w, S + 1.55, x0); olhar(tl, w, 1, 0, S + 1.6); expressao(tl, w, 'alegre', S + 1.6, 0.3);
   tl.call(() => audio.tocar('uivo1', { vol: 0.35, dur: 3.6, pan: -0.5 }), S + 1.6);
   tl.grupo('atras'); loboVaiAtras(tl, w, vL, S + 1.95); // "foi atrás", na página seguinte: ele sai pela mesma borda que Pipo
   tl.grupo('base');
-  return { linha: tl, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { casa: casa.raiz, porta: xc, vao: casa.vao }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; } };
+  return { linha: tl, camera: cam, vento: ventoInterativo(c, w.fundoBoca, casa.raiz), atores: { lobo: w, pipo }, provas: { casa: casa.raiz, porta: xc, vao: casa.vao }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.8 + Math.sin(t * 2.2) * 0.06; pipo.idle(t); so.raios.rotation.z = t * 0.1; v.idle(t); } };
 };
 
 // ---- 8. A casa de madeira ---------------------------------------------------------------------------
@@ -1098,29 +1125,31 @@ montadores['corrida-kael'] = (p, audio) => {
 };
 
 // ---- Cataplof: mesmo cenário de "Correu, correu", para a virada de página não pular nada --------------------
-function cenarioDaFuga(p) {
-  const c = p.conteudo;
+function cenarioDaFuga(p, { vivo = false } = {}) {
+  const c = p.conteudo; const v = vivo ? p.vida : null;
   p.chao(blob([[-0.3, 1.14], [-0.08, 1.14], [-0.02, 1.7], [0.14, 2.2], [0.4, 2.94], [-0.3, 2.96], [-0.32, 2.2], [-0.44, 1.7]]), pat('stripes', '#7f8fb8', '#7283ac', 0.2), { edge: '#5f7098' });
+  if (vivo) p.longe(0.79, { cores: ['#31507e', '#2a4672'], copas: ['#27456f', '#223d64'] });
   colinas(p, { atras: ['#26406e', '#203860'], meio: ['#2c4f74', '#264668'], z1: 0.84, z2: 1.0 });
   O.lua(c, { x: 0.05, y: 2.34, z: 0.74, s: 0.8 });
   for (const [x, y, s] of [[-0.2, 2.5, 0.08], [-0.26, 2.0, 0.05], [0.28, 2.0, 0.05], [-0.04, 2.7, 0.06]]) piece(p.alto(x, y, 0.76), star(5, s, s * 0.45), '#fff0a6', { t: 0.006, edge: '#fff9d6' });
   const morro = p.pe(-0.14, 1.14);
   piece(morro, blob([[-0.3, 0], [-0.26, 0.36], [-0.08, 0.74], [0.1, 0.62], [0.3, 0.18], [0.42, 0]], 8), pat('chevron', '#2f5a78', '#28506c', 0.3), { t: 0.012, edge: '#3f6f8e' });
   piece(morro, stroke([[-0.04, 0], [0.08, 0.16], [-0.08, 0.32], [0.02, 0.5], [-0.05, 0.7]], 0.06, { taper: 0.6 }), pat('stripes', '#7f8fb8', '#7283ac', 0.1), { t: 0.004, z: 0.012, jitter: 0 });
-  O.arvore(p.pe(0.46, 1.32), { s: 0.62, altura: 1.1, copa: '#2c6a72', listra: '#245c64', frutas: null });
+  O.arvore(p.pe(0.46, 1.32), { s: 0.62, altura: 1.1, copa: '#2c6a72', listra: '#245c64', frutas: null, ...(vivo ? { vivo: true, vida: v, lado: 1 } : {}) });
+  if (vivo) { O.vagalumes(c, 6, { x: -0.1, y: SOLO + 0.75, z: 2.1, largura: 1.1, altura: 0.8, s: 0.6, seed: 5, vida: v }); O.pedras(p.pe(-0.5, 2.5), { n: 4, espalha: 0.16, cor: '#5f7098', listra: '#52628a', seed: 9 }); O.tufos(p.pe(0.1, 2.5), { n: 6, espalha: 0.55, cores: ['#4a7f74', '#3f7268'], seed: 15 }); }
   const xc = 0.32, zc = 1.86, sc = 0.58;
   const casa = O.casaTijolo(c, { x: xc, y: SOLO, z: zc, s: sc }); O.chamine(casa.raiz, { x: 0.3, y: 1.3, z: 0 });
   const luz = rig(casa.raiz, 'luz-porta', {}); piece(luz, rrect(0.3, 0.5, 0.1, 0, 0.26), '#ffcf7a', { t: 0.002, z: casa.porta.position.z - 0.003, glow: true, jitter: 0 });
   janelasDeBento(c, { x: xc, zc, s: sc, casa });
   const fum = O.fumaca(c, 5, { x: xc + 0.18, y: SOLO + 1.04, z: zc + 0.01, altura: 0.6, s: 0.7 });
-  return { c, xc, zc, sc, casa, fum, luz };
+  return { c, xc, zc, sc, casa, fum, luz, v };
 }
 const POSICOES_NA_PORTA = [['pipo', 0.04, 2.24, 0.62], ['bento', 0.32, 2.2, 0.66], ['tico', 0.62, 2.26, 0.64]];
 /** O Lobo depois do tombo: do mesmo jeito no fim de uma página e no começo da outra. */
 // onde o Lobo cai: longe o bastante para o rabo em chamas não encostar em João, que para na porta
 const XQ = -0.36;
-function loboCaido(c, { y = SOLO, escondido: esc = false } = {}) {
-  const w = lobo(c, { x: XQ, y, z: 2.3, s: 0.76, virado: true });
+function loboCaido(c, { y = SOLO, escondido: esc = false, vivo = false } = {}) {
+  const w = lobo(c, { x: XQ, y, z: 2.3, s: 0.76, virado: true, vivo });
   w.chama.scale.setScalar(1); w.fundoBoca.scale.y = 1; w.queixo.rotation.z = -0.28; w.olho.scale.set(1.2, 1.25, 1); w.bracoF.rotation.z = 2.6; w.bracoT.rotation.z = -2.6;
   const estrelas = [0, 1, 2].map((i) => { const g = rig(c, 'estrela', { x: XQ, y: SOLO + 0.8, z: 2.34, s: esc ? 0.001 : 1 }); piece(g, star(5, 0.055, 0.024), '#ffd24f', { t: 0.004, edge: '#fff4c0', jitter: 0, noShadow: true }); return g; });
   const gira = (t) => { estrelas.forEach((g, i) => { const a = t * 3 + i * 2.09; g.position.x = XQ - 0.05 + Math.cos(a) * 0.17; g.position.y = SOLO + 0.72 + Math.sin(a) * 0.05; g.rotation.z = t * 2; }); };
@@ -1129,12 +1158,12 @@ function loboCaido(c, { y = SOLO, escondido: esc = false } = {}) {
 }
 
 montadores.tombo = (p, audio) => {
-  const tl = new Timeline(); const { c, xc, zc, sc, casa, fum, luz } = cenarioDaFuga(p);
+  const tl = new Timeline(); const { c, xc, zc, sc, casa, fum, luz, v } = cenarioDaFuga(p, { vivo: true }); const cam = guiaDeCamera();
   luz.scale.setScalar(0.001);
   const ch = { x: xc + 0.3 * sc, y: SOLO + 1.3 * sc + 0.46 * sc * 0.72 };
-  const { w, estrelas, gira } = loboCaido(c, { y: ch.y, escondido: true }); const vL = escondido(w); w.root.position.x = ch.x; w.root.position.z = zc + 0.02;
+  const { w, estrelas, gira } = loboCaido(c, { y: ch.y, escondido: true, vivo: true }); const vL = escondido(w); w.root.position.x = ch.x; w.root.position.z = zc + 0.02;
   w.root.rotation.z = 0;
-  const atores = Object.fromEntries(POSICOES_NA_PORTA.map(([tipo, x, z, s]) => { const q = porco(c, tipo, { x, y: SOLO, z, s, virado: true }); const v = escondido(q); return [tipo, { q, v, x, z: q.root.position.z }]; }));
+  const atores = Object.fromEntries(POSICOES_NA_PORTA.map(([tipo, x, z, s]) => { const q = porco(c, tipo, { x, y: SOLO, z, s, virado: true, vivo: true }); const v = escondido(q); return [tipo, { q, v, x, z: q.root.position.z }]; }));
   primeiroPlano(p, ['#4a7f74', '#3f7268'], ['#ffd24f', '#ff7fa8', '#fff']);
   poste(p, -1, 2.3, { cor: '#ffd24f' }); trepadeira(p, 1, 2.42, '#ffb02e', { alto: 1.1 });
   const puf = (n, nome) => Array.from({ length: n }, () => { const g = rig(c, nome, { x: 0, y: 0.3, z: 2, s: 0.001 }); piece(g, scallop(0.07, 0.06, 6, 0.16, 0, 0, 5), pat('stripes', '#c9c6dc', '#b6b2ce', 0.08), { t: 0.006, edge: '#ffffff', jitter: 0, noShadow: true }); return g; });
@@ -1146,15 +1175,17 @@ montadores.tombo = (p, audio) => {
   tl.to(w.root, tam(w, vL * 0.3), 0, 0.08, ease.out);
   tl.to(w.root, { x: TOPO.x, y: TOPO.y, z: TOPO.z }, 0.02, 1.7, ease.out); tl.to(w.root, tam(w, vAlto), 0.02, 1.7, ease.out);
   tl.to(w.root, { rz: 0.2 }, 0.02, 0.5, ease.out);
+  tl.pulse(cam, { y: 0.2 }, 0.2, 3.1); // a câmera sobe com ele e desce antes da queda
   fumas.forEach((g, i) => { const q = (i + 0.5) / fumas.length; const e = 1 - (1 - q) ** 2; const t = 0.05 + q * 1.3; tl.to(g, { x: ch.x + (TOPO.x - ch.x) * e + 0.03, y: ch.y + (TOPO.y - ch.y) * e - 0.04, z: 1.92, s: 0.9 - q * 0.3 }, t, 0.04); tl.to(g, { s: 0.001 }, t + 0.8, 0.4, ease.in); });
   // para no ar: e só agora ele percebe
   tl.grupo('para');
   tl.to(w.root, { rz: 0 }, 1.72, 0.2, ease.out); tl.call(() => audio.tocar('ar', { vol: 0.45, taxa: 0.7 }), 1.74);
+  olhar(tl, w, 0, -1, 1.8, 0.2); // olha para baixo: é aí que ele percebe
   tl.grupo('engole');
   tl.to(w.cabeca, { rz: -0.36 }, 2.1, 0.22, ease.out); tl.to(w.olho, { sx: 1.35, sy: 1.4 }, 2.1, 0.12); tl.to(w.queixo, { rz: -0.1 }, 2.1, 0.12); tl.to(w.fundoBoca, { sy: 0.4 }, 2.1, 0.12);
   tl.call(() => audio.tocar('engolir', { vol: 0.9 }), 2.3); tl.pulse(w.corpo, { y: -0.03 }, 2.3, 0.3);
   tl.grupo('ih');
-  tl.pulse(w.cabeca, { rz: 0.05 }, 2.8, 0.5, ease.wiggle);
+  tl.pulse(w.cabeca, { rz: 0.05 }, 2.8, 0.5, ease.wiggle); tremer(tl, w, 2.85, 0.45);
   // despenca: a altura acelera e o lado não, então a curva é de queda de verdade
   tl.grupo('despenca');
   const Q = 3.4; const DQ = 1.15;
@@ -1170,17 +1201,18 @@ montadores.tombo = (p, audio) => {
   tl.to(w.root, { sx: sg * vL * 1.3, sy: vL * 0.55 }, T, 0.05, ease.out); tl.to(w.root, { sx: sg * vL, sy: vL }, T + 0.06, 0.4, ease.back);
   poeira.forEach((g, i) => { const a = (i / poeira.length) * Math.PI * 2; const dx = Math.cos(a) * (0.26 + (i % 3) * 0.09); tl.to(g, { x: XQ, y: SOLO + 0.04, z: 2.34, s: 0.5 }, T, 0.01); tl.to(g, { x: XQ + dx, y: SOLO + 0.08 + Math.abs(Math.sin(a)) * 0.22, s: 1.2 + (i % 3) * 0.3, rz: dx * 3 }, T + 0.01, 0.6, ease.out); tl.to(g, { s: 0.001 }, T + 0.75, 0.55, ease.in); });
   tl.pulse(casa.raiz, { rz: 0.012 }, T, 0.5, ease.wiggle);
+  tl.pulse(cam, { y: -0.07 }, T, 0.45, ease.wiggle); olhar(tl, w, 0, 0, T, 0.05); // o chão treme com o tombo
   tl.grupo('poeira');
   estrelas.forEach((g) => tl.to(g, { s: 1 }, T + 0.45, 0.2, ease.back));
   tl.call(() => audio.tocar('sino', { vol: 0.25, taxa: 1.5, dur: 0.9 }), T + 0.5);
   tl.grupo('saem');
   const S = T + 1.6; const porta = casa.porta;
   tl.call(() => audio.tocar('porta', { vol: 0.8, pan: xc }), S); abrePorta(tl, porta, 0.16, S, 0.24); tl.to(luz, { s: 1 }, S, 0.2, ease.out);
-  ['pipo', 'bento', 'tico'].forEach((tipo, i) => { const { q, v, x, z } = atores[tipo]; const t = S + 0.2 + i * 0.26; q.root.position.x = xc; tl.to(q.root, tam(q, v * 0.5), t, 0.1); tl.to(q.root, tam(q, v), t + 0.1, 0.3); tl.to(q.root, { x, z }, t, 0.5, ease.out); passos(tl, q, t, 0.5, { n: 3, salto: 0.04 }); });
+  ['pipo', 'bento', 'tico'].forEach((tipo, i) => { const { q, v, x, z } = atores[tipo]; const t = S + 0.2 + i * 0.26; q.root.position.x = xc; tl.to(q.root, tam(q, v * 0.5), t, 0.1); tl.to(q.root, tam(q, v), t + 0.1, 0.3); tl.to(q.root, { x, z }, t, 0.5, ease.out); passos(tl, q, t, 0.5, { n: 3, salto: 0.04 }); olhar(tl, q, -0.8, -0.15, t + 0.15); expressao(tl, q, i === 2 ? 'susto' : 'alegre', t + 0.2); if (i === 0) assentar(tl, q, t + 0.38); });
   tl.call(() => audio.tocar('grunhido', { vol: 0.7 }), S + 0.3);
   tl.grupo('base');
   const q = (n) => atores[n].q;
-  return { linha: tl, atores: { lobo: w, pipo: q('pipo'), tico: q('tico'), bento: q('bento') }, provas: { casa: casa.raiz, chamine: ch }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.32 + Math.sin(t * 12) * 0.14; q('pipo').idle(t); q('tico').idle(t); q('bento').idle(t); fum.idle(t); gira(t); } };
+  return { linha: tl, camera: cam, atores: { lobo: w, pipo: q('pipo'), tico: q('tico'), bento: q('bento') }, provas: { casa: casa.raiz, chamine: ch }, idle(t) { w.idle(t); w.rabo.rotation.z = 0.32 + Math.sin(t * 12) * 0.14; q('pipo').idle(t); q('tico').idle(t); q('bento').idle(t); fum.idle(t); gira(t); v.idle(t); } };
 };
 
 export function arteDaCapa(renderer) {

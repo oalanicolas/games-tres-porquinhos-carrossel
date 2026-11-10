@@ -119,3 +119,19 @@ As páginas agora são carregadas por proximidade e liberadas antes de carregar 
 A perda de contexto gráfico é tratada como pausa temporária. A cena e a preferência da narração são preservadas, assim como a energia de um sopro em andamento. As regressões estão em `tests/memoria.test.mjs`. Medições e comparações ficam em `output/memoria-iphone/`.
 
 A validação completa passou em 80 de 80 testes. O percurso no WebKit emulado narrou 17 de 17 cenas, incluindo perda e restauração forçada do contexto gráfico, e terminou em 402.891 s. O iPhone físico ainda depende de validação de Alan.
+
+## Piloto de qualidade em três cenas — 9 de novembro de 2026
+
+Alan pediu mais qualidade de animação e mais detalhe em cenários e personagens, começando por um piloto em Hora de partir, A casa de palha e Cataplof!, sem ganhar muito peso nem perder desempenho. As outras 14 cenas ficam como estavam até ele aprovar.
+
+Os porquinhos ganharam sobrancelhas e pupilas que olham para quem fala ou para onde vão. `src/atuar.js` reúne olhar, expressão, antecipação, assentar e tremor; o Lobo usa as mesmas peças recortadas. `src/vida.js` move o cenário sem alocar por quadro: copas, arbusto e nuvens ao vento, borboletas, passarinho na cerca, folhas, vagalumes e poeira na queda da casa de palha. Pedras, tufos, florzinhas e a colina distante são fundidos ao cenário. A cena pode guiar a câmera de leve, e isso fica desligado para quem pede menos movimento.
+
+Medido em três rodadas intercaladas, Chrome headless com GPU Metal (Apple M3 Ultra), 1280×800, contra o commit `331d0b6`:
+
+| Cena | Chamadas antes → depois | Malhas antes → depois | p95 por quadro antes (ms) | p95 depois (ms) |
+|---|---|---|---|---|
+| Hora de partir | 1257 → 1306 | 270 → 305 | 3,4 / 3,4 / 3,5 | 3,4 / 3,4 / 3,4 |
+| A casa de palha | 2784 → 2827 | 286 → 320 | 5,1 / 5,6 / 5,5 | 5,6 / 5,7 / 5,5 |
+| Cataplof! | 2861 → 2893 | 304 → 326 | 5,2 / 5,7 / 5,7 | 5,8 / 5,9 / 5,6 |
+
+O JavaScript do build passou de 208166 para 216442 bytes comprimidos. Nenhuma imagem ou áudio novo. As 17 durações sem voz não mudaram. O teto de 10% de chamadas por cena e a volta da câmera ao zero estão em `tests/orcamento.test.mjs`. Não testado em dispositivo móvel.

@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { piece, rig, group, spiral, stroke, rng } from './paper.js';
 import { CUNHA } from './book.js';
 import { ease } from './tween.js';
+import { criarVida } from './vida.js';
+import { colinaLonge } from './objetos.js';
 
 const T = Math.tan(CUNHA / 2);
 export const SOLO = 0.05;
@@ -31,6 +33,10 @@ export function palco(conteudo) {
     },
     /** Grupo livre, sem plantar. */
     alto(x, y, z, s = 1) { return group(conteudo, { x, y, z, s }); },
+    /** Coletor de vida da cena (vento, deriva, bater de asas...), criado na primeira vez que se pede. Chame `p.vida.idle(t)` no idle da cena. */
+    get vida() { return (this._vida ||= criarVida()); },
+    /** Camada distante opt-in: colina em silhueta (com fileira de copas) em z, atrás das colinas. Ver `colinaLonge` em objetos.js. */
+    longe(z = 0.8, opts = {}) { return colinaLonge(this.pe(0, z), { ...opts, z }); },
   };
   return p;
 }

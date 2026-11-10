@@ -1,12 +1,17 @@
 // Cenografia de recorte: casas, árvores, nuvens e miudezas.
-import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, scallop, cloud, flame, heart, shade, rng } from './paper.js';
+import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, scallop, cloud, flame, heart, shade, rng, hill } from './paper.js';
+import { ease } from './tween.js';
 
+/** Meia largura útil da cunha nesse raio (a mesma conta de `meiaLargura` em palco.js). */
+const meia = (z) => z * Math.tan(Math.PI / 8) - 0.025;
 const pilha = (parent, passo = 0.008, inicio = 0) => { let z = inicio; const f = (pts, paint, o = {}) => { z += passo; return piece(parent, pts, paint, { t: 0.01, z, ...o }); }; f.z = () => z; f.salto = (d) => { z += d; }; return f; };
 
-export function nuvem(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#fff8f0', listra = '#ffe5e0' } = {}) {
+/** vivo + vida: a nuvem (que já é um rig) deriva em laço; a deriva respeita a folga que sobra até a parede da cunha. */
+export function nuvem(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#fff8f0', listra = '#ffe5e0', vivo = false, vida = null, deriva = 0.035 } = {}) {
   const g = rig(parent, 'nuvem', { x, y, z, s });
   piece(g, cloud(0.56, 0.24), pat('stripes', cor, listra, 0.15), { t: 0.012, edge: '#ffffff' });
   piece(g, cloud(0.34, 0.12), cor, { t: 0.006, z: 0.012, edge: '#ffffff', y: -0.02 });
+  if (vivo && vida) { const folga = (meia(z) - 0.012 - Math.abs(x) - 0.285 * s) * 0.9; vida.deriva(g, { ax: Math.max(0, Math.min(deriva, folga)), ay: 0.012, vel: 0.33 }); }
   return g;
 }
 export function solDePapel(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#ffd24f', raio = '#ffb02e', pontas = 14 } = {}) {
@@ -23,29 +28,38 @@ export function lua(parent, { x = 0, y = 0, z = 0, s = 1 } = {}) {
   for (const [a, b, r] of [[-0.08, 0.05, 0.05], [0.09, 0.1, 0.03], [0.05, -0.09, 0.04]]) piece(g, ellipse(r, r, a, b, 14), '#f3d873', { t: 0.003, z: 0.018, jitter: 0.001 });
   return g;
 }
-export function arvore(parent, { x = 0, y = 0, z = 0, s = 1, copa = '#6fcb5c', listra = '#5eb94d', tronco = '#a0623a', altura = 1, frutas = '#e84a5f', estampa = 'scales', flip = 1 } = {}) {
+/** vivo: a copa inteira vira UM rig, com o pivô no topo do tronco; devolve o rig da copa (e, com `vida`, já o registra no vento). lado: 0 vai e volta; +1/−1 só para um lado (árvore encostada na parede). */
+export function arvore(parent, { x = 0, y = 0, z = 0, s = 1, copa = '#6fcb5c', listra = '#5eb94d', tronco = '#a0623a', altura = 1, frutas = '#e84a5f', estampa = 'scales', flip = 1, vivo = false, vida = null, lado = 0, amp = 0.022 } = {}) {
   const g = group(parent, { x, y, z, s });
   const t = pilha(g);
   t(stroke([[0, 0], [0.012 * flip, 0.3 * altura], [-0.01 * flip, 0.62 * altura]], 0.09, { taper: 0.25 }), pat('wood', tronco, shade(tronco, -0.08), 0.2), { edge: '#f0d0ac' });
   t(stroke([[0, 0.34 * altura], [0.13 * flip, 0.5 * altura]], 0.038), tronco, { edge: '#f0d0ac' });
   const y0 = 0.62 * altura + 0.2;
-  t(scallop(0.38, 0.34, 9, 0.11, 0, y0), pat(estampa, copa, listra, 0.28), { edge: '#fff8e0' });
-  t(scallop(0.25, 0.22, 7, 0.13, -0.05, y0 + 0.05), pat('dots', shade(copa, 0.07), shade(copa, 0.14), 0.18), { edge: '#fff8e0' });
-  if (frutas) { const r = rng(Math.abs(x * 100 + z * 37) | 0); for (let i = 0; i < 6; i++) { const a = r() * 6.28, d = 0.1 + r() * 0.2; t(ellipse(0.034, 0.034, Math.cos(a) * d * 1.2, y0 + Math.sin(a) * d, 12), frutas, { jitter: 0.001, t: 0.008 }); } }
-  return g;
+  const raiz = vivo ? rig(g, 'copa', { y: 0.62 * altura }) : null; // pivô no topo do tronco
+  const c = vivo ? pilha(raiz, 0.008, t.z()) : t; const dy = vivo ? -0.62 * altura : 0;
+  c(scallop(0.38, 0.34, 9, 0.11, 0, y0), pat(estampa, copa, listra, 0.28), { edge: '#fff8e0', y: dy });
+  c(scallop(0.25, 0.22, 7, 0.13, -0.05, y0 + 0.05), pat('dots', shade(copa, 0.07), shade(copa, 0.14), 0.18), { edge: '#fff8e0', y: dy });
+  if (frutas) { const r = rng(Math.abs(x * 100 + z * 37) | 0); for (let i = 0; i < 6; i++) { const a = r() * 6.28, d = 0.1 + r() * 0.2; c(ellipse(0.034, 0.034, Math.cos(a) * d * 1.2, y0 + Math.sin(a) * d, 12), frutas, { jitter: 0.001, t: 0.008, y: dy, edge: vivo ? '#fff8e0' : undefined }); } }
+  if (!vivo) return g;
+  vida?.balanca(raiz, { amp, vel: 1.1, lado });
+  return raiz;
 }
-export function arbusto(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#58b957', listra = '#47a549', flor = '#ff7fa8' } = {}) {
-  const g = group(parent, { x, y, z, s });
+/** vivo: o arbusto inteiro é UM rig (pivô no pé) e devolve o rig; com `vida`, balança. */
+export function arbusto(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#58b957', listra = '#47a549', flor = '#ff7fa8', vivo = false, vida = null, amp = 0.018 } = {}) {
+  const g = vivo ? rig(parent, 'arbusto', { x, y, z, s }) : group(parent, { x, y, z, s });
   piece(g, blob([[-0.25, 0], [-0.27, 0.1], [-0.14, 0.2], [0, 0.17], [0.13, 0.24], [0.27, 0.11], [0.25, 0]], 5), pat('scales', cor, listra, 0.2), { t: 0.012 });
   if (flor) { const r = rng(Math.abs(x * 90 + z * 13) | 0); for (let i = 0; i < 4; i++) { const fx = -0.17 + r() * 0.34, fy = 0.05 + r() * 0.12; piece(g, star(5, 0.032, 0.018, fx, fy), flor, { t: 0.005, z: 0.012, jitter: 0 }); piece(g, ellipse(0.011, 0.011, fx, fy, 8), '#ffe27a', { t: 0.003, z: 0.017, jitter: 0 }); } }
+  if (vivo) vida?.balanca(g, { amp, vel: 1.5 });
   return g;
 }
-export function flor(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#ff7fa8', altura = 0.26, miolo = '#ffd24f', caule = '#3f9f55' } = {}) {
-  const g = group(parent, { x, y, z, s });
+/** vivo: a flor inteira é UM rig, pivô no pé; devolve o rig e, com `vida`, balança. */
+export function flor(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#ff7fa8', altura = 0.26, miolo = '#ffd24f', caule = '#3f9f55', vivo = false, vida = null, amp = 0.05 } = {}) {
+  const g = vivo ? rig(parent, 'flor', { x, y, z, s }) : group(parent, { x, y, z, s });
   piece(g, stroke([[0, 0], [0.012, altura * 0.55], [0, altura]], 0.02), caule, { t: 0.006, jitter: 0 });
   piece(g, blob([[0, altura * 0.3], [0.06, altura * 0.42], [0.09, altura * 0.33], [0.04, altura * 0.26]], 4), caule, { t: 0.006, z: 0.002 });
   piece(g, star(6, 0.062, 0.04, 0, altura), cor, { t: 0.008, z: 0.006 });
   piece(g, ellipse(0.022, 0.022, 0, altura, 10), miolo, { t: 0.005, z: 0.012, jitter: 0 });
+  if (vivo) vida?.balanca(g, { amp, vel: 1.8 });
   return g;
 }
 export function cogumelo(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#e84a5f' } = {}) {
@@ -257,4 +271,171 @@ export function fumaca(parent, n, { x = 0, y = 0, z = 0, cor = '#efe7f2', altura
     const p = (t * 0.22 + i / n) % 1; b.position.set(Math.sin(p * 6 + i) * 0.06 + p * 0.07, p * altura, 0); const q = Math.sin(Math.min(p * 3.2, 1) * Math.PI / 2) * (1 - p * 0.35) * (p > 0.86 ? (1 - p) / 0.14 : 1); b.scale.setScalar(Math.max(0.001, (0.4 + p * 1.1) * q));
   });
   return { raiz, bolas, idle };
+}
+
+// ====================================================================================================
+// Piloto de cenário vivo (opt-in): miudezas animadas, estáticos fundidos, camadas distantes e poeira.
+// Custo em "malhas-rig" = malhas que sobram de cada rig depois do bake (uma por material, face e corte); cada uma é um desenho
+// a mais e, se projeta sombra, outro na passada de sombra. Estático fundido não entra nessa conta.
+// ====================================================================================================
+const VERDE = '#3f9f55'; const VERDE_CLARO = '#5cc06a'; const ESCURO = '#3d2c55';
+
+/**
+ * Borboleta: UM rig (asas dos dois lados, corpo e antenas), 3 malhas. Com `vida`: bate as asas, voa em oito curto e balança.
+ * Fica a ±(deriva + 0.16·s) do ponto dado. Devolve o rig.
+ */
+export function borboleta(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#ff8fb1', cor2 = '#fff4e4', vida = null, ax = 0.07, ay = 0.04, vel = 0.9 } = {}) {
+  const g = rig(parent, 'borboleta', { x, y, z, s });
+  const asa = pat('dots', cor, cor2, 0.09);
+  const lado = [[0.012, 0.01], [0.04, 0.085], [0.105, 0.115], [0.16, 0.075], [0.13, 0.015], [0.155, -0.045], [0.1, -0.1], [0.04, -0.07]];
+  piece(g, blob(lado, 5), asa, { t: 0.006, jitter: 0, noShadow: true });
+  piece(g, blob(lado.map(([px, py]) => [-px, py]).reverse(), 5), asa, { t: 0.006, jitter: 0, noShadow: true });
+  piece(g, ellipse(0.013, 0.06, 0, -0.005, 10), ESCURO, { t: 0.008, z: 0.008, jitter: 0, noShadow: true });
+  piece(g, stroke([[-0.004, 0.05], [-0.04, 0.11]], 0.006), ESCURO, { t: 0.004, z: 0.008, jitter: 0, noShadow: true });
+  piece(g, stroke([[0.004, 0.05], [0.04, 0.11]], 0.006), ESCURO, { t: 0.004, z: 0.008, jitter: 0, noShadow: true });
+  if (vida) { vida.bate(g, { prof: 0.72, vel: 15 + (x * 7 % 3) }); vida.deriva(g, { ax, ay, vel, razao: 2 }); vida.balanca(g, { amp: 0.16, vel: 1.9 }); }
+  return g;
+}
+
+/**
+ * Passarinho pousado, olhando para a direita (flip −1 olha para a esquerda). O pé fica em y = 0: ponha-o sobre cerca, galho ou placa.
+ * Com `vida`: a cabeça se espelha de vez em quando (olha para trás) e ele dá um pulinho.
+ * pulinho: true → corpo e cabeça são rigs (7 malhas); false → corpo estático fundido e só a cabeça é rig (4 malhas).
+ * Devolve { raiz, cabeca }.
+ */
+export function passarinho(parent, { x = 0, y = 0, z = 0, s = 1, flip = 1, cor = '#3fb8c9', barriga = '#fff3dc', vida = null, pulinho = true, fase = 0, sombra = false } = {}) {
+  const ns = !sombra;
+  const sx = s * flip;
+  const raiz = pulinho ? rig(parent, 'passarinho', { x, y, z, sx, sy: s }) : group(parent, { x, y, z, sx, sy: s });
+  const pena = pat('scales', cor, shade(cor, -0.08), 0.1);
+  const f = pilha(raiz, 0.004);
+  f(poly([-0.06, 0.08], [-0.16, 0.125], [-0.19, 0.09], [-0.15, 0.065], [-0.18, 0.03], [-0.08, 0.025]), pena, { t: 0.008, jitter: 0, noShadow: ns });
+  f(blob([[-0.085, 0.045], [-0.065, 0.1], [0, 0.125], [0.065, 0.105], [0.09, 0.055], [0.05, 0.005], [-0.03, 0.0]], 6), pena, { t: 0.012, jitter: 0, noShadow: ns });
+  f(blob([[-0.01, 0.02], [0.05, 0.03], [0.075, 0.07], [0.03, 0.085], [-0.02, 0.06]], 5), barriga, { t: 0.006, jitter: 0, noShadow: ns });
+  const cabeca = rig(raiz, 'cabeca-passarinho', { x: 0.06, y: 0.135, z: 0.03 });
+  piece(cabeca, ellipse(0.05, 0.046, 0, 0, 20), pena, { t: 0.012, jitter: 0, noShadow: ns });
+  piece(cabeca, poly([0.04, 0.012], [0.105, -0.004], [0.04, -0.022]), '#ff9c3c', { t: 0.006, z: 0.004, jitter: 0, noShadow: ns });
+  piece(cabeca, ellipse(0.01, 0.01, 0.017, 0.012, 8), '#2f2b55', { t: 0.004, z: 0.014, jitter: 0, noShadow: ns });
+  if (vida) {
+    if (pulinho) vida.pulinho(raiz, { alt: 0.03 * s, periodo: 5.2, inicio: 1.7 + fase });
+    vida.olha(cabeca, { periodo: 3.9 + fase * 0.3, inicio: 2.2 + fase });
+  }
+  return { raiz, cabeca };
+}
+
+/**
+ * Vagalume: UM rig com UMA peça brilhante (estrela de oito pontas curtas, sem luz e sem sombra), 1 malha.
+ * Com `vida`: pisca (a escala vai quase a zero e volta) e deriva em laço. Fica a ±ax, ±ay do ponto dado.
+ */
+export function vagalume(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#e8ff7a', vida = null, ax = 0.06, ay = 0.035, vel = 0.5, pisca = 2.2 } = {}) {
+  const g = rig(parent, 'vagalume', { x, y, z, s });
+  piece(g, star(8, 0.034, 0.017, 0, 0, Math.PI / 2), cor, { t: 0.004, glow: true, jitter: 0 });
+  if (vida) { vida.pulsa(g, { amp: 0.95, vel: pisca, min: 0.12 }); vida.deriva(g, { ax, ay, vel, razao: 1 }); }
+  return g;
+}
+/** Vários vagalumes numa faixa x ± largura/2, y ± altura/2 (sementes fixas). Devolve a lista de rigs; custo: 1 malha cada. */
+export function vagalumes(parent, n, { x = 0, y = 0, z = 0, largura = 0.6, altura = 0.4, s = 1, seed = 11, cor, vida = null } = {}) {
+  const r = rng(seed);
+  return Array.from({ length: n }, () => vagalume(parent, { x: x + (r() - 0.5) * largura, y: y + (r() - 0.5) * altura, z: z + r() * 0.04, s: s * (0.75 + r() * 0.5), cor, vida, ax: 0.03 + r() * 0.04, ay: 0.02 + r() * 0.03, vel: 0.35 + r() * 0.3, pisca: 1.6 + r() * 1.6 }));
+}
+
+/**
+ * Folha caindo: UM rig com uma peça (2 malhas). Com `vida`: nasce parada no ponto dado, cai `alto` em `periodo` s balançando e girando,
+ * some no chão e renasce no alto. O corredor de queda é x ± ax, y de `y` a `y − alto`.
+ */
+export function folhaCaindo(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#f49d3f', listra = '#e4892e', vida = null, alto = 1, periodo = 7, atraso = 0, ax = 0.06, giro = 0.9 } = {}) {
+  const g = rig(parent, 'folha', { x, y, z, s, rot: 0.4 });
+  piece(g, blob([[0, 0.065], [0.04, 0.025], [0.036, -0.03], [0, -0.065], [-0.036, -0.03], [-0.04, 0.025]], 5), pat('scales', cor, listra, 0.08), { t: 0.004, edge: '#fff8e0', jitter: 0, noShadow: true });
+  vida?.queda(g, { alto, periodo, atraso, ax, giro });
+  return g;
+}
+/** n folhas espalhadas em x ± largura/2, com atrasos e períodos diferentes. Devolve os rigs; custo: 2 malhas cada. */
+export function folhas(parent, n, { x = 0, y = 1, z = 0, largura = 0.6, s = 1, seed = 5, alto = 1, periodo = 7, cor, listra, vida = null } = {}) {
+  const r = rng(seed);
+  return Array.from({ length: n }, (_, i) => folhaCaindo(parent, { x: x + (r() - 0.5) * largura, y: y + r() * 0.12, z: z + i * 0.004, s: s * (0.8 + r() * 0.5), cor, listra, vida, alto, periodo: periodo * (0.85 + r() * 0.35), atraso: (i / n) * periodo * 0.9 + r() * 0.5, ax: 0.04 + r() * 0.05, giro: 0.6 + r() * 0.8 }));
+}
+
+// ---- estáticos fundidos (zero rigs) ---------------------------------------------------------------
+/** Pedras no chão (pai = grupo plantado, como p.pe). espalha: largura da faixa em x. */
+export function pedras(parent, { n = 5, x = 0, y = 0, z = 0, espalha = 0.3, s = 1, cor = '#8f8aa0', listra = '#7f7a92', seed = 7 } = {}) {
+  const g = group(parent, { x, y, z, s }); const r = rng(seed); const paint = pat('stripes', cor, listra, 0.15);
+  for (let i = 0; i < n; i++) {
+    const w = 0.035 + r() * 0.05, h = w * (0.8 + r() * 0.4); const px = (n === 1 ? 0 : -espalha / 2 + (espalha * i) / (n - 1)) + (r() - 0.5) * 0.03;
+    piece(g, blob([[-w, 0], [-w * 0.95, h * 0.6], [-w * 0.4, h * 1.05], [w * 0.5, h * 0.95], [w * 0.95, h * 0.45], [w, 0]], 4), paint, { t: 0.01, z: i * 0.004, x: px, edge: '#d8d5e3', jitter: 0.001 });
+  }
+  return g;
+}
+/** Tufos de capim: cada um tem 4 lâminas curvas que afinam. altura em unidades de cena (antes de `s`). */
+export function tufos(parent, { n = 6, x = 0, y = 0, z = 0, espalha = 0.5, altura = 0.12, s = 1, cores = [VERDE, VERDE_CLARO], seed = 13 } = {}) {
+  const g = group(parent, { x, y, z, s }); const r = rng(seed); let zz = 0;
+  for (let i = 0; i < n; i++) {
+    const px = n === 1 ? 0 : -espalha / 2 + (espalha * i) / (n - 1) + (r() - 0.5) * 0.04; const h = altura * (0.7 + r() * 0.6);
+    for (let k = 0; k < 4; k++) {
+      const d = (k - 1.5) * 0.7; zz += 0.002;
+      piece(g, stroke([[px + d * 0.02, 0], [px + d * 0.05, h * 0.55], [px + d * 0.11, h * (0.85 + (k % 2) * 0.15)]], 0.022, { taper: 0.97, steps: 3 }), cores[k % cores.length], { t: 0.006, z: zz, jitter: 0, edge: cores[0] });
+    }
+  }
+  return g;
+}
+/** Grupo de cogumelos (o `cogumelo` de sempre) em tamanhos diferentes. */
+export function cogumelos(parent, n, { x = 0, y = 0, z = 0, espalha = 0.2, s = 1, cor = '#e84a5f', seed = 17 } = {}) {
+  const g = group(parent, { x, y, z, s }); const r = rng(seed);
+  for (let i = 0; i < n; i++) cogumelo(g, { x: n === 1 ? 0 : -espalha / 2 + (espalha * i) / (n - 1), z: i * 0.012, s: 0.45 + r() * 0.5, cor });
+  return g;
+}
+/** Florzinhas miúdas sem rig (estrela de 5 pontas em caule curto). cores: lista de cores das pétalas. */
+export function florzinhas(parent, n, { x = 0, y = 0, z = 0, espalha = 0.5, altura = 0.1, s = 1, cores = ['#ff7fa8', '#ffd24f', '#ffffff'], seed = 19 } = {}) {
+  const g = group(parent, { x, y, z, s }); const r = rng(seed); let zz = 0;
+  for (let i = 0; i < n; i++) {
+    const px = n === 1 ? 0 : -espalha / 2 + (espalha * i) / (n - 1) + (r() - 0.5) * 0.05; const h = altura * (0.75 + r() * 0.5); zz += 0.006;
+    piece(g, stroke([[px, 0], [px + 0.006, h * 0.5], [px, h]], 0.011), VERDE, { t: 0.004, z: zz, jitter: 0 });
+    piece(g, star(5, 0.03, 0.017, px, h), cores[i % cores.length], { t: 0.005, z: zz + 0.003, jitter: 0 });
+    piece(g, ellipse(0.009, 0.009, px, h, 8), '#ffe27a', { t: 0.003, z: zz + 0.007, jitter: 0 });
+  }
+  return g;
+}
+
+// ---- camadas de profundidade ----------------------------------------------------------------------
+/** Altura da crista da colina de `hill(w, h, skew)` na posição x (a mesma conta de paper.js, resolvida por iteração). */
+const crista = (x, w, h, skew) => { let y = 0; for (let k = 0; k < 4; k++) { const t = Math.min(1, Math.max(0, (x - skew * y + w / 2) / w)); y = h * Math.sin(t * Math.PI) ** 0.75; } return y; };
+/**
+ * Colina distante, uma camada a mais entre o céu e as colinas (que ficam em z 0.84–1.24): peça fundida. `z` é o raio absoluto
+ * (o mesmo de p.pe(0, z)); use algo entre o astro (z ≈ 0.75) e a primeira colina menos 0.04. cores: par da estampa, mais claro/frio que a colina de trás.
+ * Com `arvores`, uma fileira de copas em silhueta na crista (também fundida). Devolve o grupo.
+ */
+export function colinaLonge(parent, { z = 0.8, h = 0.78, skew = -0.08, cores = ['#a6d98f', '#97cc82'], arvores = 7, copas = null, seed = 23 } = {}) {
+  const w = meia(z) * 2; const g = group(parent, {});
+  piece(g, hill(w, h, skew), pat('stripes', cores[0], cores[1], 0.26), { t: 0.012 });
+  if (arvores) {
+    const [c1, c2] = copas || [shade(cores[0], -0.05), shade(cores[1], -0.05)]; const paint = pat('scales', c1, c2, 0.1); const r = rng(seed);
+    for (let i = 0; i < arvores; i++) {
+      const px = (-0.5 + (i + 0.5 + (r() - 0.5) * 0.5) / arvores) * (w - 0.1); const base = crista(px, w, h, skew) - 0.015; const a = 0.1 + r() * 0.07;
+      piece(g, rect(0.018, a * 0.7, 0, a * 0.35), paint, { t: 0.008, z: 0.016, x: px, y: base, jitter: 0 });
+      piece(g, scallop(0.052 + r() * 0.02, a * 0.5, 8, 0.05, 0, a * 0.7, 6), paint, { t: 0.008, z: 0.018 + i * 0.001, x: px, y: base, jitter: 0 });
+    }
+  }
+  return g;
+}
+
+// ---- poeira ----------------------------------------------------------------------------------------
+/**
+ * n pufes reutilizáveis (o `puf` de montadores.tombo, generalizado), escondidos por escala 0.001 até a Timeline os chamar.
+ * Cada puf é um rig de 2 malhas, mesmo escondido: escala 0.001 não poupa o desenho. Devolve a lista de rigs.
+ */
+export function poeira(parent, n, { nome = 'poeira', x = 0, y = 0.3, z = 2, cor = '#c9c6dc', listra = '#b6b2ce' } = {}) {
+  const paint = pat('stripes', cor, listra, 0.08);
+  return Array.from({ length: n }, () => { const g = rig(parent, nome, { x, y, z, s: 0.001 }); piece(g, scallop(0.07, 0.06, 6, 0.16, 0, 0, 5), paint, { t: 0.006, edge: '#ffffff', jitter: 0, noShadow: true }); return g; });
+}
+/**
+ * Impacto: os pufes de `rigs[de..ate)` nascem em (x, y, z) no instante t0 e se abrem em roda (valores do Cataplof! por padrão).
+ * Chame de novo com outro t0 e outras faixas para passos ou outro impacto. y é o chão.
+ */
+export function poeiraEstoura(tl, rigs, t0, { x = 0, y = 0, z = 2, raio = 0.26, alto = 0.22, dur = 0.6, de = 0, ate = rigs.length } = {}) {
+  const m = ate - de;
+  for (let i = 0; i < m; i++) {
+    const g = rigs[de + i]; const a = (i / m) * Math.PI * 2; const dx = Math.cos(a) * (raio + (i % 3) * raio * 0.35);
+    tl.to(g, { x, y: y + 0.04, z, s: 0.5 }, t0, 0.01);
+    tl.to(g, { x: x + dx, y: y + 0.08 + Math.abs(Math.sin(a)) * alto, s: 1.2 + (i % 3) * 0.3, rz: dx * 3 }, t0 + 0.01, dur, ease.out);
+    tl.to(g, { s: 0.001 }, t0 + dur + 0.15, 0.55, ease.in);
+  }
 }

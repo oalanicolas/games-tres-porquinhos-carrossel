@@ -463,6 +463,14 @@ function passo(dt) {
   const px = estado.modo === 'aberto' && !reduzido ? estado.mouseS.x : 0; const py = estado.modo === 'aberto' && !reduzido ? estado.mouseS.y : 0;
   livro.anel.rotation.y = -estado.giro + px * 0.022;
   camera.position.x += px * 0.28; camera.position.y -= py * 0.12;
+  // A cena em foco pode conduzir a câmera de leve (`camera` da cena: x e y em unidades do livro, escala = aproximação).
+  // Some ao virar a página, e quem pediu menos movimento não recebe nenhum.
+  const guia = !reduzido && estado.modo === 'aberto' ? cenas[estado.indice]?.camera : null;
+  if (guia) {
+    const peso = clamp(1 - Math.abs(estado.giro - estado.indice * CUNHA) / (CUNHA * 0.5), 0, 1);
+    camera.position.x += guia.position.x * peso; camera.position.y += guia.position.y * peso;
+    camera.position.lerp(alvoAtual, (1 - 1 / guia.scale.x) * peso);
+  }
   camera.lookAt(alvoAtual);
   // no celular em pé a câmera recua: a névoa recua junto para não apagar o livro
   scene.fog.near = Math.max(13, camera.position.distanceTo(alvoAtual) + 2.4); scene.fog.far = scene.fog.near + 13;
