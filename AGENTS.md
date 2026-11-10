@@ -4,6 +4,7 @@ Herda as regras de `../../AGENTS.md`. Este arquivo lista só o que é próprio d
 
 ## Antes de entregar
 
+- Páginas desencontradas, devolvido por Alan em 10/11/2026 ("tem erros bobos como páginas se desencontrando, eu quero o projeto flawless"): a capa é maior que as páginas e esticava a folha da primeira e da última cena, então céu, colinas e borda de cima não casavam na dobra. A folha da cena vai colada por dentro da capa, do tamanho e na altura das outras (`_capaComGuarda` em `src/book.js`), e título comprido encolhe até caber no papel. Checagem: `tests/emenda.test.mjs`.
 - Queda no Chrome do iPhone, devolvida por Alan em 07/11/2026. Manter texturas de páginas próximas, descartar CPU e GPU das distantes antes de alocar novas e preservar sua resolução ao recriar. Perda do contexto gráfico pausa a voz e o sopro sem apagar progresso. Checagens em `tests/memoria.test.mjs`.
 - `npm test` e `npm run build`. Os arquivos de teste rodam um por vez (cerca de 10 min): em paralelo, cinco Chromes com GPU na máquina ocupada derrubam navegador e carga, sem ser defeito do livro.
 - Servidor local: `npm start`, porta 4291.

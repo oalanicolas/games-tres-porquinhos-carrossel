@@ -165,3 +165,13 @@ Mediana de cinco rodadas intercaladas contra o commit `d24aad7`, Chrome headless
 O custo existe e é pequeno: de 0,2 a 0,8 ms a mais por quadro na mediana, contra 16,7 ms de um quadro a 60 Hz. As cenas do piloto também subiram um pouco porque as páginas vizinhas, que aparecem junto, ficaram mais ricas. O JavaScript comprimido do build foi de 216442 para 217147 bytes. `tests/orcamento.test.mjs` passou a cobrar das 17 cenas o teto de 10% de chamadas sobre o que eram antes das melhorias. Não testado em dispositivo móvel.
 
 No mesmo dia Alan devolveu: "a narração às vezes para, ela não pode parar a não ser que seja desligada". O percurso narrado real leu 17 de 17 cenas sem parar, e a pergunta sobre a situação ficou sem resposta. O código pausava a voz de propósito quando a página ficava escondida, o que no macOS inclui o Chrome inteiro atrás de outra janela. Com a narração ligada, a página escondida agora não pausa nada, a cena vai ao fim sem esperar quadros de animação e a página vira sozinha; no modo sopro, o Lobo sopra sozinho. A checagem é o sétimo teste de `tests/narracao-continua.test.mjs`, que esconde a página e corta os quadros. Se a parada que Alan viu for de outra origem, este registro não a cobre.
+
+## 10/11/2026 · Páginas desencontradas na dobra
+
+Alan devolveu, com um print do topo da primeira cena: "tem erros bobos como páginas se desencontrando, eu quero o projeto flawless".
+
+Causa: a capa e a contracapa são caixas maiores que as páginas (0,07 mais largas, 0,10 mais altas e sem o recuo de 0,05 do chão), e a folha pintada da cena era esticada sobre a caixa inteira. Na primeira e na última cena, a borda de cima, as colinas e as listras do céu ficavam fora de registro com a página vizinha. As 15 cenas do meio não tinham o defeito.
+
+Correção: a folha da cena vai colada por dentro da capa, do tamanho e na altura das outras páginas (`_capaComGuarda` em `src/book.js`); a sobra em volta fica na cor da capa, como a guarda de um livro de capa dura. Na varredura das 17 cenas apareceu um segundo desencontro: o título "A casa que o vento não leva" passava do papel para o céu; agora título comprido encolhe até caber.
+
+Checagem nova: `tests/emenda.test.mjs` mede as duas folhas de cada cena (17 de 17 iguais) e a sobra do título. Falha no commit anterior e passa neste.

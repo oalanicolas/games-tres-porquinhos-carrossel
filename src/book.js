@@ -1,6 +1,7 @@
 // O livro físico: mesa, capas, paredes pintadas e a mecânica que abre em estrela.
 import * as THREE from 'three';
 import { TAU, rng, piece, rig, sector, stroke, pat, bake, shade } from './paper.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CENAS, CAPA } from './story.js';
 
 export const N = CENAS.length;
@@ -106,7 +107,10 @@ function pintaTexto(i, c = novaFolha(), soMedir = false) {
   const m = 74; const larg = limite - m - 40;
   ctx.fillStyle = ceu.tinta; ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '4px'; ctx.textBaseline = 'alphabetic';
   ctx.fillText(`CENA ${algarismo(i)}  ·  ${cena.parte.toUpperCase()}`, m, 96); ctx.letterSpacing = '0px';
-  ctx.fillStyle = '#2a1c33'; ctx.font = 'italic 500 66px "Fraunces Variable"'; ctx.fillText(cena.titulo, m, 176);
+  // título comprido encolhe até caber no papel, sem entrar no céu
+  ctx.fillStyle = '#2a1c33'; let corpo = 66;
+  do { ctx.font = `italic 500 ${corpo}px "Fraunces Variable"`; } while (ctx.measureText(cena.titulo).width > larg && --corpo > 40);
+  ctx.fillText(cena.titulo, m, 176); const larguraTitulo = ctx.measureText(cena.titulo).width;
   [ceu.borda, '#f2a93b', '#7a5fc4'].forEach((cor, k) => { ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(m + 8 + k * 30, 216, 6, 0, TAU); ctx.fill(); });
   let y = 268; const fonte = 35; const lh = 46;
   cena.linhas.forEach((l, li) => {
@@ -132,7 +136,7 @@ function pintaTexto(i, c = novaFolha(), soMedir = false) {
   });
   // fio de borda
   ctx.fillStyle = ceu.borda; ctx.fillRect(0, 0, 7, PX_A);
-  return { canvas: c, fimTexto: y };
+  return { canvas: c, fimTexto: y, sobraTitulo: larg - larguraTitulo };
 }
 /** Parede direita, como quem olha: céu à esquerda junto à lombada, legenda à direita. */
 function pintaLegenda(i) {
@@ -220,7 +224,7 @@ export class Livro {
   _construirParedes() {
     const borda = new THREE.MeshLambertMaterial({ color: '#fff4dc' });
     const capa = new THREE.MeshLambertMaterial({ color: COR_CAPA });
-    this.fimTexto = [];
+    this.fimTexto = []; this.sobraTitulo = [];
     const medicao = novaFolha();
     for (let k = 0; k <= N; k++) {
       const pivo = new THREE.Group(); this.anel.add(pivo);
@@ -231,11 +235,12 @@ export class Livro {
       // +z: parede direita da cena k-1; -z: parede esquerda da cena k
       if (k === 0) { frente = null; } else frente = this._pagina(k - 1, () => pintaLegenda(k - 1));
       if (k === N) { tras = this._pagina(null, pintaContracapa); } else {
-        this.fimTexto[k] = pintaTexto(k, medicao, true).fimTexto;
+        const medida = pintaTexto(k, medicao, true); this.fimTexto[k] = medida.fimTexto; this.sobraTitulo[k] = medida.sobraTitulo;
         tras = this._pagina(k, () => pintaTexto(k).canvas);
       }
       if (k === 0) { frente = new THREE.MeshLambertMaterial({ color: COR_CAPA }); this.materialCapa = frente; }
-      const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [lado, lado, lado, lado, frente, tras]);
+      const caixa = new THREE.BoxGeometry(w, h, d);
+      const m = new THREE.Mesh(ehCapa ? this._capaComGuarda(caixa, k === 0 ? 5 : 4, w, h, d) : caixa, [lado, lado, lado, lado, frente, tras, capa]);
       m.position.set(w / 2, h / 2 + (ehCapa ? 0 : 0.05), 0); m.castShadow = true; m.receiveShadow = true; m.name = `parede-${k}`;
       m.userData.parede = k; pivo.add(m);
       this.paredes.push({ pivo, m, k });
@@ -255,6 +260,21 @@ export class Livro {
     // lombada central
     this.eixo = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.06, 0.05), new THREE.MeshLambertMaterial({ color: COR_CAPA }));
     this.eixo.position.y = H + 0.07; this.raiz.add(this.eixo);
+  }
+  /**
+   * A capa é maior que as páginas. A folha da cena vai colada por dentro, do tamanho e na altura das outras páginas,
+   * para o céu pintado casar na dobra com a página vizinha; a sobra em volta fica na cor da capa.
+   */
+  _capaComGuarda(caixa, interno, w, h, d) {
+    const folha = new THREE.PlaneGeometry(R, H);
+    const lado = interno === 5 ? -1 : 1;
+    if (lado < 0) folha.rotateY(Math.PI);
+    folha.translate(R / 2 - w / 2, H / 2 + 0.05 - h / 2, lado * (d / 2 + 0.004));
+    const geo = mergeGeometries([caixa, folha], false);
+    for (const g of caixa.groups) geo.addGroup(g.start, g.count, g.materialIndex === interno ? 6 : g.materialIndex);
+    geo.addGroup(caixa.index.count, folha.index.count, interno);
+    caixa.dispose(); folha.dispose();
+    return geo;
   }
   _pagina(cena, pintar) {
     const material = new THREE.MeshLambertMaterial();
