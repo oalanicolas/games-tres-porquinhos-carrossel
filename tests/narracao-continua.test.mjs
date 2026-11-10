@@ -138,3 +138,23 @@ test('narração contínua: leitura mantém a voz e só o botão de narração a
     assert.equal(await page.evaluate(() => window.__livro.audio.narrando), false);
   } finally { await fechar(); }
 });
+
+// Devolvido por Alan em 10/11/2026: "a narração às vezes para, ela não pode parar a não ser que seja desligada".
+// Com o Chrome atrás de outra janela a página fica escondida e deixa de desenhar quadros; a voz tem de seguir e virar a página sozinha.
+test('narração contínua: página escondida e sem quadros segue na voz e vira a página', async () => {
+  const { page, fechar } = await abrir({ narrado: true });
+  try {
+    await page.click('#acao');
+    await page.waitForFunction(() => window.__livro.audio.tempoVoz(0) > 0.2 && window.__livro.estado.modo === 'aberto', null, { timeout: 20000 });
+    const antes = await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+      window.requestAnimationFrame = () => 0; // página escondida: o navegador não chama mais o laço
+      return window.__livro.audio.tempoVoz(0);
+    });
+    await page.waitForFunction((t) => window.__livro.audio.tempoVoz(0) > t + 0.8, antes, { timeout: 8000 });
+    assert.equal(await page.evaluate(() => window.__livro.audio.voz.el.paused), false, 'a voz não pausa com a página escondida');
+    await page.waitForFunction(() => window.__livro.estado.indice === 1 && window.__livro.audio.tempoVoz(1) > 0.2, null, { timeout: 90000, polling: 250 });
+    assert.equal(await page.getAttribute('#narrar', 'aria-pressed'), 'true');
+  } finally { await fechar(); }
+});

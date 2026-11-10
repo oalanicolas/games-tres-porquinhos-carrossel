@@ -292,8 +292,9 @@ export class Audio {
     else this._retomarVoz(true);
   }
   _visibilidade() {
-    this.oculto = document.hidden; if (!this.ctx) return;
-    if (document.hidden) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume().catch(() => {}); if (this.ligado) this.atual?.el.play().catch(() => {}); this._retomarVoz(true); }
+    // A narração só para no botão (Alan, 10/11/2026): com ela ligada, a página escondida atrás de outra janela ou aba continua contando a história.
+    this.oculto = document.hidden && !this.narrando; if (!this.ctx) return;
+    if (this.oculto) { this.ctx.suspend(); this.atual?.el.pause(); this.voz?.el.pause(); } else { this.ctx.resume().catch(() => {}); if (this.ligado) this.atual?.el.play().catch(() => {}); this._retomarVoz(true); }
   }
   alternar() { this.ligado = !this.ligado; if (this.master) this.master.gain.setTargetAtTime(this.ligado && !this.interacao && !this.graficoPausado ? 1 : 0, this.ctx.currentTime, 0.04); return this.ligado; }
   /**

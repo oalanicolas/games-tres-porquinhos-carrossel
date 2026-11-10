@@ -17,7 +17,8 @@ export class InteracaoSopro {
     this.$ = (id) => document.getElementById(id);
     this.$('sopro-microfone').addEventListener('click', () => this.captar());
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) this.interromper();
+      if (document.hidden && this.pendente && this.audio.narrando) this.concluir({ sozinho: true }); // a narração não para: sem ninguém olhando, o Lobo sopra sozinho
+      else if (document.hidden) this.interromper();
       else if (this.pendente && this.autorizado && this.fase === 'pronto') this.captar();
     });
     addEventListener('pagehide', () => this.cancelar());

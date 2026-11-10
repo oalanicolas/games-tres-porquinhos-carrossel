@@ -135,3 +135,33 @@ Medido em três rodadas intercaladas, Chrome headless com GPU Metal (Apple M3 Ul
 | Cataplof! | 2861 → 2893 | 304 → 326 | 5,2 / 5,7 / 5,7 | 5,8 / 5,9 / 5,6 |
 
 O JavaScript do build passou de 208166 para 216442 bytes comprimidos. Nenhuma imagem ou áudio novo. As 17 durações sem voz não mudaram. O teto de 10% de chamadas por cena e a volta da câmera ao zero estão em `tests/orcamento.test.mjs`. Não testado em dispositivo móvel.
+
+## Melhorias nas 17 cenas e narração com a página escondida — 10 de novembro de 2026
+
+Alan aprovou o piloto ("aprovado, pode continuar as melhorias") e as outras 14 cenas receberam o mesmo tratamento. Todo personagem nasce com sobrancelhas e pupilas; a atuação entra pelos gestos que as cenas já compartilham em `src/cenas.js` (o Lobo chega e enche o peito de cara fechada, quem foge leva medo no rosto, quem surge na janela olha para o Lobo). Árvores, arbustos e nuvens balançam, uma colina distante fecha o fundo, as cenas de dia têm uma borboleta e as de noite, vagalumes. A casa de madeira ganhou poeira e câmera no segundo sopro. As 17 durações sem voz não mudaram e nenhuma peça sai da cunha.
+
+Mediana de cinco rodadas intercaladas contra o commit `d24aad7`, Chrome headless com GPU Metal (Apple M3 Ultra), 1280×800. O tempo é o custo de desenhar um quadro, em milissegundos.
+
+| Cena | Chamadas | Malhas | p50 | p95 |
+|---|---|---|---|---|
+| 1 | 1306 → 1348 | 305 → 305 | 2,9 → 3,2 | 3,5 → 4,0 |
+| 2 | 1770 → 1835 | 158 → 170 | 3,7 → 3,9 | 4,2 → 4,8 |
+| 3 | 2495 → 2583 | 196 → 210 | 4,7 → 5,0 | 5,5 → 5,9 |
+| 4 | 2449 → 2543 | 232 → 248 | 4,6 → 4,9 | 5,3 → 5,7 |
+| 5 | 2533 → 2627 | 365 → 381 | 4,6 → 5,0 | 5,3 → 6,1 |
+| 6 | 2827 → 2941 | 320 → 323 | 4,9 → 5,4 | 6,1 → 6,5 |
+| 7 | 2939 → 3057 | 208 → 220 | 5,0 → 5,7 | 5,9 → 6,8 |
+| 8 | 3049 → 3180 | 401 → 433 | 5,2 → 5,8 | 6,1 → 6,8 |
+| 9 | 2969 → 3122 | 292 → 311 | 5,4 → 5,9 | 6,3 → 7,0 |
+| 10 | 3130 → 3286 | 504 → 528 | 5,4 → 6,2 | 6,0 → 7,6 |
+| 11 | 3006 → 3141 | 264 → 283 | 5,2 → 5,9 | 5,9 → 7,0 |
+| 12 | 3015 → 3126 | 302 → 318 | 5,2 → 5,8 | 5,8 → 6,7 |
+| 13 | 2723 → 2833 | 329 → 345 | 4,8 → 5,3 | 5,4 → 6,5 |
+| 14 | 2844 → 2946 | 326 → 329 | 5,1 → 5,6 | 6,1 → 6,6 |
+| 15 | 2859 → 2964 | 284 → 309 | 5,1 → 5,8 | 6,5 → 6,7 |
+| 16 | 2295 → 2378 | 307 → 321 | 4,4 → 5,1 | 5,4 → 5,9 |
+| 17 | 1725 → 1805 | 306 → 324 | 3,5 → 3,8 | 4,0 → 4,5 |
+
+O custo existe e é pequeno: de 0,2 a 0,8 ms a mais por quadro na mediana, contra 16,7 ms de um quadro a 60 Hz. As cenas do piloto também subiram um pouco porque as páginas vizinhas, que aparecem junto, ficaram mais ricas. O JavaScript comprimido do build foi de 216442 para 217147 bytes. `tests/orcamento.test.mjs` passou a cobrar das 17 cenas o teto de 10% de chamadas sobre o que eram antes das melhorias. Não testado em dispositivo móvel.
+
+No mesmo dia Alan devolveu: "a narração às vezes para, ela não pode parar a não ser que seja desligada". O percurso narrado real leu 17 de 17 cenas sem parar, e a pergunta sobre a situação ficou sem resposta. O código pausava a voz de propósito quando a página ficava escondida, o que no macOS inclui o Chrome inteiro atrás de outra janela. Com a narração ligada, a página escondida agora não pausa nada, a cena vai ao fim sem esperar quadros de animação e a página vira sozinha; no modo sopro, o Lobo sopra sozinho. A checagem é o sétimo teste de `tests/narracao-continua.test.mjs`, que esconde a página e corta os quadros. Se a parada que Alan viu for de outra origem, este registro não a cobre.

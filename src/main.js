@@ -318,6 +318,8 @@ audio.aoFimDaVoz = (i) => {
   const ultima = i >= N - 1; // fim da história: o livro se fecha sozinho e fica pronto para ser lido de novo
   const virar = () => {
     if (i !== estado.indice || !audio.narrando || !['abrindo', 'aberto'].includes(estado.modo)) return;
+    // Página escondida não desenha quadros: a cena vai direto ao fim para a história seguir só na voz.
+    if (document.hidden && estado.modo === 'aberto' && !interacao.pendente) { if (leitura.i === i) leitura.segue = false; cenas[i].linha.playing = false; cenas[i].linha.seek(cenas[i].linha.duration); estado.tocouAcao.add(i); }
     if (audio.oculto || interacao.pendente || estado.modo === 'abrindo' || estado.arrastando || leitura.segue || cenas[i].linha.playing) { viradaAuto = setTimeout(virar, 300); return; }
     if (ultima) { recomecarAoFechar = true; fecharLivro(); } else irPara(i + 1);
   };
@@ -442,6 +444,8 @@ function cancelarArrasto() {
 }
 for (const evento of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(evento, cancelarArrasto);
 addEventListener('blur', cancelarArrasto);
+// Ao reaparecer depois de páginas viradas só na voz, o livro já está na página certa, sem girar várias de uma vez.
+document.addEventListener('visibilitychange', () => { if (!document.hidden && estado.modo === 'aberto' && Math.abs(estado.giro - estado.giroAlvo) > CUNHA * 1.5) estado.giro = estado.giroAlvo; });
 
 // ---- laço -------------------------------------------------------------------------------------------
 let ultimo = performance.now(); let relogio = 0;
