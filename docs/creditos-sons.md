@@ -8,6 +8,8 @@ Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, ta
 
 ## Efeitos e ambientes
 
+Onde a linha diz "autor no catálogo", o catálogo de `shared/sfx` não traz o nome do autor; a licença de cada gravação está na própria linha.
+
 - `flap1`: Papel · abanar 01 (`paper-flap-1`), autor no catálogo, CC0-1.0, ganho -1.7 dB.
 - `flap2`: Papel · abanar 02 (`paper-flap-2`), autor no catálogo, CC0-1.0, ganho -1.0 dB.
 - `abrir`: Folhear caderno · 01 (`original-owlish-paper-sketchbook-page-flips-1`), autor no catálogo, CC0-1.0, ganho 10.6 dB.

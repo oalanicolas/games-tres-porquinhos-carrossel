@@ -31,8 +31,6 @@
   --microfone-fundo: #fff5df;
   --microfone-tinta: #36523e;
   --microfone-anel: #547c56;
-  --aviso-fundo: #f3ded0;
-  --aviso-tinta: #974834;
   --display: 'Fraunces Variable', Georgia, serif;
   --texto: 'Libre Caslon Text', Georgia, serif;
   --ui: 'Inter Variable', system-ui, sans-serif;
@@ -151,13 +149,9 @@ body.sopro-na-pagina #acao, body.sopro-na-pagina #narrar { display: none; }
 .sopro-anel { position: absolute; inset: 0; width: 48px; height: 48px; fill: none; stroke: var(--borda-papel); stroke-width: 2; }
 #sopro-anel { stroke: var(--microfone-anel); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transform: rotate(-90deg); transform-origin: center; }
 .sopro-mic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-.sopro-check { display: none !important; width: 22px; height: 22px; fill: none; stroke: var(--microfone-anel); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .sopro-no-livro[data-fase='pronto'] #sopro-microfone { animation: sopro-convite 1.8s ease-in-out infinite; }
 .sopro-no-livro[data-fase='permissao'] .sopro-anel, .sopro-no-livro[data-fase='calibrando'] .sopro-anel { stroke-dasharray: 3 6; animation: sopro-giro 4s linear infinite; }
-.sopro-no-livro[data-fase='concluido'] .sopro-check { display: block !important; }
 .sopro-no-livro[data-fase='concluido'] .sopro-mic { display: none; }
-.sopro-no-livro[data-aviso='microfone'] #sopro-microfone { background: var(--aviso-fundo); }
-.sopro-no-livro[data-aviso='microfone'] #sopro-microfone::after { content: ''; position: absolute; width: 25px; height: 2px; background: var(--aviso-tinta); transform: rotate(-45deg); }
 @keyframes sopro-convite { 50% { box-shadow: 0 0 0 4px var(--sopro-fundo); } }
 @keyframes sopro-giro { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {

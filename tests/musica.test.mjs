@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { abrir } from './_apoio.mjs';
 
+// Cópia de propósito do mapa TRILHA de src/audio.js: trava a decisão, e mudar a faixa de uma cena exige mudar os dois.
 // Migrada das 11 cenas antigas para as 17, sem mudar a asserção: as antigas mantêm a faixa, e cada cena nova herda a da cena que ela prepara.
 const ESPERADA = ['partida', 'obra', 'obra', 'obra', 'lobo-chega', 'lobo-chega', 'lobo-insiste', 'lobo-insiste', 'lobo-teima', 'lobo-teima', 'noite', 'noite', 'noite', 'fuga', 'fuga', 'festa', 'era-uma-vez'];
 const som = (page) => page.evaluate(() => window.__livro.audio.estado());

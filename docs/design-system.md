@@ -8,7 +8,8 @@ Tudo é papel: recortes extrudados com estampa (listras, bolinhas, chevron, made
 
 | Uso | Cor |
 |---|---|
-| Mesa e neblina | `#71472a` |
+| Mesa e neblina da cena 3D | `#71472a` |
+| Fundo da página antes do livro e `theme-color` | `#3a2212` (`--mesa`) |
 | Capa | teal, com fios dourados |
 | Miolo do livro | coral |
 | Fitas | palha |

@@ -1,6 +1,6 @@
 # Gauntlet — 17-cenas
 
-Preparado em 2026-11-06. **Não iniciado.** Gerar ou ler este arquivo não executa nada. A execução começa quando Alan cola o
+Preparado em 2026-11-06. **Executado: R0 a R8 e RF concluídas; R9 aguarda Alan** (estado em 09/11/2026, tabela abaixo). Gerar ou ler este arquivo não executa nada. A execução começa quando Alan cola o
 texto abaixo numa sessão, ou diz "vamos avançar". O estado vive no livro `prototypes/tres-porquinhos-carrossel/docs/gauntlet-17-cenas.json`; este documento é a receita.
 
 ## Texto para colar
@@ -21,7 +21,7 @@ texto abaixo numa sessão, ou diz "vamos avançar". O estado vive no livro `prot
 
 Fatos medidos de onde o gauntlet parte, e o que já está fechado e não se refaz. Cada item leva caminho ou recibo.
 
-- O livro tem 11 cenas no ar (`src/story.js`). Último commit do módulo: 2a1f22f; o Lobo recortado, a sonoplastia e o modo grito estão sem commit, com 58 de 60 testes verdes (`output/som-npm-test.log`).
+- Na partida (06/11/2026), antes das rodadas: o livro tinha 11 cenas no ar (`src/story.js`). Último commit do módulo: 2a1f22f; o Lobo recortado, a sonoplastia e o modo grito estão sem commit, com 58 de 60 testes verdes (`output/som-npm-test.log`).
 - As duas falhas são conhecidas: limite do ambiente sob a voz, já ajustado e verde em nova execução (de 0,56 para 0,8, porque o ambiente sob a voz subiu de propósito), e o balão do grito contando como balão de fala em `tests/sincronia.test.mjs`, a corrigir no código na R1.
 - Mixagem medida com `tests/mix-medida.mjs`: cenas 2, 4 e 7 em -13,6, -13,4 e -13,6 LUFS; o limitador sobe 1,14 dB um sinal abaixo do limiar (-20 para -18,86 dBFS).
 - Modo sopro: `tests/sopro.test.mjs` 10 de 10. Biblioteca `shared/sfx` já publicada (b23b33176) com o uivo novo.
@@ -33,33 +33,33 @@ Fatos medidos de onde o gauntlet parte, e o que já está fechado e não se refa
 <!-- gauntlet:rodadas -->
 | Rodada | Entrega | Fecha quando | Depende | Estado |
 |---|---|---|---|---|
-| **R0** | Estado e prova | Gates globais rodados com recibo; 'Onde estamos' confere com o disco. | — | aberta |
-| **R1** | Fechar Lobo, som e sopro | tests/sopro, sincronia e narracao verdes; 3 commits no main (Lobo, som, sopro); nota nova em docs/pesquisas com fontes e medições. | R0 | aberta |
-| **R2** | Estrutura de 17 cenas | As 17 cenas montam, sem erro no console, e o teste de estrutura passa; as 10 cenas antigas passam os mesmos testes de antes nos novos índices. | R1 | aberta |
-| **R3** | Uma cena para cada casa | 3 de 3 casas nascem do zero e terminam no mesmo lugar e no mesmo tamanho da cena do sopro; captura das 3 lida. | R2 | aberta |
-| **R4** | Lobo espiando e as duas corridas | Testes de espia e corridas verdes; captura das 3 cenas lida. | R2 | aberta |
-| **R5** | O voo e o tombo do Lobo | Testes de voo e tombo verdes: fim do tombo igual ao início da fuga em posição e tamanho, do Lobo e dos 3 porquinhos; captura do voo inteiro lida. | R2 | aberta |
-| **R6** | Narração nas 17 cenas | 17 de 17 faixas no manifesto, balões e gestos ancorados; narracao e sincronia verdes. | R3, R4, R5 | aberta |
-| **R7** | Revisão de 17 de 17 cenas | 17/17 folhas capturadas pelo script e lidas, com defeitos numerados e corrigidos; suíte completa verde. | R6 | aberta |
-| **R8** | Revisão independente | Relatório em output/agentes/porquinhos-auditoria-17.md; cada apontamento corrigido ou recusado com o motivo; percurso real 3 vezes sem erro. | R7 | aberta |
-| **R9** | Aprovação de Alan em movimento | Mensagem de Alan aprovando as 17 cenas em movimento. | R8 | aberta |
-| **RF** | Consolidação | Gates globais verdes; canônico atualizado com resultado, lacunas e próxima ação; commit local feito; nada enviado (push) nem publicado sem pedido. | R0, R1, R2, R3, R4, R5, R6, R7, R8, R9 | aberta |
+| **R0** | Estado e prova | Gates globais rodados com recibo; 'Onde estamos' confere com o disco. | — | concluida |
+| **R1** | Fechar Lobo, som e sopro | tests/sopro, sincronia e narracao verdes; 3 commits no main (Lobo, som, sopro); nota nova em docs/pesquisas com fontes e medições. | R0 | concluida |
+| **R2** | Estrutura de 17 cenas | As 17 cenas montam, sem erro no console, e o teste de estrutura passa; as 10 cenas antigas passam os mesmos testes de antes nos novos índices. | R1 | concluida |
+| **R3** | Uma cena para cada casa | 3 de 3 casas nascem do zero e terminam no mesmo lugar e no mesmo tamanho da cena do sopro; captura das 3 lida. | R2 | concluida |
+| **R4** | Lobo espiando e as duas corridas | Testes de espia e corridas verdes; captura das 3 cenas lida. | R2 | concluida |
+| **R5** | O voo e o tombo do Lobo | Testes de voo e tombo verdes: fim do tombo igual ao início da fuga em posição e tamanho, do Lobo e dos 3 porquinhos; captura do voo inteiro lida. | R2 | concluida |
+| **R6** | Narração nas 17 cenas | 17 de 17 faixas no manifesto, balões e gestos ancorados; narracao e sincronia verdes. | R3, R4, R5 | concluida |
+| **R7** | Revisão de 17 de 17 cenas | 17/17 folhas capturadas pelo script e lidas, com defeitos numerados e corrigidos; suíte completa verde. | R6 | concluida |
+| **R8** | Revisão independente | Relatório em output/agentes/porquinhos-auditoria-17.md; cada apontamento corrigido ou recusado com o motivo; percurso real 3 vezes sem erro. | R7 | concluida |
+| **R9** | Aprovação de Alan em movimento | Mensagem de Alan aprovando as 17 cenas em movimento. | R8 | aguarda-alan: Aprovar em movimento as 17 cenas, o Lobo e a sonoplastia, abrindo o livro em http://127.0.0.1:4291/ (capa, abrir, cada cena e fim) |
+| **RF** | Consolidação | Gates globais verdes; canônico atualizado com resultado, lacunas e próxima ação; commit local feito; nada enviado (push) nem publicado sem pedido. | R0, R1, R2, R3, R4, R5, R6, R7, R8, R9 | concluida |
 <!-- /gauntlet:rodadas -->
 
 <!-- gauntlet:dag -->
 ```mermaid
 flowchart LR
-  R0["R0 · Estado e prova"]:::aberta
-  R1["R1 · Fechar Lobo, som e sopro"]:::aberta
-  R2["R2 · Estrutura de 17 cenas"]:::aberta
-  R3["R3 · Uma cena para cada casa"]:::aberta
-  R4["R4 · Lobo espiando e as duas corridas"]:::aberta
-  R5["R5 · O voo e o tombo do Lobo"]:::aberta
-  R6["R6 · Narração nas 17 cenas"]:::aberta
-  R7["R7 · Revisão de 17 de 17 cenas"]:::aberta
-  R8["R8 · Revisão independente"]:::aberta
-  R9["R9 · Aprovação de Alan em movimento"]:::aberta
-  RF["RF · Consolidação"]:::aberta
+  R0["R0 · Estado e prova"]:::concluida
+  R1["R1 · Fechar Lobo, som e sopro"]:::concluida
+  R2["R2 · Estrutura de 17 cenas"]:::concluida
+  R3["R3 · Uma cena para cada casa"]:::concluida
+  R4["R4 · Lobo espiando e as duas corridas"]:::concluida
+  R5["R5 · O voo e o tombo do Lobo"]:::concluida
+  R6["R6 · Narração nas 17 cenas"]:::concluida
+  R7["R7 · Revisão de 17 de 17 cenas"]:::concluida
+  R8["R8 · Revisão independente"]:::concluida
+  R9["R9 · Aprovação de Alan em movimento"]:::aguarda_alan
+  RF["RF · Consolidação"]:::concluida
   R0 --> R1
   R1 --> R2
   R2 --> R3
@@ -99,7 +99,7 @@ flowchart LR
   `--captura` lado a lado com a referência e, em coleção, `--cobertura N/M` com `--saida` (N de N tirado do arquivo de
   saída do comando, nunca digitado). Número na `--prova` vem de `--saida`. Defeito devolvido por Alan vira checagem
   nomeada antes do próximo "pronto". Celular emulado é "não testado em aparelho".
-- **Commit local por rodada fechada**, em branch de trabalho, sem push: o `fechar` imprime o comando. Teste afrouxado
+- **Commit local por rodada fechada**, em `main`, sem push: o `fechar` imprime o comando. Teste afrouxado
   depois de falha aparece como `testes_alterados_apos_falha` e não conta como prova. Handoff em `output/agentes/` ou
   `~/.claude/handoffs/`, nunca em `/tmp`.
 - **O livro está selado.** Critério, rodadas, dependências e gates não mudam durante a execução. Mudar exige pedido de

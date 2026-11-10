@@ -30,7 +30,6 @@ AJUSTES = {
 ALVO_LUFS = -18.0
 TOTAL = 17
 ROTEIRO = MOD / 'src' / 'roteiro.json'
-WHISPER = Path.home() / '.cache' / 'whisper-cpp' / 'ggml-large-v3-turbo.bin'
 
 
 def chave(nome):

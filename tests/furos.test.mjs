@@ -21,7 +21,7 @@ const inicioGrupo = (page, i, g, voz) => page.evaluate(([i, g, voz, f]) => {
   const t = Math.min(...[...l._trilhas(), ...(l.chamadas ?? l.calls)].filter((x) => x.g === g).map((x) => x.start ?? x.at)); l.desancorar(); return t;
 }, [i, g, voz, faixas[i]]);
 
-test('Bento não fica fora de casa: casa de tijolos, entram Pipo, Tico e Bento por último, e só então chega o Lobo', async () => {
+test('Kael não fica fora de casa: casa de tijolos, entram João, Lulu e Kael por último, e só então chega o Lobo', async () => {
   const { page, erros, fechar } = await abrir();
   try {
     for (const [nome, voz] of MODOS) {
@@ -40,7 +40,7 @@ test('Bento não fica fora de casa: casa de tijolos, entram Pipo, Tico e Bento p
   } finally { await fechar(); }
 });
 
-test('casa de madeira: Pipo chega e entra antes de o Lobo aparecer', async () => {
+test('casa de madeira: João chega e entra antes de o Lobo aparecer', async () => {
   const { page, fechar } = await abrir();
   try {
     for (const [nome, voz] of MODOS) {

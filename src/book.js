@@ -98,11 +98,11 @@ function algarismo(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'
 export const romano = algarismo;
 
 /** Parede esquerda de uma cena, como quem olha: papel com o texto à esquerda, céu junto à lombada à direita. */
-function pintaTexto(i, c = novaFolha()) {
+function pintaTexto(i, c = novaFolha(), soMedir = false) {
   const ctx = c.getContext('2d'); const cena = CENAS[i]; const ceu = CEUS[i];
-  papelBase(ctx, PX_L, PX_A, 100 + i);
   const limite = PX_L * (1 - CEU_FRACAO);
-  pintaCeu(ctx, ceu, limite, PX_L, true, 300 + i);
+  // `soMedir`: a carga só precisa saber onde o texto termina; papel e céu, a parte cara, ficam para a pintura de verdade
+  if (!soMedir) { papelBase(ctx, PX_L, PX_A, 100 + i); pintaCeu(ctx, ceu, limite, PX_L, true, 300 + i); }
   const m = 74; const larg = limite - m - 40;
   ctx.fillStyle = ceu.tinta; ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '4px'; ctx.textBaseline = 'alphabetic';
   ctx.fillText(`CENA ${algarismo(i)}  ·  ${cena.parte.toUpperCase()}`, m, 96); ctx.letterSpacing = '0px';
@@ -231,8 +231,7 @@ export class Livro {
       // +z: parede direita da cena k-1; -z: parede esquerda da cena k
       if (k === 0) { frente = null; } else frente = this._pagina(k - 1, () => pintaLegenda(k - 1));
       if (k === N) { tras = this._pagina(null, pintaContracapa); } else {
-        medicao.width = PX_L; medicao.height = PX_A;
-        this.fimTexto[k] = pintaTexto(k, medicao).fimTexto;
+        this.fimTexto[k] = pintaTexto(k, medicao, true).fimTexto;
         tras = this._pagina(k, () => pintaTexto(k).canvas);
       }
       if (k === 0) { frente = new THREE.MeshLambertMaterial({ color: COR_CAPA }); this.materialCapa = frente; }

@@ -145,7 +145,7 @@ const painters = {
   },
   dots(ctx, s, [a, b]) {
     ctx.fillStyle = a; ctx.fillRect(0, 0, s, s); ctx.fillStyle = b || shade(a, 0.1); const r = s / 14;
-    for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc((i + (j % 2) * 0.5) * (s / 4) + s / 8, j * (s / 4) + s / 8, r, 0, TAU); ctx.fill(); if (i === 0 && j % 2) { ctx.beginPath(); ctx.arc(-s / 8 + s / 8 - s / 8 + (j % 2) * 0 , j * (s / 4) + s / 8, r, 0, TAU); ctx.fill(); } }
+    for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc((i + (j % 2) * 0.5) * (s / 4) + s / 8, j * (s / 4) + s / 8, r, 0, TAU); ctx.fill(); if (i === 0 && j % 2) { ctx.beginPath(); ctx.arc(0, j * (s / 4) + s / 8, r, 0, TAU); ctx.fill(); } }
   },
   weave(ctx, s, [a, b]) {
     ctx.fillStyle = a; ctx.fillRect(0, 0, s, s); ctx.fillStyle = b || shade(a, -0.06); const c = s / 8;

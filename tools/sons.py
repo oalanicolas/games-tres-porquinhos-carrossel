@@ -54,22 +54,13 @@ AMBIENTES = {
   'fogo': ('foley-fire', 0, 2.4, -25, ''),
   'fervura': ('original-owlish-kettle-boil', 20, 40, -27, ''),
 }
-# momento da história: música (bytes originais)
 # A trilha vem de tools/trilha.py: Alan recusou as faixas do acervo, que não têm nada de conto infantil.
-MUSICAS = {}
-ALVO_MUSICA = -22.0
 PAD = 0.1
 
 def origem(sid):
     i = CAT[sid]; arq = ACERVO / i['file']
     if hashlib.sha256(arq.read_bytes()).hexdigest() != i['sha256']: sys.exit(f'hash não confere: {sid}')
     return i, arq
-
-def lufs(arq, filtro=''):
-    f = (filtro + ',' if filtro else '') + 'ebur128=peak=true'
-    e = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', '-i', str(arq), '-af', f, '-f', 'null', '-'], capture_output=True, text=True).stderr
-    fim = e[e.rindex('Summary:'):]
-    return float(re.search(r'I:\s+(-?[\d.]+) LUFS', fim).group(1)), float(re.search(r'Peak:\s+(-?[\d.]+) dBFS', fim).group(1))
 
 def efeito(nome, sid, ini, dur, alvo, extra, pasta, laco=False):
     i, arq = origem(sid); saida = pasta / f'{nome}.mp3'
@@ -112,10 +103,11 @@ def main():
     arq_sons = MOD / 'src' / 'sons.json'
     musicas = json.loads(arq_sons.read_text()).get('musicas', {}) if arq_sons.exists() else {}
     (MOD / 'src' / 'sons.json').write_text(json.dumps({'efeitos': [f['nome'] for f in fx], 'ambientes': [a['nome'] for a in am], 'pad': PAD, 'lacos': {a['nome']: a['trecho'][1] for a in am}, 'musicas': musicas}, ensure_ascii=False, indent=1) + '\n')
-    ln = ['# Créditos dos sons', '', 'Gerado por `tools/sons.py` a partir de `shared/sfx`. Não editar à mão.', '', '## Música', '', 'Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, tarefas e medições em `docs/trilha-recibo.json`; composta por `tools/trilha.py`. As faixas trazem a marca-d\'água SynthID do Google, inaudível.', '', '## Efeitos e ambientes', '']
+    ln = ['# Créditos dos sons', '', 'Gerado por `tools/sons.py` a partir de `shared/sfx`. Não editar à mão.', '', '## Música', '', 'Trilha original gerada com Google Lyria 3 Pro, pela API da Magnific. Prompts, tarefas e medições em `docs/trilha-recibo.json`; composta por `tools/trilha.py`. As faixas trazem a marca-d\'água SynthID do Google, inaudível.', '', '## Efeitos e ambientes', '', 'Onde a linha diz "autor no catálogo", o catálogo de `shared/sfx` não traz o nome do autor; a licença de cada gravação está na própria linha.', '']
     for f in fx + am: ln.append(f"- `{f['nome']}`: {f['titulo']} (`{f['id']}`), {', '.join(f['autores'] or ['autor no catálogo'])}, {f['licenca']}, ganho {f['ganho_db']} dB.")
     (MOD / 'docs' / 'creditos-sons.md').write_text('\n'.join(ln) + '\n')
     print(f"efeitos {len(fx)} ambientes {len(am)} bytes_sfx {sum(x['bytes'] for x in fx + am)}")
 
 
-main()
+if __name__ == '__main__':
+    main()

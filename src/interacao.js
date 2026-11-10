@@ -52,8 +52,6 @@ export class InteracaoSopro {
       this.$('sopro-painel').hidden = false;
       document.body.classList.add('soprando');
       this.$('sopro-painel').dataset.casa = i;
-      delete this.$('sopro-painel').dataset.aviso;
-      delete this.$('sopro-painel').dataset.resultado;
       this.$('sopro-titulo').textContent = casa.nome;
       this.$('sopro-meta').textContent = casa.meta;
       this.$('sopro-nivel').low = casa.nivel * 100;
@@ -75,7 +73,6 @@ export class InteracaoSopro {
   async captar() {
     if (!this.pendente) return;
     const captura = ++this.captura;
-    delete this.$('sopro-painel').dataset.aviso;
     this.fase = 'permissao';
     this.$('sopro-microfone').disabled = true;
     this.mensagem('Permita o microfone no navegador para assoprar.');
@@ -183,7 +180,6 @@ export class InteracaoSopro {
     this.sozinho = sozinho; this.soltarPose();
     this.concluidas.add(this.indice); this.pendente = false; this.fase = 'concluido';
     document.body.classList.remove('soprando');
-    this.$('sopro-painel').dataset.resultado = 'venceu';
     this.captura++; this.microfone.parar(); this.audio.pausarInteracao(false);
     this.mensagem(this.casa.resultado);
     this.$('sopro-progresso').value = 100;

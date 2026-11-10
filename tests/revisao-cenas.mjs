@@ -1,5 +1,6 @@
 // Folha de revisão: cada cena em 8 momentos, para ler uma a uma. Grava em output/revisao/ e imprime N/M.
-// `--conferir` só conta o que já foi capturado e lido (output/revisao/lidas.json), sem abrir navegador.
+// `--conferir` conta as cenas lidas em output/revisao/lidas.json, sem abrir navegador. As folhas .jpg são capturas de QA,
+// apagadas depois de lidas (regra do estúdio): o recibo que fica é o JSON.
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { CENAS } from '../src/story.js';
@@ -8,8 +9,8 @@ const PASTA = 'output/revisao'; mkdirSync(PASTA, { recursive: true });
 const N = CENAS.length;
 if (process.argv.includes('--conferir')) {
   const lidas = existsSync(`${PASTA}/lidas.json`) ? JSON.parse(readFileSync(`${PASTA}/lidas.json`, 'utf8')) : {};
-  const ok = CENAS.filter((c) => existsSync(`${PASTA}/${c.id}.jpg`) && lidas[c.id]);
-  console.log(`${ok.length}/${N} cenas capturadas e lidas`);
+  const ok = CENAS.filter((c) => lidas[c.id] === true);
+  console.log(`${ok.length}/${N} cenas lidas`);
   for (const c of CENAS) if (!ok.includes(c)) console.log('falta:', c.id);
   process.exit(ok.length === N ? 0 : 1);
 }

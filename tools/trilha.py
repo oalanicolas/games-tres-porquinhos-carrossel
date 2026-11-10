@@ -34,13 +34,15 @@ MOMENTOS = {
 def chave():
     if os.environ.get('MAGNIFIC_API_KEY'):
         return os.environ['MAGNIFIC_API_KEY']
-    for linha in (HUB / '.env').read_text().splitlines():
-        if linha.startswith('MAGNIFIC_API_KEY='):
-            return linha.split('=', 1)[1].strip().strip('"\'')
-    sys.exit('MAGNIFIC_API_KEY não encontrada')
+    env = HUB / '.env'
+    if env.exists():
+        for linha in env.read_text().splitlines():
+            if linha.startswith('MAGNIFIC_API_KEY='):
+                return linha.split('=', 1)[1].strip().strip('"\'')
+    sys.exit('MAGNIFIC_API_KEY não encontrada no ambiente nem no .env do hub.')
 
 
-def compor(k, prompt, seg):
+def compor(k, prompt):
     cab = {'x-magnific-api-key': k, 'Content-Type': 'application/json', 'User-Agent': 'tres-porquinhos-trilha'}
     req = urllib.request.Request(API + ROTA, data=json.dumps({'prompt': prompt, 'model': 'pro'}).encode(), headers=cab)
     with urllib.request.urlopen(req, timeout=120) as r:
@@ -63,9 +65,9 @@ def medir(arq):
     return round(d, 2), float(re.findall(r'I:\s+(-?[\d.]+) LUFS', r)[-1]), float(re.findall(r'Peak:\s+(-?[\d.]+) dBFS', r)[-1])
 
 
-def salvar(arq, dados):
+def salvar(arq, dados, indent=2):
     with tempfile.NamedTemporaryFile('w', dir=arq.parent, delete=False, suffix='.tmp') as t:
-        json.dump(dados, t, ensure_ascii=False, indent=2); t.write('\n')
+        json.dump(dados, t, ensure_ascii=False, indent=indent); t.write('\n')
     os.replace(t.name, arq)
 
 
@@ -80,8 +82,8 @@ def main():
         if recibo['faixas'].get(nome, {}).get('hash') == h and arq.exists():
             print(f'{nome}: já composta'); continue
         try:
-            audio, tarefa = compor(k, prompt, seg)
-        except (urllib.error.HTTPError, RuntimeError) as e:
+            audio, tarefa = compor(k, prompt)
+        except (urllib.error.URLError, TimeoutError, RuntimeError) as e:  # HTTPError é um URLError
             corpo = e.read()[:200].decode('utf-8', 'replace') if isinstance(e, urllib.error.HTTPError) else ''
             print(f'{nome}: falhou: {e} {corpo}', file=sys.stderr); erro = 2; continue
         arq.write_bytes(audio)
@@ -92,7 +94,7 @@ def main():
     if all(n in recibo['faixas'] for n in MOMENTOS):
         sons = json.loads(SONS.read_text())
         sons['musicas'] = {n: {'arquivo': f'{n}.mp3', 'ganho_db': round(min(ALVO_LUFS - recibo['faixas'][n]['lufs'], -1 - recibo['faixas'][n]['pico_dbfs']), 1)} for n in MOMENTOS}
-        salvar(SONS, sons)
+        salvar(SONS, sons, indent=1)  # a mesma forma que tools/sons.py grava, para não gerar diff de formatação
         print(f'{len(MOMENTOS)} de {len(MOMENTOS)} momentos; src/sons.json atualizado')
     return erro
 

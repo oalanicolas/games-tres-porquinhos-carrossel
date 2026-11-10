@@ -514,7 +514,7 @@ function casaEmCorte(p, zc = 1.62) {
   for (const [x, h, cor] of [[-0.09, 0.12, '#e84a5f'], [0, 0.17, '#3fb8c9'], [0.09, 0.1, '#ffd24f']]) piece(e, rrect(0.06, h, 0.02, x, 0.02 + h / 2), cor, { t: 0.008, z: 0.004 });
   // a mesa da sopa, com as três tigelas que ficaram para trás
   const m = group(g, { x: -0.36, y: 0.07, z: 0.024 }); piece(m, rrect(0.48, 0.035, 0.008, 0, 0.3), pat('wood', '#a0623a', '#8a5230', 0.15), { t: 0.012 }); for (const sx of [-0.19, 0.19]) piece(m, rrect(0.035, 0.3, 0.006, sx, 0.15), '#8a5230', { t: 0.01 });
-  for (const sx of [-0.15, 0, 0.15]) { piece(m, blob([[-0.05, 0.335], [-0.035, 0.31], [0.035, 0.31], [0.05, 0.335]], 3), '#fff4dc', { t: 0.006, z: 0.006, edge: '#d9a56a', jitter: 0 }); piece(m, ellipse(0.046, 0.008, sx * 0, 0.335, 10), '#f2a93b', { t: 0.003, z: 0.01, jitter: 0 }); m.children[m.children.length - 1].position.x = sx; m.children[m.children.length - 2].position.x = sx; }
+  for (const sx of [-0.15, 0, 0.15]) { piece(m, blob([[-0.05, 0.335], [-0.035, 0.31], [0.035, 0.31], [0.05, 0.335]], 3), '#fff4dc', { t: 0.006, z: 0.006, edge: '#d9a56a', jitter: 0 }); piece(m, ellipse(0.046, 0.008, 0, 0.335, 10), '#f2a93b', { t: 0.003, z: 0.01, jitter: 0 }); m.children[m.children.length - 1].position.x = sx; m.children[m.children.length - 2].position.x = sx; }
   // lareira e duto, sob a chaminé de fora
   const d = group(g, { x: DUTO_X });
   piece(d, blob([[-0.28, 0.07], [-0.28, 0.5], [-0.17, 0.66], [0.17, 0.66], [0.28, 0.5], [0.28, 0.07]], 4), pat('brick', '#8c3c2c', '#b67559', 0.2), { t: 0.016, z: 0.012, edge: '#c69276' });

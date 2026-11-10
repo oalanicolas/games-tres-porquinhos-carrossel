@@ -4,6 +4,10 @@
 Saída: src/lobo-atlas.webp e src/lobo-pecas.json. Cada peça tem a parte visível (polígono na imagem,
 cortado pela silhueta e pela cor) e a parte escondida (o que fica sob as peças de cima e só aparece
 quando elas se mexem), preenchida com a cor mais próxima. Coordenadas em pixels da referência.
+
+Uso (na raiz do módulo; precisa de numpy, scipy e magick):
+  python3 tools/lobo_pecas.py              gera o atlas e o json
+  python3 tools/lobo_pecas.py <diretório>  além disso grava cortes.jpg e rosto.jpg (vista explodida e rosto) no diretório, que já deve existir
 """
 import json, subprocess, sys
 from pathlib import Path

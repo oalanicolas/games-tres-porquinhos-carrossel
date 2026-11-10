@@ -82,8 +82,8 @@ registro de quem pediu essa publicação.
    na cena IX, onde a transcrição automática ouviu outra coisa.
 3. Testar o grito com criança, microfone real, iPhone e Android.
 4. Confirmar a licença de uso público da voz gerada na Magnific.
-5. Confirmar se a publicação de 03:42 foi pedida por ele. O site no ar ainda tem a placa escura da cena VI: o conserto
-   só vai ao ar com push e novo deploy; o gitlink no hub também falta.
+5. Confirmar se a publicação de 03:42 foi pedida por ele. O conserto da placa escura da cena VI já está no GitHub
+   (conferido em 09/11/2026); o que está no ar depende de novo deploy, que não foi feito nem verificado.
 6. Balão da Mamãe em "partida" (dúvida 11 da auditoria) e quartos em "juntos" (dúvida 14).
 7. Lacunas do acervo de sons: palha, torcida infantil e barriga roncando.
 

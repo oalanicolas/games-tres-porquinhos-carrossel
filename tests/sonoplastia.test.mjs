@@ -26,7 +26,9 @@ test('todo efeito baixado é usado, e nada é chamado sem existir', () => {
   const codigo = cenas + readFileSync(new URL('../src/main.js', import.meta.url), 'utf8') + readFileSync(new URL('../src/audio.js', import.meta.url), 'utf8');
   const sobra = sons.efeitos.filter((n) => !(codigo.includes(`'${n}'`) || (/^passo\d$/.test(n) && codigo.includes('`passo$'))));
   assert.deepEqual(sobra, []);
-  const chamados = [...codigo.matchAll(/tocar\('([a-z0-9]+)'/g)].map((m) => m[1]);
+  // o primeiro argumento inteiro, para pegar também os nomes escolhidos por ternário (k % 2 ? 'bate2' : 'bate1')
+  const chamados = [...codigo.matchAll(/tocar\(([^,)]*)/g)].flatMap((m) => [...m[1].matchAll(/'([a-z0-9]+)'/g)].map((n) => n[1]));
+  assert.ok(chamados.length > 40, `só ${chamados.length} chamadas lidas`);
   assert.deepEqual(chamados.filter((n) => !sons.efeitos.includes(n)), []);
 });
 

@@ -19,8 +19,9 @@ test('a voz real existe nas 17 cenas, com botão e o momento de cada ação', as
   try {
     await page.waitForTimeout(500);
     const r = await page.evaluate(async () => {
-      const a = window.__livro.audio; const f = a.faixasVoz; const cenas = Object.keys(f);
-      const medidas = await Promise.all(cenas.map(async (i) => { const x = await fetch(`/narracao/${f[i].arquivo}`); const b = await x.arrayBuffer(); const seg = await new (window.AudioContext)().decodeAudioData(b); return { i, status: x.status, seg: seg.duration, previsto: f[i].duracao, acao: f[i].acao_em }; }));
+      const a = window.__livro.audio; const f = a.faixasVoz; const cenas = Object.keys(f); const decodificador = new AudioContext();
+      const medidas = await Promise.all(cenas.map(async (i) => { const x = await fetch(`/narracao/${f[i].arquivo}`); const b = await x.arrayBuffer(); const seg = await decodificador.decodeAudioData(b); return { i, status: x.status, seg: seg.duration, previsto: f[i].duracao, acao: f[i].acao_em }; }));
+      await decodificador.close();
       return { medidas, botao: getComputedStyle(document.querySelector('#narrar')).display };
     });
     assert.equal(r.medidas.length, 17);

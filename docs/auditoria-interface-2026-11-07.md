@@ -1,5 +1,7 @@
 # Revisão da interface — 7 de novembro de 2026
 
+Nota de 09/11/2026: as medições com axe-core e de tempo de quadro citadas abaixo foram feitas com ferramentas de fora do repositório; nem o axe-core nem o script de medição estão em `devDependencies` ou em `tests/`, então não se reproduzem a partir de um clone. O que o repositório reexecuta está em `tests/acessibilidade.test.mjs`.
+
 A auditoria inicial encontrou seis defeitos e atribuiu 13/20 à interface. Os seis foram corrigidos. A revisão usa vinte verificações observáveis, descritas abaixo. A contagem de verificações não substitui a nota qualitativa inicial nem certifica conformidade integral com WCAG.
 
 ## Correções

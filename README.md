@@ -86,6 +86,21 @@ Sem as 17 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a co
 | `tests/sincronia.test.mjs` | cada grupo de gestos começa na sua palavra, balão e boca só durante a fala, relógio da cena igual ao da voz |
 | `tests/sopro.test.mjs` | três casas pelo microfone, "Fuuuu!" com voz conta e apito não, microfone recusado não prende, Lobo termina sozinho |
 
+### Ferramentas manuais
+
+Fora do `npm test`; rodam à mão, contra um servidor local (`LIVRO_URL`, padrão `http://127.0.0.1:4291/`). As capturas que gravam em `output/` são temporárias: apague depois de olhar.
+
+| Arquivo | Para quê |
+|---|---|
+| `tests/captura.mjs` | uma captura da capa ou de uma cena, num segundo da ação ou da voz |
+| `tests/folha.mjs` | folha de contato das cenas em repouso e no fim da ação |
+| `tests/folha-voz.mjs` | uma captura por marco da narração, cena a cena |
+| `tests/captura-baloes.mjs` | os balões de fala em cada cena |
+| `tests/revisao-cenas.mjs` | cada cena em 8 momentos; `--conferir` conta as cenas lidas em `output/revisao/lidas.json` |
+| `tests/narrado-real.mjs` | percurso do modo narrado com as faixas reais (cerca de 4 min) |
+| `tests/mix-medida.mjs` | mede a mixagem real e o limitador; precisa de `ffmpeg` |
+| `tools/conferir_ancoras.py` | confere as âncoras da fala contra a gravação; precisa de `output/narracao/cena-N.wav`, que nenhuma ferramenta gera hoje (converta os mp3 de `public/narracao` com `ffmpeg` antes) |
+
 ## Pesquisa
 
 - Decisões técnicas: `docs/pesquisas/Livro pop-up em carrossel no navegador — papel recortado, sombra e trilha por cena em Three.js.md`, no vault do hub.
