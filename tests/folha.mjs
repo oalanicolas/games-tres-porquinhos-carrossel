@@ -2,7 +2,7 @@
 import { chromium } from 'playwright-core';
 const [saida = 'output/qa/f', modo = 'inicio', lista = '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16'] = process.argv.slice(2);
 const base = process.env.LIVRO_URL || 'http://127.0.0.1:4291/';
-const b = await chromium.launch({ channel: 'chrome', headless: true, args: ['--use-angle=metal', '--ignore-gpu-blocklist'] });
+const b = await chromium.launch({ channel: 'chrome', headless: !process.env.QA_HEADED, args: ['--use-angle=metal', '--ignore-gpu-blocklist'] });
 const page = await b.newPage({ viewport: { width: 1200, height: 726 } });
 const erros = []; page.on('pageerror', (e) => erros.push(String(e))); page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
 await page.goto(`${base}?qa=1`); await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });

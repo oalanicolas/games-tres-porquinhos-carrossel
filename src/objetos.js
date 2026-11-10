@@ -1,5 +1,5 @@
 // Cenografia de recorte: casas, árvores, nuvens e miudezas.
-import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, scallop, cloud, wave, hill, flame, heart, spiral, shade, rng } from './paper.js';
+import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, scallop, cloud, flame, heart, shade, rng } from './paper.js';
 
 const pilha = (parent, passo = 0.008, inicio = 0) => { let z = inicio; const f = (pts, paint, o = {}) => { z += passo; return piece(parent, pts, paint, { t: 0.01, z, ...o }); }; f.z = () => z; f.salto = (d) => { z += d; }; return f; };
 
@@ -89,10 +89,8 @@ export function lanterna(parent, { x = 0, y = 0, z = 0, s = 1, cor = '#ff9c3c', 
   return g;
 }
 // ---- casas ----------------------------------------------------------------------------------------
-function janela(f, x, y, r = 0.15, moldura = '#a0623a', fundo = '#3c2233') { f(ellipse(r, r, x, y, 26), fundo, { edge: fundo }); }
-
 /** Casa de palha: cada feixe é um rig que pode voar. y=0 no chão, ~1,3 de altura. */
-export function casaPalha(parent, { x = 0, y = 0, z = 0, s = 1, janelaPorco = false } = {}) {
+export function casaPalha(parent, { x = 0, y = 0, z = 0, s = 1 } = {}) {
   const raiz = rig(parent, 'casa-palha', { x, y, z, s });
   const palha = pat('straw', '#f2cf63', '#c7972f', 0.26); const palha2 = pat('straw', '#e9bd4d', '#b5862a', 0.26);
   const esq = group(raiz, {});
@@ -218,11 +216,6 @@ export function chamine(parent, { x = 0, y = 0, z = 0, s = 1, altura = 0.46 } = 
   piece(g, rrect(0.27, 0.06, 0.012, 0, altura), '#e9c79c', { t: 0.012, z: 0.014, edge: '#f8e5c8' });
   return g;
 }
-export function janelaComBorda(parent, { x = 0, y = 0, z = 0, r = 0.15, cor = '#fff3dc' } = {}) {
-  const g = group(parent, { x, y, z });
-  piece(g, ellipse(r, r, 0, 0, 30), '#3c2233', { t: 0.004, edge: '#3c2233', jitter: 0 });
-  return g;
-}
 /** Moldura colocada na frente do porquinho, cobrindo o pescoço. */
 export function molduraJanela(parent, { x = 0, y = 0, z = 0, r = 0.15, cor = '#fff3dc', sombra = '#a0623a' } = {}) {
   const g = group(parent, { x, y, z });
@@ -265,4 +258,3 @@ export function fumaca(parent, n, { x = 0, y = 0, z = 0, cor = '#efe7f2', altura
   });
   return { raiz, bolas, idle };
 }
-export { pilha, hill, wave, flame, heart, spiral };

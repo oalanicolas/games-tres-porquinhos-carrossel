@@ -25,7 +25,7 @@ npm run build
 - `src/cenas.js`, `src/personagens.js`, `src/objetos.js`, `src/palco.js`, `src/paper.js`: recortes de papel e ações das dezessete cenas.
 - `src/story.js`: o texto.
 - `src/audio.js`: música com fusão e emenda antes do fade, ambientes em laço, efeitos num bus que cede à voz, posição no estéreo, espaço e limitador. `src/sons.json` é gerado.
-- `tools/sons.py`: monta `public/sfx`, `public/musica`, `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub.
+- `tools/sons.py`: monta `public/sfx`, os efeitos de `src/sons.json` e `docs/creditos-sons.md` a partir de `shared/sfx` do hub. A música (`public/musica`) vem de `tools/trilha.py`.
 
 ## Brincar de soprar
 
@@ -79,6 +79,12 @@ Sem as 17 cenas gravadas, o botão não aparece. `--servico elevenlabs` usa a co
 | `tests/texto-livre.test.mjs` | nada da cena tapa o texto da página, em 17 de 17 cenas |
 | `tests/furos.test.mjs` | a história se sustenta em cena: Kael entra por último antes do Lobo chegar, três janelas, Lobo alcança a porta, chaminé e caldeirão à vista, ninguém reaparece |
 | `tests/continuidade.test.mjs` | balões mantêm a ordem durante gestos; voz terminada durante a abertura ou antes do primeiro quadro e toque cancelado não prendem o avanço |
+| `tests/acessibilidade.test.mjs` | texto das 17 cenas no HTML, leitura ampliada até 200%, gestos sem zoom e cabeçalho legível em 320 px |
+| `tests/memoria.test.mjs` | páginas distantes liberam as imagens e voltam idênticas; perda do contexto gráfico pausa voz e sopro sem apagar progresso |
+| `tests/narracao.test.mjs` | sem voz gravada o botão some; com ela, as 17 cenas tocam, a música abaixa e o modo narrado vira as páginas e fecha o livro |
+| `tests/narracao-continua.test.mjs` | a voz atravessa as páginas, retoma depois de pausa, falha de rede ou sopro, e só o botão de narração a desliga |
+| `tests/sincronia.test.mjs` | cada grupo de gestos começa na sua palavra, balão e boca só durante a fala, relógio da cena igual ao da voz |
+| `tests/sopro.test.mjs` | três casas pelo microfone, "Fuuuu!" com voz conta e apito não, microfone recusado não prende, Lobo termina sozinho |
 
 ## Pesquisa
 

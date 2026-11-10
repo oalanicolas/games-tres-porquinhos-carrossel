@@ -1,7 +1,7 @@
 // Checagem nomeada "nenhuma peça fura a parede": caixa de cada peça, no início e no fim da ação, contra a largura da cunha.
 import { chromium } from 'playwright-core';
 const base = process.env.LIVRO_URL || 'http://127.0.0.1:4291/';
-const b = await chromium.launch({ channel: 'chrome', headless: true, args: ['--use-angle=metal', '--ignore-gpu-blocklist'] });
+const b = await chromium.launch({ channel: 'chrome', headless: !process.env.QA_HEADED, args: ['--use-angle=metal', '--ignore-gpu-blocklist'] });
 const page = await b.newPage({ viewport: { width: 800, height: 500 } });
 await page.goto(`${base}?qa=1`); await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });
 const r = await page.evaluate(async () => {

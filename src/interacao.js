@@ -55,7 +55,7 @@ export class InteracaoSopro {
       delete this.$('sopro-painel').dataset.aviso;
       delete this.$('sopro-painel').dataset.resultado;
       this.$('sopro-titulo').textContent = casa.nome;
-      this.$('sopro-meta').textContent = i === 4 ? 'Vento forte · será que ela cai?' : i === 3 ? 'Vento médio · a madeira resiste mais.' : 'Vento leve · a palha é levinha.';
+      this.$('sopro-meta').textContent = casa.meta;
       this.$('sopro-nivel').low = casa.nivel * 100;
       this.$('sopro-nivel').high = casa.nivel * 100;
       this.$('sopro-nivel').optimum = 100;
@@ -84,7 +84,7 @@ export class InteracaoSopro {
       if (!ok || captura !== this.captura || !this.pendente || this.fase !== 'permissao') return;
       this.autorizado = true; this.fase = 'calibrando'; this.calibracao = []; this.tempoCalibracao = 0;
       this.mensagem('Um instante em silêncio para ouvir o ambiente…');
-    } catch (e) {
+    } catch {
       if (captura !== this.captura || !this.pendente || this.fase !== 'permissao') return;
       this.concluir({ sozinho: true }); // sem microfone, a história segue com o sopro do próprio Lobo
     }

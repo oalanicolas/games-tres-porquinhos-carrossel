@@ -205,7 +205,6 @@ function atualizarUI() {
   if (!capa) {
     $('capitulo-texto').textContent = `Cena ${romano(i)} · ${CENAS[i].parte}`;
     const f = CENAS[i].fase; // fase: de sol pleno a lua; desloca o disco escuro
-    $('fase').setAttribute('cx', String(10 + 16 * (1 - Math.abs(f * 2 - 1)) + (f < 0.5 ? -16 : 0) * 0));
     $('fase').setAttribute('cx', String(f < 0.62 ? 30 : 10 + (1 - f) * 22));
   }
   $('anterior').disabled = capa; $('proxima').disabled = i === N - 1;
@@ -227,7 +226,7 @@ function irPara(i) {
   if (estado.modo === 'capa') { abrirLivro(); estado.indice = i; estado.giroAlvo = i * CUNHA; atualizarUI(); return; }
   if (estado.modo !== 'aberto' && estado.modo !== 'abrindo') return;
   if (i === estado.indice) return;
-  estado.indice = i; estado.giroAlvo = i * CUNHA; estado.virando = !estado.lendo;
+  estado.indice = i; estado.giroAlvo = i * CUNHA;
   if (estado.lendo) estado.giro = estado.giroAlvo;
   audio.tocar(Math.random() > 0.5 ? 'flap1' : 'flap2', { vol: 0.9 }); atualizarUI();
 }
@@ -447,7 +446,7 @@ addEventListener('blur', cancelarArrasto);
 // ---- laço -------------------------------------------------------------------------------------------
 let ultimo = performance.now(); let relogio = 0;
 const atuacao = new Atuacao({ raiz: $('baloes'), camera, canvas: renderer.domElement, audio, cenas: () => cenas });
-const quadros = { n: 0, soma: 0, piores: [] };
+const quadros = { n: 0, soma: 0 };
 function passo(dt) {
   relogio += dt;
   if (estado.modo === 'abrindo') { estado.tAbrir = Math.min(1, estado.tAbrir + dt / DUR_ABRIR); if (estado.tAbrir >= 1) { estado.modo = 'aberto'; } } else if (estado.modo === 'fechando') {
@@ -462,7 +461,7 @@ function passo(dt) {
   estado.mouseS.lerp(estado.mouse, 1 - Math.exp(-dt * 4));
   aplicarLivro();
   const px = estado.modo === 'aberto' && !reduzido ? estado.mouseS.x : 0; const py = estado.modo === 'aberto' && !reduzido ? estado.mouseS.y : 0;
-  livro.anel.rotation.y = -estado.giro * clamp(estado.tAbrir * 4 - 3, 0, 1) - estado.giro * (1 - clamp(estado.tAbrir * 4 - 3, 0, 1)) + px * 0.022;
+  livro.anel.rotation.y = -estado.giro + px * 0.022;
   camera.position.x += px * 0.28; camera.position.y -= py * 0.12;
   camera.lookAt(alvoAtual);
   // no celular em pé a câmera recua: a névoa recua junto para não apagar o livro

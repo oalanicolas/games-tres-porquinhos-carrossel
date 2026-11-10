@@ -1,7 +1,7 @@
-// Auditoria de sonoplastia (Alan, 06/17/2026: "se tem algo que nao estamos descuidando"). Cada item é um defeito achado.
+// Auditoria de sonoplastia (Alan, 06/11/2026: "se tem algo que nao estamos descuidando"). Cada item é um defeito achado.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { abrir } from './_apoio.mjs';
 

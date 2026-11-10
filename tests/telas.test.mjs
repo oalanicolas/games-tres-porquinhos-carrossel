@@ -3,7 +3,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { abrir } from './_apoio.mjs';
 
-const sobrepoe = (a, b) => a && b && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
 for (const [nome, largura, altura] of [['celular em pé', 390, 844], ['celular pequeno', 360, 640], ['celular deitado', 844, 390], ['desktop', 1440, 870]]) {
   test(`${nome}: livro nítido e textos sem sobreposição`, async () => {

@@ -1,6 +1,6 @@
 // Folha de revisão: cada cena em 8 momentos, para ler uma a uma. Grava em output/revisao/ e imprime N/M.
 // `--conferir` só conta o que já foi capturado e lido (output/revisao/lidas.json), sem abrir navegador.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { CENAS } from '../src/story.js';
 

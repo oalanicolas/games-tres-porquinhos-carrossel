@@ -1,6 +1,6 @@
 // Ajudantes para compor uma cunha do carrossel. x: lado a lado; z: raio, da lombada para a frente.
 import * as THREE from 'three';
-import { piece, rig, group, pat, star, ellipse, spiral, stroke, rng, shade } from './paper.js';
+import { piece, rig, group, spiral, stroke, rng } from './paper.js';
 import { CUNHA } from './book.js';
 import { ease } from './tween.js';
 

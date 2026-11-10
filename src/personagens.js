@@ -1,5 +1,5 @@
 // Personagens de recorte: cada parte móvel é um rig; o resto se funde em poucas chamadas de desenho.
-import { piece, rig, group, ellipse, rrect, blob, stroke, spiral, flame, poly, pat, star, shade } from './paper.js';
+import { piece, rig, group, ellipse, rrect, blob, stroke, spiral, flame, pat, star, shade } from './paper.js';
 import { recorte, tinta, pxLobo, U_LOBO, BASE_LOBO } from './lobo-recorte.js';
 
 const pilha = (parent, passo = 0.007, inicio = 0) => { let z = inicio; const f = (pts, paint, o = {}) => { z += passo; return piece(parent, pts, paint, { t: 0.008, z, ...o }); }; f.z = () => z; f.salto = (d) => { z += d; }; return f; };

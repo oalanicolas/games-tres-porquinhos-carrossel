@@ -1,4 +1,4 @@
-// O texto do conto. Cada `linhas` vira parágrafo na parede e no cartão de leitura; `fala: true` recua a linha.
+// O texto do conto. Cada `linhas` vira parágrafo na parede e na leitura textual; `fala: true` recua a linha.
 export const CAPA = {
   titulo: 'Os Três Porquinhos',
   sub: 'Conto popular · um livro-carrossel em dezessete cenas',

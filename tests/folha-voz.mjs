@@ -5,7 +5,7 @@ import { readFileSync, mkdirSync } from 'node:fs';
 const { faixas } = JSON.parse(readFileSync(new URL('../src/narracao.json', import.meta.url)));
 const [pasta = 'output/qa/folha', lista, instantes] = process.argv.slice(2); mkdirSync(pasta, { recursive: true });
 const cenas = lista ? lista.split(',').map(Number) : Object.keys(faixas).map(Number);
-const b = await chromium.launch({ channel: 'chrome', headless: true, args: ['--use-angle=metal', '--ignore-gpu-blocklist'] });
+const b = await chromium.launch({ channel: 'chrome', headless: !process.env.QA_HEADED, args: ['--use-angle=metal', '--ignore-gpu-blocklist'] });
 const page = await b.newPage({ viewport: { width: Number(process.env.W || 960), height: Number(process.env.H || 580) } });
 const erros = []; page.on('pageerror', (e) => erros.push(String(e))); page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
 await page.goto(`${process.env.LIVRO_URL || 'http://127.0.0.1:4291/'}?qa=1`); await page.waitForFunction(() => window.__livro, null, { timeout: 90000 });

@@ -1,6 +1,6 @@
 // As cenas e a capa. Cada cena devolve { linha, idle }: a linha é a ação do papel; idle é a vida em repouso.
 import * as THREE from 'three';
-import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, cloud, hill, wave, flame, heart, shade, sector, scallop, spiral, bake } from './paper.js';
+import { piece, rig, group, ellipse, rect, rrect, blob, stroke, poly, pat, star, hill, wave, flame, heart, shade, scallop } from './paper.js';
 import { Timeline } from './tween.js';
 import { H } from './book.js';
 import { palco, sopro, revoada, ease, SOLO, meiaLargura, ventoInterativo } from './palco.js';
@@ -459,7 +459,7 @@ montadores.telhado = (p, audio) => {
   for (const [x, y, s] of [[-0.24, 2.6, 0.05], [0.26, 2.3, 0.04]]) piece(p.alto(x, y, 0.76), star(5, s, s * 0.45), '#fff0a6', { t: 0.006, edge: '#fff9d6' });
   O.arvore(p.pe(-0.54, 1.44), { s: 0.84, altura: 1.55, copa: '#6c3fa8', listra: '#5e3498', frutas: '#ffd24f', estampa: 'dots' });
   O.arvore(p.pe(0.56, 1.48), { s: 0.74, altura: 1.28, copa: '#b74a86', listra: '#a53e76', frutas: '#fff4dc', flip: -1 });
-  const { fum, jan } = casaDeBento(c); const xc = CASA_BENTO.x, zc = CASA_BENTO.zc; const k = jan.k;
+  const { fum, jan } = casaDeBento(c); const xc = CASA_BENTO.x, zc = CASA_BENTO.zc;
   const j1 = jan.rosto('pipo', 0), j2 = jan.rosto('tico', 1), j3 = jan.rosto('bento', 2);
   // barril encostado na casa: é por ele que o Lobo sobe
   const bx = xc - 0.72, bz = zc + 0.2, bh = 0.34;
@@ -469,7 +469,7 @@ montadores.telhado = (p, audio) => {
   primeiroPlano(p, ['#6c9a6a', '#5f8c5e'], ['#ffd24f', '#ff7fa8', '#fff']);
   const x0 = -0.68;
   const w = lobo(c, { x: x0, y: SOLO, z: 2.6, s: 0.76 }); w.rabo.rotation.z = 1.35;
-  const vL = w.root.scale.y; const z0 = w.root.position.z;
+  const vL = w.root.scale.y;
   // de onde a página anterior o deixou: arriado, sem fôlego
   w.corpo.rotation.z = 0.12; w.cabeca.rotation.z = -0.42; w.cabeca.position.y = 0.77; w.bracoF.rotation.z = -0.16; w.bracoT.rotation.z = 0.1; w.queixo.rotation.z = -0.22; w.fundoBoca.scale.y = 1; w.roxo.scale.setScalar(0.5);
   poste(p, -1, 2.26, { cor: '#ff8fb1' }); trepadeira(p, 1, 2.46, '#ff8fb1', { alto: 1.15 });
@@ -541,7 +541,7 @@ montadores.chamine = (p, audio) => {
   const corte = casaEmCorte(p, 1.62); const DX = DUTO_X;
   // o Lobo já está no telhado, onde a página anterior o deixou
   const telha = (x) => corte.apiceY - Math.abs(x) * (0.67 / 0.72);
-  const w = lobo(c, { x: -0.1, y: telha(-0.1), z: 1.72, s: 0.5 }); w.root.rotation.z = 0.2; w.rabo.rotation.z = 0.6; const vW = w.root.scale.y;
+  const w = lobo(c, { x: -0.1, y: telha(-0.1), z: 1.72, s: 0.5 }); w.root.rotation.z = 0.2; w.rabo.rotation.z = 0.6;
   // fogo baixo, e o caldeirão ainda longe da chaminé
   const fogo = O.fogueira(c, { x: DX, y: SOLO + 0.04, z: 2.02, s: 0.86 });
   const cal = O.caldeirao(c, { x: -0.2, y: SOLO + 0.13, z: 2.14, s: 0.8 });
@@ -796,7 +796,6 @@ montadores.juntos = (p, audio) => {
   return { linha: tl, atores: { mae, pipo, tico, bento }, idle(t) { pipo.idle(t); tico.idle(t); bento.idle(t); mae.idle(t); fum.idle(t); so.raios.rotation.z = t * 0.1; } };
 };
 
-// ---- capa: arte renderizada de recortes reais ------------------------------------------------------------
 // ---- As casas, uma por página. Cada uma nasce no mesmo lugar e no mesmo cenário em que depois será soprada. ----------
 /** A tábua torta e a que ficou sobrando: são o capricho de Lulu, e continuam lá quando o Lobo chega. */
 function tabuasDeLulu(casa) {
@@ -1202,7 +1201,7 @@ export function arteDaCapa(renderer) {
   for (const [x, st] of [[-0.05, 0], [0.14, 2], [0.32, 4]]) { const a = group(g, { x, y: 0.1 + st * 0.03, z: 0.42 }); piece(a, stroke([[-0.16, 0], [0, 0.03], [0.16, 0]], 0.028, { taper: 0.75 }), '#fff8ee', { t: 0.004, edge: '#fff', jitter: 0 }); }
   piece(g, wave(5, 0.27, 0.03, 4, 0.5), pat('grass', '#6cc05a', '#57ab4b', 0.28), { y: -1.42, z: 0.48, t: 0.012 });
   for (const [x, c2] of [[-1.5, '#ffd24f'], [0.22, '#ffffff'], [0.82, '#ff7fa8'], [1.5, '#ffd24f']]) O.flor(g, { x, y: -1.28, z: 0.5, cor: c2, altura: 0.2, s: 1.1 });
-  g.traverse((o) => { if (o.isMesh) { o.castShadow = o.castShadow; o.receiveShadow = true; } });
+  g.traverse((o) => { if (o.isMesh) { o.receiveShadow = true; } });
   const cam = new THREE.OrthographicCamera(-1.75, 1.75, 1.66, -1.66, 0.1, 20); cam.position.set(0, 0, 8); cam.lookAt(0, 0, 0);
   const antes = renderer.getRenderTarget(); renderer.setRenderTarget(rt); renderer.render(s, cam);
   const px = new Uint8Array(W * A * 4); renderer.readRenderTargetPixels(rt, 0, 0, W, A, px); renderer.setRenderTarget(antes);

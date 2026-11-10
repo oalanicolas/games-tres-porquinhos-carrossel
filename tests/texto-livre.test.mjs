@@ -1,4 +1,4 @@
-// Defeito achado na revisão de 06/17/2026: com as histórias mais longas, poste e flor passavam na frente do fim do texto.
+// Defeito achado na revisão de 06/11/2026: com as histórias mais longas, poste e flor passavam na frente do fim do texto.
 // Para cada cena, no início e no fim da ação, um raio por ponto do bloco de texto: nada da cena pode tapar a parede ali.
 import test from 'node:test';
 import assert from 'node:assert/strict';

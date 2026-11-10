@@ -56,11 +56,11 @@ Papel `#fffdf4`, borda `#e8d9c4`, sombra de papel e a fonte de títulos, com cau
 
 ## Voz
 
-Enquanto a voz fala, a música cai para 0,3 e o ambiente para 0,5.
+Enquanto a voz fala, a música cai para 0,3 e o ambiente para 0,75.
 
 ## Lobo
 
-Referência pedida por Alan em 06/11/2026: as duas fotos do lobo de pelúcia (Foto 1 e Foto 2), vistas de lado e de frente. A adaptação mantém os recortes extrudados, o rig e as ações do livro. Traços a reconhecer: cinza suave, cabeça arredondada com focinho largo e nariz carvão grande, orelhas altas com miolo creme, olhos ovais com sobrancelhas castanhas, barriga e patas claras e lenço azul. A aparência da pelúcia orienta formas e cores; o material continua sendo o papel do livro.
+Recortado da imagem de referência enviada por Alan em 06/11/2026 (`arte/lobo-referencia.png`): as peças articuladas saem da própria imagem (`tools/lobo_pecas.py`, `src/lobo-recorte.js`) e levam o rig de fala, sopro, subida e fuga. Traços: cinza, focinho e nariz grandes, barriga clara e lenço azul. A adaptação anterior, em formas desenhadas a partir das fotos de pelúcia, foi recusada por Alan e não volta. O Lobo atual ainda aguarda a aprovação dele.
 
 ## Memória das páginas
 

@@ -51,7 +51,7 @@ function papelBase(ctx, w, h, seed) {
 }
 /** Céu em tiras coladas. `dist` cresce a partir da lombada; `espelho` inverte o lado para casar na dobra. */
 function pintaCeu(ctx, ceu, x0, x1, espelho, seed) {
-  const w = x1 - x0; const r = rng(seed); const n = ceu.faixas.length; const alturas = [0, 0.2, 0.42, 0.62, 0.8, 1.02];
+  const w = x1 - x0; const r = rng(seed); const alturas = [0, 0.2, 0.42, 0.62, 0.8, 1.02];
   ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, w, PX_A); ctx.clip();
   ceu.faixas.forEach(([cor, listra], i) => {
     const y0 = alturas[i] * PX_A;
@@ -65,9 +65,6 @@ function pintaCeu(ctx, ceu, x0, x1, espelho, seed) {
     ctx.save(); ctx.clip();
     ctx.fillStyle = listra; for (let y = y0 - 90; y < PX_A; y += 44) ctx.fillRect(x0, y, w, 22);
     ctx.restore();
-    if (i + 1 < n) {
-      // a próxima tira cobre o que sobrar da listra
-    }
   });
   // estrelas
   ctx.fillStyle = '#fff3b0';
@@ -171,8 +168,6 @@ function pintaCapa(arte) {
   const arco = (cx) => { cx.beginPath(); cx.moveTo(ax - rad, base); cx.lineTo(ax - rad, topo + rad); cx.arc(ax, topo + rad, rad, Math.PI, 0); cx.lineTo(ax + rad, base); cx.closePath(); };
   ctx.save(); arco(ctx); ctx.clip(); if (arte) ctx.drawImage(arte, ax - rad, topo, aw, base - topo); ctx.restore();
   arco(ctx); ctx.strokeStyle = COR_OURO; ctx.lineWidth = 9; ctx.stroke();
-  ctx.save(); ctx.translate(ax, 0); ctx.scale(1.03, 1); ctx.translate(-ax, 0);
-  ctx.restore();
   // pequenos enfeites
   ctx.fillStyle = COR_OURO; for (const [x, y] of [[170, 640], [1230, 640], [140, 880], [1260, 880], [190, 1080], [1210, 1080]]) { ctx.beginPath(); for (let k = 0; k < 8; k++) { const rr = k % 2 ? 5 : 15; ctx.lineTo(x + Math.cos((k / 8) * TAU) * rr, y + Math.sin((k / 8) * TAU) * rr); } ctx.closePath(); ctx.fill(); }
   ctx.font = '600 25px "Inter Variable"'; ctx.letterSpacing = '9px'; ctx.fillText('ABRA · GIRE · SOPRE', PX_L / 2, PX_A - 74); ctx.letterSpacing = '0px';
@@ -215,7 +210,7 @@ export class Livro {
     this.raiz = new THREE.Group(); this.raiz.rotation.order = 'YXZ';
     this.anel = new THREE.Group(); this.raiz.add(this.anel);
     this.paredes = []; this.cunhas = []; this.paginas = []; this.aniso = aniso;
-    this.abertura = 0; this.giro = 0; this.stats = { pieces: 0, draws: 0, triangles: 0 };
+    this.abertura = 0; this.stats = { pieces: 0, draws: 0, triangles: 0 };
     this.larguraFoco = CUNHA; this.alvos = [];
     this.focar(0);
     this._construirParedes();
@@ -223,7 +218,6 @@ export class Livro {
     this._construirMiolo();
   }
   _construirParedes() {
-    this.faces = [];
     const borda = new THREE.MeshLambertMaterial({ color: '#fff4dc' });
     const capa = new THREE.MeshLambertMaterial({ color: COR_CAPA });
     this.fimTexto = [];
