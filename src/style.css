@@ -60,6 +60,15 @@ body.so-olhar .pilula:not(.voltar-olhar) { opacity: 0; pointer-events: none; tra
 .abertura h1 { font: 500 clamp(2.25rem, 4.6vw, 4.375rem)/1.04 var(--display); letter-spacing: -.015em; font-variation-settings: 'opsz' 110; color: var(--capa-titulo); }
 .abertura p { margin-top: 18px; font-size: clamp(.875rem, 1.04vw, 1rem); line-height: 1.58; max-width: 36ch; }
 body.aberto .abertura, body.fechando .abertura { opacity: 0; transform: translateY(-14px); }
+.estante { margin-top: 22px; display: grid; gap: 10px; justify-items: start; pointer-events: auto; }
+.estante[hidden] { display: none; }
+.estante-livro { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px 16px 6px 6px; border-radius: 16px; background: var(--vidro); border: 1px solid var(--vidro-borda); box-shadow: var(--sombra); color: var(--tinta); text-decoration: none; text-shadow: none; transition: transform .15s; }
+.estante-livro:hover { transform: translateY(-2px); }
+.estante-livro:active { transform: scale(.98); }
+.estante-livro img { width: 104px; height: auto; aspect-ratio: 7 / 5; object-fit: cover; border-radius: 11px; display: block; }
+.estante-livro span { display: grid; gap: 3px; }
+.estante-livro small { font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-2); }
+.estante-livro strong { font: 500 1.0625rem/1.15 var(--display); }
 .barra { left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 12px; max-width: calc(100vw - 20px); width: max-content; }
 body.so-olhar .barra { transform: translate(-50%, 6px); }
 .barra-navegacao, .barra-opcoes, .ajuste-leitura { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 0; }

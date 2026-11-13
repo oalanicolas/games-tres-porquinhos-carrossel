@@ -106,6 +106,10 @@ Fora do `npm test`; rodam à mão, contra um servidor local (`LIVRO_URL`, padrã
 - Decisões técnicas: `docs/pesquisas/Livro pop-up em carrossel no navegador — papel recortado, sombra e trilha por cena em Three.js.md`, no vault do hub.
 - Identidade visual: [docs/design-system.md](docs/design-system.md).
 
+## Estante
+
+Na capa fechada aparecem os outros livros da coleção, e o ícone de estante na barra fecha o livro e leva até eles. A lista é `public/livros.json`, com as miniaturas em `public/estante/`; `src/estante.js` é igual em todos os livros e esconde o próprio (`data-livro` no `index.html`). Livro novo: uma linha na lista e uma miniatura, em cada livro, e novo deploy de cada um. Checagem: `tests/estante.test.mjs`.
+
 ## Créditos
 
 A página não mostra créditos sobre a mesa, a pedido de Alan: eles ficam só aqui.
